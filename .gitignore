@@ -1,2 +1,4 @@
-.idea
+.idea/
 gqm_phase3.iml
+target
+.gitignore
