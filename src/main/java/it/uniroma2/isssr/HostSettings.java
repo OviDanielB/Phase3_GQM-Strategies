@@ -17,457 +17,473 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HostSettings {
 
-	@Value("${host.address}")
-	private static String address;
+    @Value("${host.address}")
+    private static String address;
 
-	@Value("${host.port}")
-	private static String port;
+    @Value("${host.port}")
+    private static String port;
 
-	@Value("${host.activiti.address}")
-	public static String activitiAddress;
+    @Value("${host.activiti.address}")
+    public static String activitiAddress;
 
-	@Value("${host.activiti.port}")
-	private static String activitiPort;
+    @Value("${host.activiti.port}")
+    private static String activitiPort;
 
-	@Value("${host.activiti.username}")
-	private static String activitiUsername;
+    @Value("${host.activiti.username}")
+    private static String activitiUsername;
 
-	@Value("${host.activiti.password}")
-	private static String activitiPassword;
+    @Value("${host.activiti.password}")
+    private static String activitiPassword;
 
-	@Value("${host.activiti.modeler.uri}")
-	private static String activitiModelerUri;
+    @Value("${host.activiti.modeler.uri}")
+    private static String activitiModelerUri;
 
-	@Value("${host.activiti.explorer.endpoint}")
-	private static String activitiExplorerEndpoint;
+    @Value("${host.activiti.explorer.endpoint}")
+    private static String activitiExplorerEndpoint;
 
-	@Value("${host.activiti.rest.endpoint.models}")
-	private static String activitiRestEndpointModels;
+    @Value("${host.activiti.rest.endpoint.models}")
+    private static String activitiRestEndpointModels;
 
-	@Value("${host.activiti.rest.endpoint.deployments}")
-	private static String activitiRestEndpointDeployments;
+    @Value("${host.activiti.rest.endpoint.deployments}")
+    private static String activitiRestEndpointDeployments;
 
-	@Value("${host.activiti.rest.endpoint.processdefinitions}")
-	private static String activitiRestEndpointProcessDefinitions;
+    @Value("${host.activiti.rest.endpoint.processdefinitions}")
+    private static String activitiRestEndpointProcessDefinitions;
 
-	@Value("${host.activiti.rest.endpoint.processistances.model.suffix}")
-	private static String activitiRestEndpointProcessDefinitionsModelSuffix;
+    @Value("${host.activiti.rest.endpoint.processistances.model.suffix}")
+    private static String activitiRestEndpointProcessDefinitionsModelSuffix;
 
-	@Value("${host.activiti.rest.endpoint.processistances.image.suffix}")
-	private static String activitiRestEndpointProcessDefinitionsImageSuffix;
+    @Value("${host.activiti.rest.endpoint.processistances.image.suffix}")
+    private static String activitiRestEndpointProcessDefinitionsImageSuffix;
 
-	@Value("${host.activiti.rest.endpoint.processistances}")
-	private static String activitiRestEndpointProcessInstances;
+    @Value("${host.activiti.rest.endpoint.processistances}")
+    private static String activitiRestEndpointProcessInstances;
 
-	@Value("${host.activiti.rest.endpoint.executions}")
-	private static String activitiRestEndpointExecutions;
+    @Value("${host.activiti.rest.endpoint.executions}")
+    private static String activitiRestEndpointExecutions;
 
-	@Value("${host.activiti.rest.endpoint.query.executions}")
-	private static String activitiRestEndpointQueryExecutions;
+    @Value("${host.activiti.rest.endpoint.query.executions}")
+    private static String activitiRestEndpointQueryExecutions;
 
-	@Value("${host.activiti.rest.endpoint.tasks}")
-	private static String activitiRestEndpointTasks;
+    @Value("${host.activiti.rest.endpoint.tasks}")
+    private static String activitiRestEndpointTasks;
 
-	@Value("${host.activiti.rest.endpoint.tasks.variables.suffix}")
-	private static String activitiRestEndpointTasksVariablesSuffix;
+    @Value("${host.activiti.rest.endpoint.tasks.variables.suffix}")
+    private static String activitiRestEndpointTasksVariablesSuffix;
 
-	@Value("${host.activiti.rest.endpoint.query.tasks}")
-	private static String activitiRestEndpointQueryTasks;
+    @Value("${host.activiti.rest.endpoint.query.tasks}")
+    private static String activitiRestEndpointQueryTasks;
 
-	@Value("${host.activiti.rest.endpoint.history.historictaskinstances}")
-	private static String activitiRestEndpointHistoryHistoricTaskInstances;
+    @Value("${host.activiti.rest.endpoint.history.historictaskinstances}")
+    private static String activitiRestEndpointHistoryHistoricTaskInstances;
 
-	@Value("${host.activiti.rest.endpoint.identity.groups}")
-	private static String activitiRestEndpointIdentityGroups;
+    @Value("${host.activiti.rest.endpoint.identity.groups}")
+    private static String activitiRestEndpointIdentityGroups;
 
-	@Value("${host.activiti.rest.endpoint.identity.users}")
-	private static String activitiRestEndpointIdentityUsers;
+    @Value("${host.activiti.rest.endpoint.identity.users}")
+    private static String activitiRestEndpointIdentityUsers;
 
-	@Value("${host.activiti.rest.endpoint}")
-	private static String activitiRestEndpoint;
+    @Value("${host.activiti.rest.endpoint}")
+    private static String activitiRestEndpoint;
 
-	@Value("${host.activiti.task.variable.state}")
-	private static String activitiTaskVariableState;
+    @Value("${host.activiti.task.variable.state}")
+    private static String activitiTaskVariableState;
 
-	@Value("${host.activiti.task.variable.responsible}")
-	private static String activitiTaskVariableResponsible;
+    @Value("${host.activiti.task.variable.responsible}")
+    private static String activitiTaskVariableResponsible;
 
-	@Value("${host.activiti.task.variable.assignee}")
-	private static String activitiTaskVariableAssignee;
+    @Value("${host.activiti.task.variable.assignee}")
+    private static String activitiTaskVariableAssignee;
 
-	@Value("${host.activiti.task.variable.errormessage}")
-	private static String activitiTaskVariableErrormessage;
+    @Value("${host.activiti.task.variable.errormessage}")
+    private static String activitiTaskVariableErrormessage;
 
-	@Value("${host.activiti.task.variable.idcollecteddata}")
-	private static String activitiTaskVariableIdCollectedData;
+    @Value("${host.activiti.task.variable.idcollecteddata}")
+    private static String activitiTaskVariableIdCollectedData;
 
-	@Value("${host.metaworkflow.prefix}")
-	private static String metaworkflowPrefix;
+    @Value("${host.metaworkflow.prefix}")
+    private static String metaworkflowPrefix;
 
-	@Value("${host.metaworkflow.suffix}")
-	private static String metaworkflowSuffix;
+    @Value("${host.metaworkflow.suffix}")
+    private static String metaworkflowSuffix;
 
-	@Value("${host.metaworkflow.path}")
-	private static String metaworkflowPath;
+    @Value("${host.metaworkflow.path}")
+    private static String metaworkflowPath;
 
-	@Value("${host.metaworkflow.processidentifiername}")
-	private static String metaworkflowProcessIdentifierName;
+    @Value("${host.metaworkflow.processidentifiername}")
+    private static String metaworkflowProcessIdentifierName;
 
-	@Value("${host.metaworkflow.name}")
-	private static String metaworkflowName;
+    @Value("${host.metaworkflow.name}")
+    private static String metaworkflowName;
 
-	@Value("${host.debug}")
-	private static boolean debug;
+    @Value("${host.debug}")
+    private static boolean debug;
 
-	@Value("${host.mongodb.username}")
-	private static String mongodbUsername;
+    @Value("${host.mongodb.username}")
+    private static String mongodbUsername;
 
-	@Value("${host.mongodb.password}")
-	private static String mongodbPassword;
+    @Value("${host.mongodb.password}")
+    private static String mongodbPassword;
 
-	@Value("${host.mongodb.database}")
-	private static String mongodbDatabase;
+    @Value("${host.mongodb.database}")
+    private static String mongodbDatabase;
 
-	@Value("${host.mongodb.host}")
-	private static String mongodbHost;
+    @Value("${host.mongodb.host}")
+    private static String mongodbHost;
 
-	@Value("${host.mongodb.port}")
-	private static Integer mongodbPort;
+    @Value("${host.mongodb.port}")
+    private static Integer mongodbPort;
 
-	@Value("${host.webapp.endpoint.backend}")
-	private static String webappBackendEndpoint;
+    @Value("${host.webapp.endpoint.backend}")
+    private static String webappBackendEndpoint;
 
-	@Value("${host.webapp.endpoint.frontend}")
-	private static String webappFrontendEndpoint;
+    @Value("${host.webapp.endpoint.frontend}")
+    private static String webappFrontendEndpoint;
 
-	@Value("${host.webapp.endpoint.deploy}")
-	private static String deployEndpoint;
+    @Value("${host.webapp.endpoint.deploy}")
+    private static String deployEndpoint;
 
-	@Value("${host.webapp.endpoint.start}")
-	private static String startEndpoint;
+    @Value("${host.webapp.endpoint.start}")
+    private static String startEndpoint;
 
-	@Value("${host.webapp.endpoint.export}")
-	private static String exportEndpoint;
+    @Value("${host.webapp.endpoint.export}")
+    private static String exportEndpoint;
 
-	@Value("${host.webapp.endpoint.measure-planning}")
-	private static String measurePlanningEndpoint;
+    @Value("${host.webapp.endpoint.measure-planning}")
+    private static String measurePlanningEndpoint;
 
-	@Value("${host.webapp.endpoint.validation-planning}")
-	private static String validationPlanningEndpoint;
+    @Value("${host.webapp.endpoint.validation-planning}")
+    private static String validationPlanningEndpoint;
 
-	@Value("${host.webapp.endpoint.workflowdata-plans-uri}")
-	private static String workflowDataPlansUri;
+    @Value("${host.webapp.endpoint.workflowdata-plans-uri}")
+    private static String workflowDataPlansUri;
 
-	@Value("${host.bus}")
-	private static Boolean bus;
+    @Value("${host.bus}")
+    private static Boolean bus;
 
-	@Value("${host.bus.address}")
-	private static String busAddress;
+    @Value("${host.bus.address}")
+    private static String busAddress;
 
-	@Value("${host.bus.port}")
-	private static String busPort;
+    @Value("${host.bus.port}")
+    private static String busPort;
 
-	@Value("${host.bus.endpoint}")
-	private static String busEndpoint;
+    @Value("${host.bus.endpoint}")
+    private static String busEndpoint;
 
-	@Value("${host.bus.phase.name}")
-	private static String phaseName;
+    @Value("${host.bus.phase.name}")
+    private static String phaseName;
 
-	@Value("${host.bus.phase.typeObject.user.create}")
-	private static String userCreateTypeObject;
-	
-	@Value("${host.bus.phase.typeObject.user.delete}")
-	private static String userDeleteTypeObject;
+    @Value("${host.bus.phase.typeObject.user.create}")
+    private static String userCreateTypeObject;
 
-	public String getWebappBackendUri() {
-		return getConnectionUrl() + webappBackendEndpoint;
-	}
+    @Value("${host.bus.phase.typeObject.user.delete}")
+    private static String userDeleteTypeObject;
 
-	public String getWebappFrontendUri() {
-		return getConnectionUrl() + webappFrontendEndpoint;
-	}
+    public static enum state {
+        MODIFIED(0), NOT_MODIFIED(1), NEW(2);
 
-	public String getDeployEndpoint() {
-		return deployEndpoint;
-	}
+        private int value;
 
-	public String getStartEndpoint() {
-		return startEndpoint;
-	}
+        private state(int value) {
+            this.value = value;
+        }
 
-	public String getExportEndpoint() {
-		return exportEndpoint;
-	}
+        public int getValue() {
+            return value;
+        }
+    }
 
-	public String getMeasurePlanningEndpoint() {
-		return measurePlanningEndpoint;
-	}
+    public String getWebappBackendUri() {
+        return getConnectionUrl() + webappBackendEndpoint;
+    }
 
-	public String getValidationPlanningEndpoint() {
-		return validationPlanningEndpoint;
-	}
+    public String getWebappFrontendUri() {
+        return getConnectionUrl() + webappFrontendEndpoint;
+    }
 
-	public boolean isDebug() {
-		return debug;
-	}
+    public String getDeployEndpoint() {
+        return deployEndpoint;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getStartEndpoint() {
+        return startEndpoint;
+    }
 
-	public String getPort() {
-		return port;
-	}
+    public String getExportEndpoint() {
+        return exportEndpoint;
+    }
 
-	public String getConnectionUrl() {
-		return address + ":" + port;
-	}
+    public String getMeasurePlanningEndpoint() {
+        return measurePlanningEndpoint;
+    }
 
-	public String getActivitiRestConnectionUrl() {
-		return activitiAddress + ":" + activitiPort + activitiRestEndpoint;
-	}
+    public String getValidationPlanningEndpoint() {
+        return validationPlanningEndpoint;
+    }
 
-	public String getActivitiExplorerConnectionUrl() {
-		return activitiAddress + ":" + activitiPort + activitiExplorerEndpoint;
-	}
+    public boolean isDebug() {
+        return debug;
+    }
 
-	public String getActivitiExplorerEndpoint() {
-		return activitiExplorerEndpoint;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public String getActivitiRestEndpoint() {
-		return activitiRestEndpoint;
-	}
+    public String getPort() {
+        return port;
+    }
 
-	public String getActivitiRestEndpointModels() {
-		return activitiRestEndpointModels;
-	}
+    public String getConnectionUrl() {
+        return address + ":" + port;
+    }
 
-	public String getActivitiRestEndpointDeployments() {
-		return activitiRestEndpointDeployments;
-	}
+    public String getActivitiRestConnectionUrl() {
+        return activitiAddress + ":" + activitiPort + activitiRestEndpoint;
+    }
 
-	public String getActivitiRestEndpointProcessDefinitions() {
-		return activitiRestEndpointProcessDefinitions;
-	}
+    public String getActivitiExplorerConnectionUrl() {
+        return activitiAddress + ":" + activitiPort + activitiExplorerEndpoint;
+    }
 
-	public String getActivitiRestEndpointProcessInstances() {
-		return activitiRestEndpointProcessInstances;
-	}
+    public String getActivitiExplorerEndpoint() {
+        return activitiExplorerEndpoint;
+    }
 
-	public String getActivitiRestEndpointQueryExecutions() {
-		return activitiRestEndpointQueryExecutions;
-	}
+    public String getActivitiRestEndpoint() {
+        return activitiRestEndpoint;
+    }
 
-	public String getActivitiRestEndpointExecutions() {
-		return activitiRestEndpointExecutions;
-	}
+    public String getActivitiRestEndpointModels() {
+        return activitiRestEndpointModels;
+    }
 
-	public String getMetaworkflowPrefix() {
-		return metaworkflowPrefix;
-	}
+    public String getActivitiRestEndpointDeployments() {
+        return activitiRestEndpointDeployments;
+    }
 
-	public String getMetaworkflowSuffix() {
-		return metaworkflowSuffix;
-	}
+    public String getActivitiRestEndpointProcessDefinitions() {
+        return activitiRestEndpointProcessDefinitions;
+    }
 
-	public String getMetaworkflowPath() {
-		return metaworkflowPath;
-	}
+    public String getActivitiRestEndpointProcessInstances() {
+        return activitiRestEndpointProcessInstances;
+    }
 
-	public String getMetaworkflowProcessIdentifierName() {
-		return metaworkflowProcessIdentifierName;
-	}
+    public String getActivitiRestEndpointQueryExecutions() {
+        return activitiRestEndpointQueryExecutions;
+    }
 
-	public String getMetaworkflowName() {
-		return metaworkflowName;
-	}
+    public String getActivitiRestEndpointExecutions() {
+        return activitiRestEndpointExecutions;
+    }
 
-	public String getActivitiUsername() {
-		return activitiUsername;
-	}
+    public String getMetaworkflowPrefix() {
+        return metaworkflowPrefix;
+    }
 
-	public String getActivitiPassword() {
-		return activitiPassword;
-	}
+    public String getMetaworkflowSuffix() {
+        return metaworkflowSuffix;
+    }
 
-	public String getMongodbUsername() {
-		return mongodbUsername;
-	}
+    public String getMetaworkflowPath() {
+        return metaworkflowPath;
+    }
 
-	public String getMongodbPassword() {
-		return mongodbPassword;
-	}
+    public String getMetaworkflowProcessIdentifierName() {
+        return metaworkflowProcessIdentifierName;
+    }
 
-	public String getMongodbDatabase() {
-		return mongodbDatabase;
-	}
+    public String getMetaworkflowName() {
+        return metaworkflowName;
+    }
 
-	public String getMongodbHost() {
-		return mongodbHost;
-	}
+    public String getActivitiUsername() {
+        return activitiUsername;
+    }
 
-	public Integer getMongodbPort() {
-		return mongodbPort;
-	}
+    public String getActivitiPassword() {
+        return activitiPassword;
+    }
 
-	public String getStrategyPlansUri() {
-		return workflowDataPlansUri;
-	}
+    public String getMongodbUsername() {
+        return mongodbUsername;
+    }
 
-	public String getActivitiModelerUri() {
-		return activitiModelerUri;
-	}
+    public String getMongodbPassword() {
+        return mongodbPassword;
+    }
 
-	public String getActivitiAddress() {
-		return activitiAddress;
-	}
+    public String getMongodbDatabase() {
+        return mongodbDatabase;
+    }
 
-	public String getActivitiPort() {
-		return activitiPort;
-	}
+    public String getMongodbHost() {
+        return mongodbHost;
+    }
 
-	public String getActivitiRestEndpointProcessDefinitionsModelSuffix() {
-		return activitiRestEndpointProcessDefinitionsModelSuffix;
-	}
+    public Integer getMongodbPort() {
+        return mongodbPort;
+    }
 
-	public String getActivitiRestEndpointProcessDefinitionsImageSuffix() {
-		return activitiRestEndpointProcessDefinitionsImageSuffix;
-	}
+    public String getStrategyPlansUri() {
+        return workflowDataPlansUri;
+    }
 
-	public String getActivitiRestEndpointTasks() {
-		return activitiRestEndpointTasks;
-	}
+    public String getActivitiModelerUri() {
+        return activitiModelerUri;
+    }
 
-	public String getActivitiRestEndpointTasksVariablesSuffix() {
-		return activitiRestEndpointTasksVariablesSuffix;
-	}
+    public String getActivitiAddress() {
+        return activitiAddress;
+    }
 
-	public String getActivitiRestEndpointQueryTasks() {
-		return activitiRestEndpointQueryTasks;
-	}
+    public String getActivitiPort() {
+        return activitiPort;
+    }
 
-	public String getActivitiRestEndpointHistoryHistoricTaskInstances() {
-		return activitiRestEndpointHistoryHistoricTaskInstances;
-	}
+    public String getActivitiRestEndpointProcessDefinitionsModelSuffix() {
+        return activitiRestEndpointProcessDefinitionsModelSuffix;
+    }
 
-	public String getActivitiRestEndpointIdentityGroups() {
-		return activitiRestEndpointIdentityGroups;
-	}
+    public String getActivitiRestEndpointProcessDefinitionsImageSuffix() {
+        return activitiRestEndpointProcessDefinitionsImageSuffix;
+    }
 
-	public String getActivitiRestEndpointIdentityUsers() {
-		return activitiRestEndpointIdentityUsers;
-	}
+    public String getActivitiRestEndpointTasks() {
+        return activitiRestEndpointTasks;
+    }
 
-	public Boolean getBus() {
-		return bus;
-	}
+    public String getActivitiRestEndpointTasksVariablesSuffix() {
+        return activitiRestEndpointTasksVariablesSuffix;
+    }
 
-	public String getActivitiTaskVariableState() {
-		return activitiTaskVariableState;
-	}
+    public String getActivitiRestEndpointQueryTasks() {
+        return activitiRestEndpointQueryTasks;
+    }
 
-	public String getActivitiTaskVariableResponsible() {
-		return activitiTaskVariableResponsible;
-	}
+    public String getActivitiRestEndpointHistoryHistoricTaskInstances() {
+        return activitiRestEndpointHistoryHistoricTaskInstances;
+    }
 
-	public String getActivitiTaskVariableAssignee() {
-		return activitiTaskVariableAssignee;
-	}
+    public String getActivitiRestEndpointIdentityGroups() {
+        return activitiRestEndpointIdentityGroups;
+    }
 
-	public String getActivitiTaskVariableErrormessage() {
-		return activitiTaskVariableErrormessage;
-	}
+    public String getActivitiRestEndpointIdentityUsers() {
+        return activitiRestEndpointIdentityUsers;
+    }
 
-	public String getActivitiTaskVariableIdCollectedData() {
-		return activitiTaskVariableIdCollectedData;
-	}
+    public Boolean getBus() {
+        return bus;
+    }
 
-	public Boolean isBus() {
-		return bus;
-	}
+    public String getActivitiTaskVariableState() {
+        return activitiTaskVariableState;
+    }
 
-	public String getBusAddress() {
-		return busAddress;
-	}
+    public String getActivitiTaskVariableResponsible() {
+        return activitiTaskVariableResponsible;
+    }
 
-	public String getWebappBackendEndpoint() {
-		return webappBackendEndpoint;
-	}
+    public String getActivitiTaskVariableAssignee() {
+        return activitiTaskVariableAssignee;
+    }
 
-	public String getWebappFrontendEndpoint() {
-		return webappFrontendEndpoint;
-	}
+    public String getActivitiTaskVariableErrormessage() {
+        return activitiTaskVariableErrormessage;
+    }
 
-	public String getBusPort() {
-		return busPort;
-	}
+    public String getActivitiTaskVariableIdCollectedData() {
+        return activitiTaskVariableIdCollectedData;
+    }
 
-	public String getBusEndpoint() {
-		return busEndpoint;
-	}
+    public Boolean isBus() {
+        return bus;
+    }
 
-	public String getBusConnectionUrl() {
-		return busAddress + ":" + busPort;
-	}
+    public String getBusAddress() {
+        return busAddress;
+    }
 
-	public String getBusUri() {
-		return getBusConnectionUrl() + busEndpoint;
-	}
+    public String getWebappBackendEndpoint() {
+        return webappBackendEndpoint;
+    }
 
-	public String getWorkflowDataPlansUri() {
-		return workflowDataPlansUri;
-	}
+    public String getWebappFrontendEndpoint() {
+        return webappFrontendEndpoint;
+    }
 
-	public String getPhaseName() {
-		return phaseName;
-	}
+    public String getBusPort() {
+        return busPort;
+    }
 
-	public String getUserCreateTypeObject() {
-		return userCreateTypeObject;
-	}
-	
-	public String getUserDeleteTypeObject() {
-		return userDeleteTypeObject;
-	}
+    public String getBusEndpoint() {
+        return busEndpoint;
+    }
 
-	/** FROM 3242 **/
+    public String getBusConnectionUrl() {
+        return busAddress + ":" + busPort;
+    }
 
-	@Value("${gqm32.gqm3141-ip}")
-	private static String gqm31_ip;
+    public String getBusUri() {
+        return getBusConnectionUrl() + busEndpoint;
+    }
 
-	@Value("${gqm32.gqm3141-port}")
-	private static String gqm31_port;
+    public String getWorkflowDataPlansUri() {
+        return workflowDataPlansUri;
+    }
 
-	@Value("${gqm32.gqm3141-endpoint}")
-	private static String gqm31_endpoint;
+    public String getPhaseName() {
+        return phaseName;
+    }
 
-	public String getGqm31_ip() {
-		return gqm31_ip;
-	}
+    public String getUserCreateTypeObject() {
+        return userCreateTypeObject;
+    }
 
-	public void setGqm31_ip(String ip) {
-		gqm31_ip = ip;
-	}
+    public String getUserDeleteTypeObject() {
+        return userDeleteTypeObject;
+    }
 
-	public String getGqm31_port() {
-		return gqm31_port;
-	}
+    /**
+     * FROM 3242
+     **/
 
-	public void setGqm31_port(String port) {
-		gqm31_port = port;
-	}
+    @Value("${gqm32.gqm3141-ip}")
+    private static String gqm31_ip;
 
-	public String getGqm31_endpoint() {
-		return gqm31_endpoint;
-	}
+    @Value("${gqm32.gqm3141-port}")
+    private static String gqm31_port;
 
-	public void setGqm31_endpoint(String endpoint) {
-		gqm31_endpoint = endpoint;
-	}
+    @Value("${gqm32.gqm3141-endpoint}")
+    private static String gqm31_endpoint;
 
-	public String getGqm31_baseurl() {
-		return "http://" + gqm31_ip + ':' + gqm31_port + gqm31_endpoint;
-	}
+    public String getGqm31_ip() {
+        return gqm31_ip;
+    }
+
+    public void setGqm31_ip(String ip) {
+        gqm31_ip = ip;
+    }
+
+    public String getGqm31_port() {
+        return gqm31_port;
+    }
+
+    public void setGqm31_port(String port) {
+        gqm31_port = port;
+    }
+
+    public String getGqm31_endpoint() {
+        return gqm31_endpoint;
+    }
+
+    public void setGqm31_endpoint(String endpoint) {
+        gqm31_endpoint = endpoint;
+    }
+
+    public String getGqm31_baseurl() {
+        return "http://" + gqm31_ip + ':' + gqm31_port + gqm31_endpoint;
+    }
 
 }

@@ -41,14 +41,12 @@ public interface Bus2fase32 {
 	
 	ArrayList<DTOStrategyFrom1> getStrategiesF1();
 	void saveOnBus(String taskId, String processInstanceId);
-	String saveValitatedDataOnBus(String taskId);
-	
+
 	/**
 	 * Gets the strategies.
 	 *
 	 * @return the strategies
 	 */
-
 	public List<Strategy> getStrategiesList();
 	
 }
