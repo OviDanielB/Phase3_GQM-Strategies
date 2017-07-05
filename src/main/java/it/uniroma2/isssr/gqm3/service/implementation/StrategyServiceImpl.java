@@ -3,7 +3,7 @@ package it.uniroma2.isssr.gqm3.service.implementation;
 
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.service.StrategyService;
-import it.uniroma2.isssr.gqm3.hermes.Bus2fase32;
+import it.uniroma2.isssr.gqm3.hermes.Bus2fase3;
 import it.uniroma2.isssr.gqm3.hermes.BusInteration;
 import it.uniroma2.isssr.gqm3.hermes.BusInterationImplementation;
 import it.uniroma2.isssr.gqm3.model.Strategy;
@@ -64,7 +64,7 @@ public class StrategyServiceImpl implements StrategyService {
     BusInteration busInteration;
 
     @Autowired
-    Bus2fase32 bus2fase32;
+    Bus2fase3 bus2Fase3;
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -124,7 +124,7 @@ public class StrategyServiceImpl implements StrategyService {
         // devo cancellare le strategy che non sono presenti nel DB, rinnovare
         // quelle aggiornate e creare le strategie nuove
         List<Strategy> actualStrategies = strategyRepository.findAll();
-        List<DTOStrategyFrom1> upToDateStr = bus2fase32.getStrategiesF1();
+        List<DTOStrategyFrom1> upToDateStr = bus2Fase3.getStrategiesF1();
         // elimino le strategy non esistenti
         for (Strategy strategy : actualStrategies) {
             // DTOStrategyFrom1 dtos2 = new DTOStrategyFrom1();

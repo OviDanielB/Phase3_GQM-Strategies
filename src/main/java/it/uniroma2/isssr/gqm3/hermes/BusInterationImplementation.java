@@ -45,7 +45,7 @@ public class BusInterationImplementation implements BusInteration {
      * The bus2fase32 implementation.
      */
     @Autowired
-    Bus2fase32Implementation bus2fase32Implementation;
+    Bus2fase3Implementation bus2Fase3Implementation;
 
     @Autowired
     StrategyRepository strategyRepository;
@@ -77,7 +77,7 @@ public class BusInterationImplementation implements BusInteration {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategies() {
         // TODO Auto-generated method stub
-        List<Strategy> strategies = bus2fase32Implementation.getStrategiesList();
+        List<Strategy> strategies = bus2Fase3Implementation.getStrategiesList();
         DTOResponseStrategy dtoResponse = new DTOResponseStrategy();
         dtoResponse.setStrategies(strategies);
         ResponseEntity<DTOResponseStrategy> responseEntity = new ResponseEntity<DTOResponseStrategy>(dtoResponse, HttpStatus.OK);
@@ -107,7 +107,7 @@ public class BusInterationImplementation implements BusInteration {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
         // TODO Auto-generated method stub
-        List<Strategy> strategies = bus2fase32Implementation.getStrategiesList();
+        List<Strategy> strategies = bus2Fase3Implementation.getStrategiesList();
         //List<StrategicPlan> strategicPlans = strategicPlanService.getStrategicPlansList();
         List<StrategicPlan> strategicPlans = strategicPlanRepository.findAll();
         List<String> organizationalunitSP = new ArrayList<String>();

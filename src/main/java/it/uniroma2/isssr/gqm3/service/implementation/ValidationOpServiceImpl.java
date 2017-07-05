@@ -4,7 +4,7 @@ import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.activiti.ActivitiInterationImplementation;
 import it.uniroma2.isssr.gqm3.service.ValidationOpService;
 import it.uniroma2.isssr.gqm3.Exception.*;
-import it.uniroma2.isssr.gqm3.hermes.Bus2fase32;
+import it.uniroma2.isssr.gqm3.hermes.Bus2fase3;
 import it.uniroma2.isssr.gqm3.model.*;
 import it.uniroma2.isssr.gqm3.model.rest.DTO;
 import it.uniroma2.isssr.gqm3.model.rest.DTOValidationOp;
@@ -70,7 +70,7 @@ public class ValidationOpServiceImpl implements ValidationOpService {
     CollectedDataRepository collectedDataRepository;
 
     @Autowired
-    Bus2fase32 bus2fase32;
+    Bus2fase3 bus2Fase3;
 
     /**
      * Metodo che restituisce una ResponseEntity, che contiene nel body un

@@ -30,7 +30,7 @@ import java.util.List;
  *
  */
 @Service("Bus32Sevice")
-public interface Bus2fase32 {
+public interface Bus2fase3 {
 	/**
 	 * Gets the strategies.
 	 *

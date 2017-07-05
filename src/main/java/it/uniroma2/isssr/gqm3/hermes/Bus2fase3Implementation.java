@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.uniroma2.isssr.HostSettings;
-import it.uniroma2.isssr.gqm3.model.CollectedData;
-import it.uniroma2.isssr.gqm3.model.MeasureTask;
 import it.uniroma2.isssr.gqm3.model.Strategy;
-import it.uniroma2.isssr.gqm3.model.rest.DTOPhase56;
 import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom1;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategy;
 import it.uniroma2.isssr.gqm3.repository.StrategyRepository;
@@ -20,8 +17,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -62,7 +57,7 @@ import java.util.List;
 @Component
 @ComponentScan(basePackages = {"it.uniroma2.gqm3141.repository"})
 
-public class Bus2fase32Implementation implements Bus2fase32 {
+public class Bus2fase3Implementation implements Bus2fase3 {
 
     /**
      * The strategy repository.
