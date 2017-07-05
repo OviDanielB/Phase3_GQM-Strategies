@@ -15,7 +15,7 @@ import java.util.Arrays;
  * Mongo configuration
  *
  */
-@Configuration
+//@Configuration
 class MongoConfiguration extends AbstractMongoConfiguration {
 
 	@Autowired
@@ -37,7 +37,7 @@ class MongoConfiguration extends AbstractMongoConfiguration {
 		return new MongoClient();
 	}
 
-	@Bean
+//	@Bean
 	public MongoDbFactory mongoDbFactory() throws Exception {
 		user = hostSettings.getMongodbUsername();
 		password = hostSettings.getMongodbPassword();

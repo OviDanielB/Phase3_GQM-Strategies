@@ -64,17 +64,21 @@ public class BusInterfaceControllerImplementation implements
     private static final Logger LOG = LoggerFactory
             .getLogger(BusInterfaceControllerImplementation.class);
 
-    @Autowired
-    private HostSettings hostSettings;
+    private final HostSettings hostSettings;
+
+    private final MetricRepository metricRepository;
+
+    private final SystemStateRepository systemStateRepository;
+
+    private final WorkflowDataRepository workflowDataRepository;
 
     @Autowired
-    private MetricRepository metricRepository;
-
-    @Autowired
-    private SystemStateRepository systemStateRepository;
-
-    @Autowired
-    private WorkflowDataRepository workflowDataRepository;
+    public BusInterfaceControllerImplementation(HostSettings hostSettings, MetricRepository metricRepository, SystemStateRepository systemStateRepository, WorkflowDataRepository workflowDataRepository) {
+        this.hostSettings = hostSettings;
+        this.metricRepository = metricRepository;
+        this.systemStateRepository = systemStateRepository;
+        this.workflowDataRepository = workflowDataRepository;
+    }
 
     @RequestMapping(value = "/bus/notifications", method = RequestMethod.POST)
     @ApiOperation(value = "Receive Notifications", notes = "This endpoint manages all notifications from bus. Supported notifications are: Creating of some new users, "

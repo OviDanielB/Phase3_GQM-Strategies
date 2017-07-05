@@ -10,6 +10,7 @@ import java.util.List;
  *
  */
 public interface WorkflowDataRepository extends MongoRepository<WorkflowData, String> {
+
 	public List<WorkflowData> findByBusinessWorkflowModelId(String businessWorkflowModelId);
 
 	public List<WorkflowData> findByBusinessWorkflowProcessDefinitionId(String businessWorkflowProcessDefinitionId);

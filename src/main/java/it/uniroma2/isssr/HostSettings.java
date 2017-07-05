@@ -18,166 +18,166 @@ import org.springframework.context.annotation.Configuration;
 public class HostSettings {
 
 	@Value("${host.address}")
-	private String address;
+	private static String address;
 
 	@Value("${host.port}")
-	private String port;
+	private static String port;
 
 	@Value("${host.activiti.address}")
-	private String activitiAddress;
+	public static String activitiAddress;
 
 	@Value("${host.activiti.port}")
-	private String activitiPort;
+	private static String activitiPort;
 
 	@Value("${host.activiti.username}")
-	private String activitiUsername;
+	private static String activitiUsername;
 
 	@Value("${host.activiti.password}")
-	private String activitiPassword;
+	private static String activitiPassword;
 
 	@Value("${host.activiti.modeler.uri}")
-	private String activitiModelerUri;
+	private static String activitiModelerUri;
 
 	@Value("${host.activiti.explorer.endpoint}")
-	private String activitiExplorerEndpoint;
+	private static String activitiExplorerEndpoint;
 
 	@Value("${host.activiti.rest.endpoint.models}")
-	private String activitiRestEndpointModels;
+	private static String activitiRestEndpointModels;
 
 	@Value("${host.activiti.rest.endpoint.deployments}")
-	private String activitiRestEndpointDeployments;
+	private static String activitiRestEndpointDeployments;
 
 	@Value("${host.activiti.rest.endpoint.processdefinitions}")
-	private String activitiRestEndpointProcessDefinitions;
+	private static String activitiRestEndpointProcessDefinitions;
 
 	@Value("${host.activiti.rest.endpoint.processistances.model.suffix}")
-	private String activitiRestEndpointProcessDefinitionsModelSuffix;
+	private static String activitiRestEndpointProcessDefinitionsModelSuffix;
 
 	@Value("${host.activiti.rest.endpoint.processistances.image.suffix}")
-	private String activitiRestEndpointProcessDefinitionsImageSuffix;
+	private static String activitiRestEndpointProcessDefinitionsImageSuffix;
 
 	@Value("${host.activiti.rest.endpoint.processistances}")
-	private String activitiRestEndpointProcessInstances;
+	private static String activitiRestEndpointProcessInstances;
 
 	@Value("${host.activiti.rest.endpoint.executions}")
-	private String activitiRestEndpointExecutions;
+	private static String activitiRestEndpointExecutions;
 
 	@Value("${host.activiti.rest.endpoint.query.executions}")
-	private String activitiRestEndpointQueryExecutions;
+	private static String activitiRestEndpointQueryExecutions;
 
 	@Value("${host.activiti.rest.endpoint.tasks}")
-	private String activitiRestEndpointTasks;
+	private static String activitiRestEndpointTasks;
 
 	@Value("${host.activiti.rest.endpoint.tasks.variables.suffix}")
-	private String activitiRestEndpointTasksVariablesSuffix;
+	private static String activitiRestEndpointTasksVariablesSuffix;
 
 	@Value("${host.activiti.rest.endpoint.query.tasks}")
-	private String activitiRestEndpointQueryTasks;
+	private static String activitiRestEndpointQueryTasks;
 
 	@Value("${host.activiti.rest.endpoint.history.historictaskinstances}")
-	private String activitiRestEndpointHistoryHistoricTaskInstances;
+	private static String activitiRestEndpointHistoryHistoricTaskInstances;
 
 	@Value("${host.activiti.rest.endpoint.identity.groups}")
-	private String activitiRestEndpointIdentityGroups;
+	private static String activitiRestEndpointIdentityGroups;
 
 	@Value("${host.activiti.rest.endpoint.identity.users}")
-	private String activitiRestEndpointIdentityUsers;
+	private static String activitiRestEndpointIdentityUsers;
 
 	@Value("${host.activiti.rest.endpoint}")
-	private String activitiRestEndpoint;
+	private static String activitiRestEndpoint;
 
 	@Value("${host.activiti.task.variable.state}")
-	private String activitiTaskVariableState;
+	private static String activitiTaskVariableState;
 
 	@Value("${host.activiti.task.variable.responsible}")
-	private String activitiTaskVariableResponsible;
+	private static String activitiTaskVariableResponsible;
 
 	@Value("${host.activiti.task.variable.assignee}")
-	private String activitiTaskVariableAssignee;
+	private static String activitiTaskVariableAssignee;
 
 	@Value("${host.activiti.task.variable.errormessage}")
-	private String activitiTaskVariableErrormessage;
+	private static String activitiTaskVariableErrormessage;
 
 	@Value("${host.activiti.task.variable.idcollecteddata}")
-	private String activitiTaskVariableIdCollectedData;
+	private static String activitiTaskVariableIdCollectedData;
 
 	@Value("${host.metaworkflow.prefix}")
-	private String metaworkflowPrefix;
+	private static String metaworkflowPrefix;
 
 	@Value("${host.metaworkflow.suffix}")
-	private String metaworkflowSuffix;
+	private static String metaworkflowSuffix;
 
 	@Value("${host.metaworkflow.path}")
-	private String metaworkflowPath;
+	private static String metaworkflowPath;
 
 	@Value("${host.metaworkflow.processidentifiername}")
-	private String metaworkflowProcessIdentifierName;
+	private static String metaworkflowProcessIdentifierName;
 
 	@Value("${host.metaworkflow.name}")
-	private String metaworkflowName;
+	private static String metaworkflowName;
 
 	@Value("${host.debug}")
-	private boolean debug;
+	private static boolean debug;
 
 	@Value("${host.mongodb.username}")
-	private String mongodbUsername;
+	private static String mongodbUsername;
 
 	@Value("${host.mongodb.password}")
-	private String mongodbPassword;
+	private static String mongodbPassword;
 
 	@Value("${host.mongodb.database}")
-	private String mongodbDatabase;
+	private static String mongodbDatabase;
 
 	@Value("${host.mongodb.host}")
-	private String mongodbHost;
+	private static String mongodbHost;
 
 	@Value("${host.mongodb.port}")
-	private Integer mongodbPort;
+	private static Integer mongodbPort;
 
 	@Value("${host.webapp.endpoint.backend}")
-	private String webappBackendEndpoint;
+	private static String webappBackendEndpoint;
 
 	@Value("${host.webapp.endpoint.frontend}")
-	private String webappFrontendEndpoint;
+	private static String webappFrontendEndpoint;
 
 	@Value("${host.webapp.endpoint.deploy}")
-	private String deployEndpoint;
+	private static String deployEndpoint;
 
 	@Value("${host.webapp.endpoint.start}")
-	private String startEndpoint;
+	private static String startEndpoint;
 
 	@Value("${host.webapp.endpoint.export}")
-	private String exportEndpoint;
+	private static String exportEndpoint;
 
 	@Value("${host.webapp.endpoint.measure-planning}")
-	private String measurePlanningEndpoint;
+	private static String measurePlanningEndpoint;
 
 	@Value("${host.webapp.endpoint.validation-planning}")
-	private String validationPlanningEndpoint;
+	private static String validationPlanningEndpoint;
 
 	@Value("${host.webapp.endpoint.workflowdata-plans-uri}")
-	private String workflowDataPlansUri;
+	private static String workflowDataPlansUri;
 
 	@Value("${host.bus}")
-	private Boolean bus;
+	private static Boolean bus;
 
 	@Value("${host.bus.address}")
-	private String busAddress;
+	private static String busAddress;
 
 	@Value("${host.bus.port}")
-	private String busPort;
+	private static String busPort;
 
 	@Value("${host.bus.endpoint}")
-	private String busEndpoint;
+	private static String busEndpoint;
 
 	@Value("${host.bus.phase.name}")
-	private String phaseName;
+	private static String phaseName;
 
 	@Value("${host.bus.phase.typeObject.user.create}")
-	private String userCreateTypeObject;
+	private static String userCreateTypeObject;
 	
 	@Value("${host.bus.phase.typeObject.user.delete}")
-	private String userDeleteTypeObject;
+	private static String userDeleteTypeObject;
 
 	public String getWebappBackendUri() {
 		return getConnectionUrl() + webappBackendEndpoint;
@@ -429,6 +429,45 @@ public class HostSettings {
 	
 	public String getUserDeleteTypeObject() {
 		return userDeleteTypeObject;
+	}
+
+	/** FROM 3242 **/
+
+	@Value("${gqm32.gqm3141-ip}")
+	private static String gqm31_ip;
+
+	@Value("${gqm32.gqm3141-port}")
+	private static String gqm31_port;
+
+	@Value("${gqm32.gqm3141-endpoint}")
+	private static String gqm31_endpoint;
+
+	public String getGqm31_ip() {
+		return gqm31_ip;
+	}
+
+	public void setGqm31_ip(String ip) {
+		gqm31_ip = ip;
+	}
+
+	public String getGqm31_port() {
+		return gqm31_port;
+	}
+
+	public void setGqm31_port(String port) {
+		gqm31_port = port;
+	}
+
+	public String getGqm31_endpoint() {
+		return gqm31_endpoint;
+	}
+
+	public void setGqm31_endpoint(String endpoint) {
+		gqm31_endpoint = endpoint;
+	}
+
+	public String getGqm31_baseurl() {
+		return "http://" + gqm31_ip + ':' + gqm31_port + gqm31_endpoint;
 	}
 
 }

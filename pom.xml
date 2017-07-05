@@ -94,6 +94,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>gqm_phase3</finalName>
+                </configuration>
             </plugin>
         </plugins>
     </build>
