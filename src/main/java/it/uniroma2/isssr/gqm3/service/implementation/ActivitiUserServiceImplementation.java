@@ -25,8 +25,7 @@ public class ActivitiUserServiceImplementation implements ActivitiUserService {
 	 * Metodo che restituisce la lista degli utenti di Activiti Rest
 	 */
 	
-	public ResponseEntity<?> getUsers() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException {
-		// TODO Auto-generated method stub
+	public ResponseEntity<?> getUsers() throws IOException, ActivitiGetException {
 			List<ActivitiUser> users = actitiviInterationImplementation.getUsers();
 			List<DTOResponseActivitiUser> dtoResponseActivitiUserList= 
 					new ArrayList<DTOResponseActivitiUser>();

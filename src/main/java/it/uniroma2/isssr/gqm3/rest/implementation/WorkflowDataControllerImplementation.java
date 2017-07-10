@@ -22,24 +22,25 @@ import java.util.List;
 @RestController
 @Api(value = "Workflow Data Controller", description = "Workflow Data API")
 public class WorkflowDataControllerImplementation implements
-		WorkflowDataController {
+        WorkflowDataController {
 
-	@Autowired
-	private WorkflowDataRepository workflowDataRepository;
+    @Autowired
+    private WorkflowDataRepository workflowDataRepository;
 
-	@RequestMapping(value = "/workflowdatas", method = RequestMethod.GET)
-	@ApiOperation(value = "Get Workflow Datas", notes = "This endpoint retrieves all datas related to a workflow")
-	@ApiResponses(value = { @ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class) })
-	public ResponseEntity<List<WorkflowData>> getWorkflowDatas(
-			@RequestParam(value = "ended", required = false) Boolean ended,
-			HttpServletResponse response) {
-		List<WorkflowData> workflowDatas;
-		if (ended == null)
-			workflowDatas = workflowDataRepository.findAll();
-		else
-			workflowDatas = workflowDataRepository.findByEnded(ended);
-		return new ResponseEntity<List<WorkflowData>>(workflowDatas,
-				HttpStatus.OK);
-	}
+    @RequestMapping(value = "/workflowdatas", method = RequestMethod.GET)
+    @ApiOperation(value = "Get Workflow Datas", notes = "This endpoint retrieves all datas related to a workflow")
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
+    public ResponseEntity<List<WorkflowData>> getWorkflowDatas(
+            @RequestParam(value = "ended", required = false) Boolean ended,
+            HttpServletResponse response) {
+
+        List<WorkflowData> workflowDatas;
+        if (ended == null)
+            workflowDatas = workflowDataRepository.findAll();
+        else
+            workflowDatas = workflowDataRepository.findByEnded(ended);
+        return new ResponseEntity<List<WorkflowData>>(workflowDatas,
+                HttpStatus.OK);
+    }
 
 }

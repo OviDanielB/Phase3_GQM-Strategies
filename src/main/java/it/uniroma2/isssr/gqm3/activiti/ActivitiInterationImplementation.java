@@ -23,14 +23,14 @@ import java.util.List;
 
 /**
  * <p>Title: ActivitiInterationImplementation</p>
- *	
+ * <p>
  * <p>Copyright: Copyright (c) 2016</p>
- * 
+ * <p>
  * <p>Company: Dipartimento di Ingegneria Informatica, Universita' degli studi di Roma
- * Tor Vergata, progetto di ISSSR, gruppo 3: Fabio Alberto Coira, 
+ * Tor Vergata, progetto di ISSSR, gruppo 3: Fabio Alberto Coira,
  * Federico Di Domenicantonio, Daniele Capri, Giuseppe Chiapparo, Gabriele Belli,
- * Luca Della Gatta</p> 
- * 
+ * Luca Della Gatta</p>
+ * <p>
  * <p>Class description:
  * Implementazione dei servizi richiesta ad Activiti Rest, attore
  * della nostra applicazione. Questa classe è pensata per essere
@@ -40,117 +40,105 @@ import java.util.List;
  * E' per quello che in questo Service viene iniettata la dipendenza
  * da un'altra classe, Activiti2Phase3Implementation,
  * che è quella che si occupa di effettuare le richieste ad Activiti
- * Rest e di esporre alla nostra applicazione le sue risposte.</p> 
- * 
- * 
+ * Rest e di esporre alla nostra applicazione le sue risposte.</p>
+ *
  * @author Fabio Alberto Coira
  * @version 1.0
- *
  */
 
 @Service("ActivitiInteration")
-public class ActivitiInterationImplementation implements ActivitiInteration{
-	
-	@Autowired
-	Activiti2Phase3Implementation activiti2fase32Implementation;
-	
-	@Override
-	public List<ActivitiUser> getUsers() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException {
-		// TODO Auto-generated method stub
-			return  activiti2fase32Implementation.getUsers();
-	}
-	
-	@Override
-	public List<ActivitiTask> getTasks() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-			return activiti2fase32Implementation.getTasks();
-	}
+public class ActivitiInterationImplementation implements ActivitiInteration {
 
-	@Override
-	public List<ActivitiTask> getUserTasks(String username) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-			return activiti2fase32Implementation.getUserTasks(username);
-			
-	}
-	
-	@Override
-	public byte[] getProcessInstanceState(String id) throws IOException {
-		// TODO Auto-generated method stub
-			
-		return activiti2fase32Implementation.getProcessInstanceState(id);
-	}
+    @Autowired
+    Activiti2Phase3Implementation activiti2fase32Implementation;
 
-	@Override
-	public ResponseEntity<DTOResponseActivitiProcess> getProcess(String username, String password) throws JsonParseException, JsonMappingException, IOException {
-			List<ActivitiProcessDef> process = activiti2fase32Implementation.getProcess(username, password);
-			
-			DTOResponseActivitiProcess dtoResponseActivitiProcess = new DTOResponseActivitiProcess();
-			dtoResponseActivitiProcess.setActivitiProcess(process);
-			ResponseEntity<DTOResponseActivitiProcess> responseEntity = new ResponseEntity<DTOResponseActivitiProcess>(dtoResponseActivitiProcess, HttpStatus.OK);
-			return responseEntity;
-	}
-	
-	@Override
-	public List<ActivitiFormProperty> getFormPropertiesTaskById(
-			String taskId) throws JsonParseException, JsonMappingException, IOException, JSONException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-			
-			return activiti2fase32Implementation.getFormPropertiesTaskById(taskId);
-		
-	}
-	
-	@Override
-	public List<ActivitiTaskVariable> getTaskVariablesFromRuntimeTaskId(
-			String taskId, String scope) throws JsonParseException, JsonMappingException, IOException, JSONException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-			return activiti2fase32Implementation.getTaskVariablesFromRuntimeTaskId(
-							taskId, scope);
-	}
-	
-	@Override
-	public void createTaskVariableFromRuntimeTaskId(
-			String taskId, List<ActivitiTaskVariable> activitiTaskVariables) throws JsonRequestConflictException, JsonRequestException {
-		// TODO Auto-generated method stub
-		activiti2fase32Implementation.createTaskVariables
-				(taskId, activitiTaskVariables);
-			
-	}
+    @Override
+    public List<ActivitiUser> getUsers() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException {
+        return activiti2fase32Implementation.getUsers();
+    }
 
-	@Override
-	public List<ActivitiTask> getUserTasksByCandidateGroup(
-			String candidateGroup) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-		return activiti2fase32Implementation.getUserTasksByCandidateGroup(candidateGroup);
-	}
-	@Override
-	public ActivitiTask getUserTaskByTaskId(
-			String taskId) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-			return activiti2fase32Implementation.getUserTaskByTaskId(
-					taskId);			
-	}
-	
-	@Override
-	public List<FlowElement> getFlowElementsList(String username, String password,
-			String businessWorkflowProcessDefinitionId) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		return activiti2fase32Implementation.getFlowElementsList(username, password, businessWorkflowProcessDefinitionId);
-}
-	@Override
-	public void submitFormDataAndCompleteTask(String taskId, List<ActivitiFormVariableProperty> activitiFormVariableProperties) throws ActivitiPostException, JsonRequestConflictException, JsonRequestException {
-		// TODO Auto-generated method stub
+    @Override
+    public List<ActivitiTask> getTasks() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
+        return activiti2fase32Implementation.getTasks();
+    }
 
-		activiti2fase32Implementation.submitFormDataAndCompleteTask(taskId, activitiFormVariableProperties);
-	
-	}
-	@Override
-	public ActivitiTaskVariable updateActivitiTaskVariable(String id, String name,
-			DTOActivitiTaskVariable dtoActivitiTaskVariable) throws JsonParseException, JsonMappingException, IOException, ActivitiPutException, JsonRequestException {
-		// TODO Auto-generated method stub
-		return activiti2fase32Implementation.updateActivitiTaskVariable(id,
-				name, dtoActivitiTaskVariable);
-	}
+    @Override
+    public List<ActivitiTask> getUserTasks(String username) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
+        return activiti2fase32Implementation.getUserTasks(username);
 
-	
+    }
+
+    @Override
+    public byte[] getProcessInstanceState(String id) throws IOException {
+
+        return activiti2fase32Implementation.getProcessInstanceState(id);
+    }
+
+    @Override
+    public ResponseEntity<DTOResponseActivitiProcess> getProcess(String username, String password) throws JsonParseException, JsonMappingException, IOException {
+        List<ActivitiProcessDef> process = activiti2fase32Implementation.getProcess(username, password);
+
+        DTOResponseActivitiProcess dtoResponseActivitiProcess = new DTOResponseActivitiProcess();
+        dtoResponseActivitiProcess.setActivitiProcess(process);
+        ResponseEntity<DTOResponseActivitiProcess> responseEntity = new ResponseEntity<DTOResponseActivitiProcess>(dtoResponseActivitiProcess, HttpStatus.OK);
+        return responseEntity;
+    }
+
+    @Override
+    public List<ActivitiFormProperty> getFormPropertiesTaskById(
+            String taskId) throws IOException, JSONException, ActivitiGetException, JsonRequestException {
+
+        return activiti2fase32Implementation.getFormPropertiesTaskById(taskId);
+
+    }
+
+    @Override
+    public List<ActivitiTaskVariable> getTaskVariablesFromRuntimeTaskId(
+            String taskId, String scope) throws IOException, JSONException, ActivitiGetException, JsonRequestException {
+        return activiti2fase32Implementation.getTaskVariablesFromRuntimeTaskId(
+                taskId, scope);
+    }
+
+    @Override
+    public void createTaskVariableFromRuntimeTaskId(
+            String taskId, List<ActivitiTaskVariable> activitiTaskVariables) throws JsonRequestConflictException, JsonRequestException {
+        activiti2fase32Implementation.createTaskVariables
+                (taskId, activitiTaskVariables);
+
+    }
+
+    @Override
+    public List<ActivitiTask> getUserTasksByCandidateGroup(
+            String candidateGroup) throws IOException, ActivitiGetException, JsonRequestException {
+        return activiti2fase32Implementation.getUserTasksByCandidateGroup(candidateGroup);
+    }
+
+    @Override
+    public ActivitiTask getUserTaskByTaskId(
+            String taskId) throws IOException, ActivitiGetException, JsonRequestException {
+        return activiti2fase32Implementation.getUserTaskByTaskId(
+                taskId);
+    }
+
+    @Override
+    public List<FlowElement> getFlowElementsList(String username, String password,
+                                                 String businessWorkflowProcessDefinitionId) throws IOException, ActivitiGetException, JsonRequestException {
+        return activiti2fase32Implementation.getFlowElementsList(username, password, businessWorkflowProcessDefinitionId);
+    }
+
+    @Override
+    public void submitFormDataAndCompleteTask(String taskId, List<ActivitiFormVariableProperty> activitiFormVariableProperties) throws ActivitiPostException, JsonRequestConflictException, JsonRequestException {
+
+        activiti2fase32Implementation.submitFormDataAndCompleteTask(taskId, activitiFormVariableProperties);
+
+    }
+
+    @Override
+    public ActivitiTaskVariable updateActivitiTaskVariable(String id, String name,
+                                                           DTOActivitiTaskVariable dtoActivitiTaskVariable) throws IOException, ActivitiPutException, JsonRequestException {
+        return activiti2fase32Implementation.updateActivitiTaskVariable(id,
+                name, dtoActivitiTaskVariable);
+    }
+
 
 }
-	

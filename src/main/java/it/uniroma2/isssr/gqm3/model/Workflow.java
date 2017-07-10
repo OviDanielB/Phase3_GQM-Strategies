@@ -24,229 +24,220 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class represents a Workflow object with name, model id (picture id), 
+ * This class represents a Workflow object with name, model id (picture id),
  * process definition (Workflow deployed) and process instance (Workflow in running)
- *
  */
 public abstract class Workflow {
 
-	private String name;
-	private String modelId;
-	private String processDefinitionId;
-	private String processInstanceId;
-	
+    private String name;
+    private String modelId;
+    private String processDefinitionId;
+    private String processInstanceId;
 
-	public static final String MODEL_XML_EXT = ".bpmn20.xml";
 
-	protected HostSettings hostSettings;
+    public static final String MODEL_XML_EXT = ".bpmn20.xml";
 
-	protected JsonRequestActiviti jsonRequestActiviti;
+    protected HostSettings hostSettings;
 
-	public Workflow(HostSettings hostSettings, String name) {
-		super();
-		this.name = name;
-		this.hostSettings = hostSettings;
-		this.jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
-	}
+    protected JsonRequestActiviti jsonRequestActiviti;
 
-	
-	
-	public Workflow(HostSettings hostSettings) {
-		this.hostSettings = hostSettings;
-		this.jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
-	}
+    public Workflow(HostSettings hostSettings, String name) {
+        super();
+        this.name = name;
+        this.hostSettings = hostSettings;
+        this.jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
+    }
 
-	
-	public void start() throws MetaWorkflowNotStartedException, JsonRequestException, JsonRequestConflictException {
 
-		PostProcessInstance processInstanceBody = buildStartRequestBody();
+    public Workflow(HostSettings hostSettings) {
+        this.hostSettings = hostSettings;
+        this.jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
+    }
 
-		ResponseEntity<ResponseProcessInstance> postProcessinstanceResponse = this.jsonRequestActiviti.post(
-				hostSettings.getActivitiRestEndpointProcessInstances(), processInstanceBody,
-				ResponseProcessInstance.class);
 
-		if (postProcessinstanceResponse.getBody() != null) {
-			setProcessInstanceId(postProcessinstanceResponse.getBody().getId());
-		}
-		if (getProcessInstanceId() == null || getProcessInstanceId().isEmpty()) {
-			throw new MetaWorkflowNotStartedException(getProcessDefinitionId());
-		} else {
-			return;
-		}
-	}
+    public void start() throws MetaWorkflowNotStartedException, JsonRequestException, JsonRequestConflictException {
 
-	
-	
-	abstract protected PostProcessInstance buildStartRequestBody();
+        PostProcessInstance processInstanceBody = buildStartRequestBody();
 
-	
-	
-	public void deploy() throws JsonRequestException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException,
-			IOException, ProcessDefinitionNotFoundException {
+        ResponseEntity<ResponseProcessInstance> postProcessinstanceResponse = this.jsonRequestActiviti.post(
+                hostSettings.getActivitiRestEndpointProcessInstances(), processInstanceBody,
+                ResponseProcessInstance.class);
 
-		String metaworkflowString = buildWorkflowXmlString();
+        if (postProcessinstanceResponse.getBody() != null) {
+            setProcessInstanceId(postProcessinstanceResponse.getBody().getId());
+        }
+        if (getProcessInstanceId() == null || getProcessInstanceId().isEmpty()) {
+            throw new MetaWorkflowNotStartedException(getProcessDefinitionId());
+        } else {
+            return;
+        }
+    }
 
-		ResponseEntity<ResponseDeployment> postDeploymentResponse = jsonRequestActiviti.postMetaWorkflowMultiPart(
-				hostSettings.getActivitiRestEndpointDeployments(), ResponseDeployment.class, getName(),
-				metaworkflowString);
 
-		String deploymentId = postDeploymentResponse.getBody().getId();
+    abstract protected PostProcessInstance buildStartRequestBody();
 
-		Map<String,String> queryParams = new LinkedHashMap<String,String>();
-		queryParams.put("deploymentId", deploymentId);
 
-		@SuppressWarnings("unchecked")
-		List<ProcessDefinition> processDefinitionList = (List<ProcessDefinition>) jsonRequestActiviti
-				.getList(
-						hostSettings.getActivitiRestEndpointProcessDefinitions(),
-						ProcessDefinitionList.class, queryParams);
+    public void deploy() throws JsonRequestException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException,
+            IOException, ProcessDefinitionNotFoundException {
 
-		if (processDefinitionList.isEmpty()) {
-			throw new ProcessDefinitionNotFoundException(deploymentId);
-		} else {
-			setProcessDefinitionId(processDefinitionList.get(0).getId());
-		}
-		return;
-	}
-	
-	
-	
-	public void deleteProcessInstance() throws JsonRequestException{
-		
-		String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId();
-		
-		jsonRequestActiviti.delete(restAddress);
-	}
-	
-	
-	
-	public void deleteDeployment() throws JsonRequestException{		
-		
-		
-		
-		String restAddressProcessDefinition = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/" + this.getProcessDefinitionId();
-		
-		ResponseEntity<ProcessDefinition> postDeploymentResponse = jsonRequestActiviti
-				.get(
-						restAddressProcessDefinition,
-						ProcessDefinition.class);
-		
-		ProcessDefinition processDefinition = postDeploymentResponse.getBody();
-		
-		if( processDefinition == null || 
-				processDefinition.getDeploymentId() == null || 
-				processDefinition.getDeploymentId().isEmpty()){
-			return;
-		} else {
-			
-			String restAddressDeployment = hostSettings.getActivitiRestEndpointDeployments() + "/" + processDefinition.getDeploymentId();
-			
-			jsonRequestActiviti.delete(restAddressDeployment);
-		}
-	}
+        String metaworkflowString = buildWorkflowXmlString();
 
-	
-	
-	abstract protected String buildWorkflowXmlString()
-			throws JsonRequestException, ModelXmlNotFoundException, IOException;
+        ResponseEntity<ResponseDeployment> postDeploymentResponse = jsonRequestActiviti.postMetaWorkflowMultiPart(
+                hostSettings.getActivitiRestEndpointDeployments(), ResponseDeployment.class, getName(),
+                metaworkflowString);
 
-	
-	
-	public void updateVariable(String key, String value) throws JsonRequestException {
+        String deploymentId = postDeploymentResponse.getBody().getId();
 
-		Variable modelIdVariable = new Variable();
-		modelIdVariable.setName(key);
-		modelIdVariable.setValue(value);
+        Map<String, String> queryParams = new LinkedHashMap<String, String>();
+        queryParams.put("deploymentId", deploymentId);
 
-		ArrayList<Variable> updateVariableBody = new ArrayList<Variable>();
-		updateVariableBody.add(modelIdVariable);
+        @SuppressWarnings("unchecked")
+        List<ProcessDefinition> processDefinitionList = (List<ProcessDefinition>) jsonRequestActiviti
+                .getList(
+                        hostSettings.getActivitiRestEndpointProcessDefinitions(),
+                        ProcessDefinitionList.class, queryParams);
 
-		String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId()
-				+ "/variables";
+        if (processDefinitionList.isEmpty()) {
+            throw new ProcessDefinitionNotFoundException(deploymentId);
+        } else {
+            setProcessDefinitionId(processDefinitionList.get(0).getId());
+        }
+        return;
+    }
 
-		jsonRequestActiviti.put(restAddress, updateVariableBody, String.class);
 
-	}
+    public void deleteProcessInstance() throws JsonRequestException {
 
-	public void updateVariables(ArrayList<Variable> variables) throws JsonRequestException {
+        String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId();
 
-		String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId()
-				+ "/variables";
+        jsonRequestActiviti.delete(restAddress);
+    }
 
-		jsonRequestActiviti.put(restAddress, variables, String.class);
 
-	}
-	
-			
+    public void deleteDeployment() throws JsonRequestException {
 
-	protected String getMessageCatcherId( String messageEventSubscriptionName) throws JsonRequestException, IssueMessageCatcherNotFoundException, JsonRequestConflictException {
-		
-		PostQueryMessageIssueCatcher postBody = new PostQueryMessageIssueCatcher();
-		postBody.setMessageEventSubscriptionName(messageEventSubscriptionName);
-		postBody.setProcessInstanceId(getProcessInstanceId());
 
-		ResponseEntity<ResponseQueryMessageIssueCatcher> response = jsonRequestActiviti.post(
-				hostSettings.getActivitiRestEndpointQueryExecutions(), postBody,
-				ResponseQueryMessageIssueCatcher.class);
+        String restAddressProcessDefinition = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/" + this.getProcessDefinitionId();
 
-		String issueMessageCatcherId = null;
-		List<Execution> executionList = response.getBody().getData();
+        ResponseEntity<ProcessDefinition> postDeploymentResponse = jsonRequestActiviti
+                .get(
+                        restAddressProcessDefinition,
+                        ProcessDefinition.class);
 
-		if (executionList != null && !executionList.isEmpty()) {
-			issueMessageCatcherId = executionList.get(0).getId();
-		} else {
+        ProcessDefinition processDefinition = postDeploymentResponse.getBody();
 
-			throw new IssueMessageCatcherNotFoundException(getProcessDefinitionId());
-		}
-		return issueMessageCatcherId;
-	}
-	
-	
-	public <T extends ActivitiEntityList> void checkAlreadyExists(String name, String restAddress, Class<T> T )
-			throws ActivitiEntityAlreadyExistsException, JsonRequestException {
-	
-		Map<String,String> queryParams = new LinkedHashMap<String,String>();
-		queryParams.put("name", name);
-		List<? extends ActivitiEntity> entityList = jsonRequestActiviti
-				.getList(restAddress, T, queryParams);
+        if (processDefinition == null ||
+                processDefinition.getDeploymentId() == null ||
+                processDefinition.getDeploymentId().isEmpty()) {
+            return;
+        } else {
 
-		if (!entityList.isEmpty()) {
-			throw new ActivitiEntityAlreadyExistsException(name, T);
-		}
+            String restAddressDeployment = hostSettings.getActivitiRestEndpointDeployments() + "/" + processDefinition.getDeploymentId();
 
-	}
-	
+            jsonRequestActiviti.delete(restAddressDeployment);
+        }
+    }
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    abstract protected String buildWorkflowXmlString()
+            throws JsonRequestException, ModelXmlNotFoundException, IOException;
 
-	public String getModelId() {
-		return modelId;
-	}
 
-	public void setModelId(String modelId) {
-		this.modelId = modelId;
-	}
+    public void updateVariable(String key, String value) throws JsonRequestException {
 
-	public String getProcessDefinitionId() {
-		return processDefinitionId;
-	}
+        Variable modelIdVariable = new Variable();
+        modelIdVariable.setName(key);
+        modelIdVariable.setValue(value);
 
-	public void setProcessDefinitionId(String processDefinitionId) {
-		this.processDefinitionId = processDefinitionId;
-	}
+        ArrayList<Variable> updateVariableBody = new ArrayList<Variable>();
+        updateVariableBody.add(modelIdVariable);
 
-	public String getProcessInstanceId() {
-		return processInstanceId;
-	}
+        String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId()
+                + "/variables";
 
-	public void setProcessInstanceId(String processInstanceId) {
-		this.processInstanceId = processInstanceId;
-	}
+        jsonRequestActiviti.put(restAddress, updateVariableBody, String.class);
+
+    }
+
+    public void updateVariables(ArrayList<Variable> variables) throws JsonRequestException {
+
+        String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId()
+                + "/variables";
+
+        jsonRequestActiviti.put(restAddress, variables, String.class);
+
+    }
+
+
+    protected String getMessageCatcherId(String messageEventSubscriptionName) throws JsonRequestException, IssueMessageCatcherNotFoundException, JsonRequestConflictException {
+
+        PostQueryMessageIssueCatcher postBody = new PostQueryMessageIssueCatcher();
+        postBody.setMessageEventSubscriptionName(messageEventSubscriptionName);
+        postBody.setProcessInstanceId(getProcessInstanceId());
+
+        ResponseEntity<ResponseQueryMessageIssueCatcher> response = jsonRequestActiviti.post(
+                hostSettings.getActivitiRestEndpointQueryExecutions(), postBody,
+                ResponseQueryMessageIssueCatcher.class);
+
+        String issueMessageCatcherId = null;
+        List<Execution> executionList = response.getBody().getData();
+
+        if (executionList != null && !executionList.isEmpty()) {
+            issueMessageCatcherId = executionList.get(0).getId();
+        } else {
+
+            throw new IssueMessageCatcherNotFoundException(getProcessDefinitionId());
+        }
+        return issueMessageCatcherId;
+    }
+
+
+    public <T extends ActivitiEntityList> void checkAlreadyExists(String name, String restAddress, Class<T> T)
+            throws ActivitiEntityAlreadyExistsException, JsonRequestException {
+
+        System.out.print(restAddress);
+        Map<String, String> queryParams = new LinkedHashMap<String, String>();
+        queryParams.put("name", name);
+        List<? extends ActivitiEntity> entityList = jsonRequestActiviti
+                .getList(restAddress, T, queryParams);
+
+        if (!entityList.isEmpty()) {
+            throw new ActivitiEntityAlreadyExistsException(name, T);
+        }
+
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(String modelId) {
+        this.modelId = modelId;
+    }
+
+    public String getProcessDefinitionId() {
+        return processDefinitionId;
+    }
+
+    public void setProcessDefinitionId(String processDefinitionId) {
+        this.processDefinitionId = processDefinitionId;
+    }
+
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
+
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
 
 }

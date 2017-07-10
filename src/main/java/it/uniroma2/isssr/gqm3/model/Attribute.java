@@ -26,8 +26,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  */
 
-// TODO: Auto-generated Javadoc
-
 @Document
 public class Attribute {
 	/** The id. */

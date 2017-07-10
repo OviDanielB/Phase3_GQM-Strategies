@@ -11,22 +11,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * <p>Title: ActivitiUserList</p>
- *	
+ *
  * <p>Copyright: Copyright (c) 2016</p>
  * <p>Company: Dipartimento di Ingegneria Informatica, Università degli studi di Roma
- * Tor Vergata, progetto di ISSSR, gruppo 3: Fabio Alberto Coira, 
+ * Tor Vergata, progetto di ISSSR, gruppo 3: Fabio Alberto Coira,
  * Federico Di Domenicantonio, Daniele Capri, Giuseppe Chiapparo, Gabriele Belli,
- * Luca Della Gatta</p> 
+ * Luca Della Gatta</p>
  * <p>Class description:
- * 
+ *
  * Entity della nostra applicazione, annotata con @Document per notificare a
  * Spring che è un oggetto persistente in Mongo DB.
- * 
- * 
+ *
+ *
  * @author Daniele Capri
  * @version 1.0
  *
@@ -37,9 +35,9 @@ public class StrategicPlan {
 	/** The id. */
 	@Id
 	private String id;
-	
-	/** The strategy and workflow ids. This attribute represent the link (one to one) between a 
-	 * strategy and a meta workflow. This relationship is unique because a strategy links to a unique 
+
+	/** The strategy and workflow ids. This attribute represent the link (one to one) between a
+	 * strategy and a meta workflow. This relationship is unique because a strategy links to a unique
 	 * organizative unit and so to a unique strategic plan too*/
 	private ArrayList<StrategyWorkflowRelation> strategyWorkflowIds;
 
@@ -48,7 +46,7 @@ public class StrategicPlan {
 
 	/** The description. */
 	private String description;
-	
+
 	/** The organizational unit. */
 	private String organizationalunit;
 
@@ -56,22 +54,18 @@ public class StrategicPlan {
 	private ArrayList<Attribute> attributes;
 
 	/** The version. */
-	private float version;
+	private Float version;
 
 	/** The release. */
 	private String release;
-	
-	/** The strategy repository. */
-	@Autowired
-	private StrategyRepository strategyRepository;
 
 	/**
 	 * Instantiates a new strategic plan.
 	 */
 	public StrategicPlan() {
 	}
-	
-	
+
+
 
 	/**
 	 * Instantiates a new strategic plan.
@@ -100,11 +94,11 @@ public class StrategicPlan {
 //		
 //
 //	}
-	
-	
+
+
 	public StrategicPlan(ArrayList<StrategyWorkflowRelation> strategyIds, String name, String description, String organizationalUnit, float version, String release) {
-		
-		
+
+
 		this.strategyWorkflowIds=strategyIds;
 
 		this.name = name;
@@ -113,7 +107,7 @@ public class StrategicPlan {
 		this.version = version;
 		this.release = release;
 		attributes = new ArrayList<Attribute>();
-		
+
 
 	}
 
@@ -144,10 +138,10 @@ public class StrategicPlan {
 		this.version = version;
 		this.release = release;
 		attributes = new ArrayList<Attribute>();
-		
+
 	}
-	
-	
+
+
 
 	/**
 	 * Instantiates a new strategic plan.
@@ -177,25 +171,7 @@ public class StrategicPlan {
 		this.release = release;
 		attributes = new ArrayList<Attribute>();
 		}
-	
-	
-	/**
-	 * Instantiates a new strategic plan.
-	 *
-	 * @return the id
-	 */
-	/*public StrategicPlan(Strategy strategy, float version, String release) {
-		this.strategyId =strategy.getId();
-		this.name = strategy.getName();
-		this.description = strategy.getDescription();
-		this.version = version;
-		this.release = release;
-		strategyIds = new ArrayList<String>();
-		attributes = new ArrayList<Attribute>();
-		metaWorkflowsIds = new ArrayList<String>();
-		
 
-	}*/
 
 	/**
 	 * Gets the id.
@@ -215,7 +191,7 @@ public class StrategicPlan {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Gets the strategy id.
 	 *
@@ -226,7 +202,7 @@ public class StrategicPlan {
 		for (StrategyWorkflowRelation string : strategyWorkflowIds) {
 			result.add(string.getStrategy().getId());
 		}
-		
+
 		return result;
 	}
 
@@ -242,8 +218,8 @@ public class StrategicPlan {
 			newStrategyIds.add(strategy);
 		}
 		this.strategyWorkflowIds=newStrategyIds;
-		
-		
+
+
 	}
 
 	/**
@@ -283,8 +259,8 @@ public class StrategicPlan {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
+
+
 
 	/**
 	 * Gets the organizational unit.
@@ -309,7 +285,7 @@ public class StrategicPlan {
 	 *
 	 * @return the version
 	 */
-	public float getVersion() {
+	public Float getVersion() {
 		return version;
 	}
 
@@ -319,7 +295,7 @@ public class StrategicPlan {
 	 * @param version
 	 *            the new version
 	 */
-	public void setVersion(float version) {
+	public void setVersion(Float version) {
 		this.version = version;
 	}
 
@@ -361,7 +337,7 @@ public class StrategicPlan {
 		this.attributes = attributes;
 	}
 
-	
+
 	/**
 	 * Gets the strategy workflow ids.
 	 *
@@ -369,7 +345,7 @@ public class StrategicPlan {
 	 */
 	public ArrayList<StrategyWorkflowRelation> getStrategyWorkflowIds() {
 		return strategyWorkflowIds;
-		
+
 	}
 	/**
 	 * Sets the strategy workflow ids.
@@ -384,12 +360,12 @@ public class StrategicPlan {
 			if(!temp2OrgUnit.equals(tempOrgUnit)){
 				organizationalunit=null;
 				return;
-			}	
+			}
 		}
 		this.strategyWorkflowIds = strategyWorkflowIds;}
-		
+
 	}
-	
+
 	 /**
 	 * Gets the metaworkflow id starting from strategy.
 	 *
@@ -404,9 +380,9 @@ public class StrategicPlan {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Sets the metaworkflow id starting from the associated strategy. 
+	 * Sets the metaworkflow id starting from the associated strategy.
 	 *
 	 * @param strategyId the strategy id
 	 * @param metaWorkflowId the meta workflow id
@@ -417,9 +393,9 @@ public class StrategicPlan {
 				strings.setWorkflow(metaWorkflowId);
 			}
 		}
-	
+
 	}
-	
+
 	public WorkflowData getSWFromStrategy(Strategy strategy){
 		for (StrategyWorkflowRelation swr : strategyWorkflowIds) {
 			if(swr.getStrategy().getId().equals(strategy.getId())){

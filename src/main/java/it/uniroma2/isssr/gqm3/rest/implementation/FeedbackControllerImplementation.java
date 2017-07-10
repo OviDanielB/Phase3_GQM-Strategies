@@ -1,6 +1,7 @@
 package it.uniroma2.isssr.gqm3.rest.implementation;
 
 import io.swagger.annotations.Api;
+import it.uniroma2.isssr.gqm3.service.implementation.BusService2Phase4Implementation;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -37,9 +39,10 @@ public class FeedbackControllerImplementation implements FeedbackController {
     @Autowired
     private WorkflowDataRepository workflowDataRepository;
 
-    private static void receiveMessage(WorkflowMessage workflowMessage,
-                                       HostSettings hostSettings,
-                                       WorkflowDataRepository workflowDataRepository)
+    @Autowired
+    private BusService2Phase4Implementation busService2Phase4Implementation;
+
+    private void receiveMessage(WorkflowMessage workflowMessage)
             throws IllegalReceiveMessageRequestBodyException,
             JsonRequestException, IssueMessageCatcherNotFoundException,
             WorkflowDataException, JsonRequestConflictException {
@@ -66,16 +69,14 @@ public class FeedbackControllerImplementation implements FeedbackController {
         return;
     }
 
-    public static void receiveFeedbackMessage(IssueMessage issueMessage,
-                                              HostSettings hostSettings,
-                                              WorkflowDataRepository workflowDataRepository)
+    public void receiveFeedbackMessage(IssueMessage issueMessage)
             throws IllegalReceiveMessageRequestBodyException,
             JsonRequestException, IssueMessageCatcherNotFoundException,
-            WorkflowDataException, JsonRequestConflictException {
+            WorkflowDataException, JsonRequestConflictException, IOException {
 
         WorkflowMessage workflowMessage = new WorkflowMessage(issueMessage);
 
-        receiveMessage(workflowMessage, hostSettings, workflowDataRepository);
+        receiveMessage(workflowMessage);
 
         BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings);
         businessWorkflow.setProcessInstanceId(issueMessage
@@ -91,7 +92,12 @@ public class FeedbackControllerImplementation implements FeedbackController {
         WorkflowData workflowData = workflowDatas.get(0);
         workflowData.setBusinessWorkflowProcessInstanceId(null);
 
+        /* save on local mongodb*/
         workflowDataRepository.save(workflowData);
+
+        /* save on bus*/
+        busService2Phase4Implementation.saveWorkflowData(workflowData);
+
 
     }
 
@@ -102,10 +108,9 @@ public class FeedbackControllerImplementation implements FeedbackController {
             @RequestBody IssueMessage issueMessage, HttpServletResponse response)
             throws WorkflowDataException, IssueMessageCatcherNotFoundException,
             IllegalReceiveMessageRequestBodyException, JsonRequestException,
-            JsonRequestConflictException {
+            JsonRequestConflictException, IOException {
 
-        receiveFeedbackMessage(issueMessage, hostSettings,
-                workflowDataRepository);
+        receiveFeedbackMessage(issueMessage);
 
         JSONObject json = new JSONObject();
         json.put("result", "ok");
@@ -120,11 +125,11 @@ public class FeedbackControllerImplementation implements FeedbackController {
             HttpServletResponse response) throws WorkflowDataException,
             IssueMessageCatcherNotFoundException, JsonRequestException,
             IllegalReceiveMessageRequestBodyException,
-            JsonRequestConflictException {
+            JsonRequestConflictException, IOException {
 
         WorkflowMessage workflowMessage = new WorkflowMessage(endingMessage);
 
-        receiveMessage(workflowMessage, hostSettings, workflowDataRepository);
+        receiveMessage(workflowMessage);
 
         String businessWorkflowProcessInstanceId = workflowMessage.getBusinessWorkflowProcessInstanceId();
 
@@ -141,7 +146,11 @@ public class FeedbackControllerImplementation implements FeedbackController {
         workflowData.setMetaWorkflowProcessInstanceId(null);
         workflowData.setBusinessWorkflowProcessInstanceId(null);
 
+        /* save on local mongodb */
         workflowDataRepository.save(workflowData);
+
+        /* update workflows on bus */
+        busService2Phase4Implementation.saveWorkflowData(workflowData);
 
         JSONObject json = new JSONObject();
         json.put("result", "ok");

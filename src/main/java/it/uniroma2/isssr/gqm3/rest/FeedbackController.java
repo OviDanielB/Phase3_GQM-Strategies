@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public interface FeedbackController {
 
@@ -25,7 +26,7 @@ public interface FeedbackController {
 	 */
 	@RequestMapping(value = "/BusinessIssueMessages", method = RequestMethod.POST)
     ResponseEntity<?> receiveIssueMessage(@RequestBody IssueMessage issueMessage, HttpServletResponse response)
-			throws WorkflowDataException, IssueMessageCatcherNotFoundException, IllegalReceiveMessageRequestBodyException, JsonRequestException, JsonRequestConflictException;
+			throws WorkflowDataException, IssueMessageCatcherNotFoundException, IllegalReceiveMessageRequestBodyException, JsonRequestException, JsonRequestConflictException, IOException;
 	
 	/**
 	 * This is the endpoint that receive an ending workflow message and terminate the specificated workflow
@@ -39,6 +40,6 @@ public interface FeedbackController {
 	 */
 	@RequestMapping(value = "/BusinessEndingMessages", method = RequestMethod.POST)
     ResponseEntity<?> receiveEndingMessage(@RequestBody EndingMessage endingMessage, HttpServletResponse response)
-			throws WorkflowDataException, IssueMessageCatcherNotFoundException, JsonRequestException, IllegalReceiveMessageRequestBodyException, JsonRequestConflictException;
+            throws WorkflowDataException, IssueMessageCatcherNotFoundException, JsonRequestException, IllegalReceiveMessageRequestBodyException, JsonRequestConflictException, IOException;
 
 }

@@ -1,5 +1,6 @@
 package it.uniroma2.isssr.gqm3.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import it.uniroma2.isssr.gqm3.model.validation.ValidationOp;
 import org.springframework.data.annotation.Id;

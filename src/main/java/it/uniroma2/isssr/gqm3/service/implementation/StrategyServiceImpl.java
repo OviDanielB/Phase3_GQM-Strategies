@@ -91,8 +91,7 @@ public class StrategyServiceImpl implements StrategyService {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategies() {
         /*
-         * // TODO Auto-generated method stub
-		 * 
+		 *
 		 * List<Strategy> strategies = strategyRepository.findAll();
 		 * 
 		 * DTOResponse dtoResponse = new DTOResponse();
@@ -107,8 +106,7 @@ public class StrategyServiceImpl implements StrategyService {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategy() {
         /*
-         * // TODO Auto-generated method stub
-		 * 
+		 *
 		 * List<Strategy> strategies = strategyRepository.findAll();
 		 * 
 		 * DTOResponse dtoResponse = new DTOResponse();
@@ -154,7 +152,7 @@ public class StrategyServiceImpl implements StrategyService {
                 } else {
                     Strategy toUpdate = mongoStrategy.get(0); // deve esserne
                     // presente solo
-                    // uno TODO
+                    // uno
                     // mettere un
                     // controllo di
                     // univocità
@@ -204,8 +202,7 @@ public class StrategyServiceImpl implements StrategyService {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
 	/*	
-		// TODO Auto-generated method stub
-		
+
 		List<Strategy> strategies = strategyRepository.findAll();
 		
 		DTOResponse dtoResponse = new DTOResponse();

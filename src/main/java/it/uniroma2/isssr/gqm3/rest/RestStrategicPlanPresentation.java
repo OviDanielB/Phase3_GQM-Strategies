@@ -1,5 +1,6 @@
 package it.uniroma2.isssr.gqm3.rest;
 
+import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.service.StrategicPlanService;
 import it.uniroma2.isssr.gqm3.model.rest.DTOMetaWorkflow;
 import it.uniroma2.isssr.gqm3.model.rest.DTOStrategicPlan;
@@ -118,7 +119,7 @@ public class RestStrategicPlanPresentation {
      * @return the strategic plan
      */
     @RequestMapping(value = "/setMetaWorkflow", method = RequestMethod.POST)
-    public ResponseEntity<DTOResponseSWRelation> setMetaWorkflows(@RequestBody DTOMetaWorkflow dtoMetaWorkflow) {
+    public ResponseEntity<DTOResponseSWRelation> setMetaWorkflows(@RequestBody DTOMetaWorkflow dtoMetaWorkflow) throws IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, ProcessDefinitionNotFoundException, JsonRequestException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException {
 
         return strategicPlanService.setMetaWorkflow(dtoMetaWorkflow.getStrategcPlanId(), dtoMetaWorkflow.getStrategyId(), dtoMetaWorkflow.getName());
 
