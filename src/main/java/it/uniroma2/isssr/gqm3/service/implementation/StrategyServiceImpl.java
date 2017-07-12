@@ -75,34 +75,6 @@ public class StrategyServiceImpl implements StrategyService {
     @Autowired
     BusInterationImplementation busInterationImplementation;
 
-
-    /**
-     * Metodo che restituisce la risposta della chiamata REST. La risposta è un
-     * oggetto che contiene sia l'oggetto di ritorno dell'interrogazione del DB
-     * (in questo caso la lista di Strategy) e lo status della risposta (200,
-     * 0k).
-     * <p>
-     * Devo fare la modifica qui per richiederla al bus invece di cercare nel
-     * nostro DB locale (Per il momento metto questo metodo in "hermes")
-     *
-     * @return the strategies
-     */
-
-    @Override
-    public ResponseEntity<DTOResponseStrategy> getStrategies() {
-        /*
-		 *
-		 * List<Strategy> strategies = strategyRepository.findAll();
-		 * 
-		 * DTOResponse dtoResponse = new DTOResponse();
-		 * dtoResponse.setStrategies(strategies); ResponseEntity<DTOResponse>
-		 * responseEntity = new
-		 * ResponseEntity<DTOResponse>(dtoResponse,HttpStatus.OK); return
-		 * responseEntity;
-		 */
-        return busInteration.getStrategies();
-    }
-
     @Override
     public ResponseEntity<DTOResponseStrategy> createStrategy(String name, String description,
                                                               String organizationalUnit, String organizationalUnitId) {
@@ -124,6 +96,34 @@ public class StrategyServiceImpl implements StrategyService {
         return responseEntity;
 
     }
+
+    /**
+     * Metodo che restituisce la risposta della chiamata REST. La risposta è un
+     * oggetto che contiene sia l'oggetto di ritorno dell'interrogazione del DB
+     * (in questo caso la lista di Strategy) e lo status della risposta (200,
+     * 0k).
+     * <p>
+     * Devo fare la modifica qui per richiederla al bus invece di cercare nel
+     * nostro DB locale (Per il momento metto questo metodo in "hermes")
+     *
+     * @return the strategies
+     */
+
+    @Override
+    public ResponseEntity<DTOResponseStrategy> getStrategies() {
+        /*
+		 *
+		 * List<Strategy> strategies = strategyRepository.findAll();
+		 *
+		 * DTOResponse dtoResponse = new DTOResponse();
+		 * dtoResponse.setStrategies(strategies); ResponseEntity<DTOResponse>
+		 * responseEntity = new
+		 * ResponseEntity<DTOResponse>(dtoResponse,HttpStatus.OK); return
+		 * responseEntity;
+		 */
+        return busInteration.getStrategies();
+    }
+
 
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategy() {

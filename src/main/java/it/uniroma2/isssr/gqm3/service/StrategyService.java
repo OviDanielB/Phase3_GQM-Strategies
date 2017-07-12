@@ -30,6 +30,11 @@ public interface StrategyService {
      *
      * @return the strategies
      */
+
+    ResponseEntity<DTOResponseStrategy> createStrategy(String name,
+                                                       String description, String organizationalUnit,
+                                                       String organizationalUnitId);
+
     ResponseEntity<DTOResponseStrategy> getStrategies();
 
 
@@ -43,10 +48,6 @@ public interface StrategyService {
      * @return the strategies
      */
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree();
-
-    ResponseEntity<DTOResponseStrategy> createStrategy(String name,
-                                                       String description, String organizationalUnit,
-                                                       String organizationalUnitId);
 
 }
 

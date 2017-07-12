@@ -42,6 +42,13 @@ public class RestPresentation {
     Bus2fase3 bus2Fase3;
 
 
+    @RequestMapping(value = "/createStrategy", method = RequestMethod.POST)
+    public ResponseEntity<DTOResponseStrategy> createStrategy(@RequestBody DTOStrategy dtoStrategy) {
+
+        return strategyService.createStrategy(dtoStrategy.getName(), dtoStrategy.getDescription(), dtoStrategy.getOrganizationalUnit(), dtoStrategy.getOrganizationalUnitId());
+
+    }
+
     /**
      * Questo metodo deve essere richiesto al bus!
      * Ma non faccio la modifica qui, ma in strategyService.
@@ -74,13 +81,6 @@ public class RestPresentation {
     public ResponseEntity<DTOResponseStrategy> getStrategiesF2() {
         strategyService.updateStrategyF1();
         return bus2Fase3.getStrategies();
-
-    }
-
-    @RequestMapping(value = "/createStrategy", method = RequestMethod.POST)
-    public ResponseEntity<DTOResponseStrategy> createStrategy(@RequestBody DTOStrategy dtoStrategy) {
-
-        return strategyService.createStrategy(dtoStrategy.getName(), dtoStrategy.getDescription(), dtoStrategy.getOrganizationalUnit(), dtoStrategy.getOrganizationalUnitId());
 
     }
 

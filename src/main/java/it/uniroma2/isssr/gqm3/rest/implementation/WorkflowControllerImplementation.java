@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8082")
 @Api(value = "Workflow Controller", description = "Workflow Controller API")
 public class WorkflowControllerImplementation implements WorkflowController {
 
@@ -71,8 +72,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
     public ResponseEntity<String> deployWorkflowModel(@RequestBody PostDeploy deployBody) throws JsonRequestException,
-            MetaWorkflowNotDeployedException, ModelXmlNotFoundException, WorkflowDataException, IOException,
-            ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException {
+            ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, IOException, MetaWorkflowNotDeployedException, WorkflowDataException {
 
 
         String modelId = deployBody.getModelId();
@@ -116,7 +116,11 @@ public class WorkflowControllerImplementation implements WorkflowController {
 
         /* update workflowData on bus */
         /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
-        busService2Phase4Implementation.saveWorkflowData(workflowData);
+        try {
+            busService2Phase4Implementation.saveWorkflowData(workflowData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         JSONObject response = new JSONObject();
         response.put("businessWorkflowProcessDefinitionId", businessWorkflowProcessDefinitionId);

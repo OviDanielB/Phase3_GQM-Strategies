@@ -354,11 +354,11 @@ public class StrategicPlan {
 	 */
 	public void setStrategyWorkflowIds(ArrayList<StrategyWorkflowRelation> strategyWorkflowIds) {
 		if(!strategyWorkflowIds.isEmpty()){
-		String tempOrgUnit=strategyWorkflowIds.get(0).getStrategy().getOrganizational_Unit();
+		String tempOrgUnit = strategyWorkflowIds.get(0).getStrategy().getOrganizational_Unit();
 		for (StrategyWorkflowRelation swr : strategyWorkflowIds) {
-			String temp2OrgUnit=swr.getStrategy().getOrganizational_Unit();
+			String temp2OrgUnit = swr.getStrategy().getOrganizational_Unit();
 			if(!temp2OrgUnit.equals(tempOrgUnit)){
-				organizationalunit=null;
+				organizationalunit = null;
 				return;
 			}
 		}
