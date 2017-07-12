@@ -1,14 +1,13 @@
 
 package it.uniroma2.isssr.gqm3.rest;
 
+import it.uniroma2.isssr.gqm3.model.rest.DTOStrategy;
 import it.uniroma2.isssr.gqm3.service.StrategyService;
 import it.uniroma2.isssr.gqm3.hermes.Bus2fase3;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>Title: RestPresentation</p>
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8082")
 @RequestMapping("/strategy/")
 public class RestPresentation {
 
@@ -62,7 +62,6 @@ public class RestPresentation {
      *
      * @return the strategies
      */
-
     @RequestMapping(value = "/getStrategiesFree", method = RequestMethod.GET)
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
 
@@ -75,6 +74,13 @@ public class RestPresentation {
     public ResponseEntity<DTOResponseStrategy> getStrategiesF2() {
         strategyService.updateStrategyF1();
         return bus2Fase3.getStrategies();
+
+    }
+
+    @RequestMapping(value = "/createStrategy", method = RequestMethod.POST)
+    public ResponseEntity<DTOResponseStrategy> createStrategy(@RequestBody DTOStrategy dtoStrategy) {
+
+        return strategyService.createStrategy(dtoStrategy.getName(), dtoStrategy.getDescription(), dtoStrategy.getOrganizationalUnit(), dtoStrategy.getOrganizationalUnitId());
 
     }
 

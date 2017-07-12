@@ -44,6 +44,9 @@ public interface StrategyService {
      */
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree();
 
+    ResponseEntity<DTOResponseStrategy> createStrategy(String name,
+                                                       String description, String organizationalUnit,
+                                                       String organizationalUnitId);
 
 }
 

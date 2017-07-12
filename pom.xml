@@ -6,6 +6,7 @@
 
     <groupId>it.uniroma2.isssr</groupId>
     <artifactId>gqm_phase3</artifactId>
+    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -113,7 +114,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>gqm_phase3</finalName>
+                    <finalName>gqm3</finalName>
                 </configuration>
             </plugin>
         </plugins>

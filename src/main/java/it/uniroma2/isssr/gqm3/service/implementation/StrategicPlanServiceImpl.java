@@ -391,7 +391,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             JSONObject jsnobject;
             String metaId = "", businessModelId = "";
             try {
-                jsnobject = new JSONObject(response.getBody());
+                jsnobject = new JSONObject(response.getBody().toString());
 
                 metaId = jsnobject.getString("metaWorkflowProcessInstanceId");
                 businessModelId = jsnobject.getString("businessWorkflowModelId");

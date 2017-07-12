@@ -104,6 +104,28 @@ public class StrategyServiceImpl implements StrategyService {
     }
 
     @Override
+    public ResponseEntity<DTOResponseStrategy> createStrategy(String name, String description,
+                                                              String organizationalUnit, String organizationalUnitId) {
+        // TODO Auto-generated method stub
+
+        // per ora gestisco il campo version e release settandoli entrambi a 0
+        // nella creazione
+        Strategy strategy = new Strategy(name, description, organizationalUnit, 0, 0);
+        strategy.setOrganizationalunitId(organizationalUnitId);
+        strategyRepository.save(strategy);
+
+        DTOResponseStrategy dtoResponse = new DTOResponseStrategy();
+        dtoResponse.setStrategyid(strategy.getId());
+        dtoResponse.setStrategyName(strategy.getName());
+        dtoResponse.setStrategyDescription(strategy.getDescription());
+
+        ResponseEntity<DTOResponseStrategy> responseEntity = new ResponseEntity<DTOResponseStrategy>(dtoResponse,
+                HttpStatus.OK);
+        return responseEntity;
+
+    }
+
+    @Override
     public ResponseEntity<DTOResponseStrategy> getStrategy() {
         /*
 		 *
