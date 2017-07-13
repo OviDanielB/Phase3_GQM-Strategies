@@ -32,7 +32,6 @@ public class RestPresentationBus {
             message = new JSONObject(data);
             typeobj = message.getString("typeObj");
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         if (typeobj.equals("base64-TerminalStrategy")) {

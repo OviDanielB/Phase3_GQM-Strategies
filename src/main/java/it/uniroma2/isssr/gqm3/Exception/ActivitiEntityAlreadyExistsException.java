@@ -23,11 +23,6 @@ public class ActivitiEntityAlreadyExistsException extends Exception {
 		return "A "+ stringListClass.getSimpleName() +" named \"" + modelName + "\" already exists.";
 	}
 	
-	
-	public ActivitiEntityAlreadyExistsException() {
-		// TODO Auto-generated constructor stub
-	}
-	
 	public ActivitiEntityAlreadyExistsException(String name, Class<?> entityListClass) {
 		super(buildMessage(name, entityListClass));
 	}

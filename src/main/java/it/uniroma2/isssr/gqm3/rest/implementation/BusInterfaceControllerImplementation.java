@@ -61,7 +61,7 @@ import java.util.*;
 public class BusInterfaceControllerImplementation implements
         BusInterfaceController {
 
-    private static final Logger LOG = LoggerFactory
+    private final Logger LOG = LoggerFactory
             .getLogger(BusInterfaceControllerImplementation.class);
 
     private final HostSettings hostSettings;
@@ -71,6 +71,9 @@ public class BusInterfaceControllerImplementation implements
     private final SystemStateRepository systemStateRepository;
 
     private final WorkflowDataRepository workflowDataRepository;
+
+    @Autowired
+    private FeedbackControllerImplementation feedbackControllerImplementation;
 
     @Autowired
     public BusInterfaceControllerImplementation(HostSettings hostSettings, MetricRepository metricRepository, SystemStateRepository systemStateRepository, WorkflowDataRepository workflowDataRepository) {
@@ -171,8 +174,7 @@ public class BusInterfaceControllerImplementation implements
 
                     }
 
-                    FeedbackControllerImplementation.receiveFeedbackMessage(
-                            issueMessage, hostSettings, workflowDataRepository);
+                    feedbackControllerImplementation.receiveFeedbackMessage(issueMessage);
                 }
             }
         }
@@ -1088,7 +1090,6 @@ public class BusInterfaceControllerImplementation implements
         try {
             url = URLDecoder.decode(expanded.toString(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             url = expanded.toString();
         }

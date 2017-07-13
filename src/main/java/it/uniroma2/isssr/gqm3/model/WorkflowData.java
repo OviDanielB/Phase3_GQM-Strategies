@@ -40,7 +40,7 @@ public class WorkflowData {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String businessWorkflowProcessInstanceId;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private boolean ended = false;
+	private Boolean ended = false;
 	@DBRef
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<MeasureTask> measureTasksList;
@@ -129,7 +129,7 @@ public class WorkflowData {
 		this.businessWorkflowProcessInstanceId = businessWorkflowProcessInstanceId;
 	}
 
-	public boolean isEnded() {
+	public Boolean isEnded() {
 		return ended;
 	}
 

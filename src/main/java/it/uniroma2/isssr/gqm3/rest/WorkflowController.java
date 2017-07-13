@@ -4,6 +4,7 @@ import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.dto.post.PostCreateWorkflow;
 import it.uniroma2.isssr.gqm3.dto.post.PostDeploy;
 import it.uniroma2.isssr.gqm3.dto.post.PostStartProcessInstance;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,16 +41,7 @@ public interface WorkflowController {
                                      @RequestBody PostCreateWorkflow createWorkflowBody) throws UnsupportedEncodingException,
             IOException, IllegalCharacterRequestException, ActivitiEntityAlreadyExistsException, JsonRequestException,
             MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, BusinessWorkflowNotCreatedException,
-            ModelXmlNotFoundException, ProcessDefinitionNotFoundException, JsonRequestConflictException;
-
-    /**
-     * This is the endpoint to get all workflows in Activiti
-     *
-     * @return 200 OK
-     * @throws JsonRequestException
-     */
-    @RequestMapping(value = "/workflows", method = RequestMethod.GET)
-    ResponseEntity<?> getWorkflows() throws JsonRequestException;
+            ModelXmlNotFoundException, ProcessDefinitionNotFoundException, JsonRequestConflictException, BusException, BusRequestException;
 
     /**
      * This is the endpoint to deploy a workflow model in Activiti if it does not exist

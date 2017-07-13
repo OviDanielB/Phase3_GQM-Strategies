@@ -11,35 +11,34 @@ import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8082")
 @Api(value = "Workflow Data Controller", description = "Workflow Data API")
 public class WorkflowDataControllerImplementation implements
-		WorkflowDataController {
+        WorkflowDataController {
 
-	@Autowired
-	private WorkflowDataRepository workflowDataRepository;
+    @Autowired
+    private WorkflowDataRepository workflowDataRepository;
 
-	@RequestMapping(value = "/workflowdatas", method = RequestMethod.GET)
-	@ApiOperation(value = "Get Workflow Datas", notes = "This endpoint retrieves all datas related to a workflow")
-	@ApiResponses(value = { @ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class) })
-	public ResponseEntity<List<WorkflowData>> getWorkflowDatas(
-			@RequestParam(value = "ended", required = false) Boolean ended,
-			HttpServletResponse response) {
-		List<WorkflowData> workflowDatas;
-		if (ended == null)
-			workflowDatas = workflowDataRepository.findAll();
-		else
-			workflowDatas = workflowDataRepository.findByEnded(ended);
-		return new ResponseEntity<List<WorkflowData>>(workflowDatas,
-				HttpStatus.OK);
-	}
+    @RequestMapping(value = "/workflowdatas", method = RequestMethod.GET)
+    @ApiOperation(value = "Get Workflow Datas", notes = "This endpoint retrieves all datas related to a workflow")
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
+    public ResponseEntity<List<WorkflowData>> getWorkflowDatas(
+            @RequestParam(value = "ended", required = false) Boolean ended,
+            HttpServletResponse response) {
+
+        List<WorkflowData> workflowDatas;
+        if (ended == null)
+            workflowDatas = workflowDataRepository.findAll();
+        else
+            workflowDatas = workflowDataRepository.findByEnded(ended);
+        return new ResponseEntity<List<WorkflowData>>(workflowDatas,
+                HttpStatus.OK);
+    }
 
 }

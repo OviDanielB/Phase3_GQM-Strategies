@@ -10,8 +10,7 @@ import java.util.List;
  *
  */
 public class DTOResponseValidationOp extends DTO {
-	/* TODO: è un bean con getter e setter */
-	
+
 private static final long serialVersionUID = 1L;
 	
 	private String id;

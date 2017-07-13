@@ -67,6 +67,7 @@ public interface BusInterfaceController {
     public ResponseEntity<?> phaseInit(HttpServletResponse response) throws IOException, JsonRequestException,
             JSONException, BusRequestException, ParseException, BusException, JsonRequestConflictException;
 
+    /*This feature maybe do not work on integration bus */
     /**
      * This is the endpoint to manage all notifications received from bus
      *

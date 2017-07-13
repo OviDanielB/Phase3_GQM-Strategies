@@ -94,10 +94,8 @@ public class IssueMessageResource {
     	    try {
 				sb.append(f.get(this));
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	    sb.append("\n\n");

@@ -40,7 +40,6 @@ public interface Bus2fase3 {
 	ResponseEntity<DTOResponseStrategy> getStrategies();
 	
 	ArrayList<DTOStrategyFrom1> getStrategiesF1();
-	void saveOnBus(String taskId, String processInstanceId);
 
 	/**
 	 * Gets the strategies.

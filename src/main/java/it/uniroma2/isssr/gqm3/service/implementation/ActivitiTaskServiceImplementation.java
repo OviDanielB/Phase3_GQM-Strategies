@@ -53,7 +53,6 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	ActivitiInterationImplementation actitiviInterationImplementation;
 	@Override
 	public ResponseEntity<?> getTasks() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
 			List<ActivitiTask> activitiTaskList = actitiviInterationImplementation.getTasks();
 			List<DTOResponseActivitiTask> dtoResponseActivitiTaskList=
 					new ArrayList<DTOResponseActivitiTask>();
@@ -92,7 +91,6 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	
 	@Override
 	public ResponseEntity<?> getUserTasks(String username) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
 			List<ActivitiTask> tasks = actitiviInterationImplementation.getUserTasks(username);
 			
 			List<DTOResponseActivitiTask> dtoResponseActivitiTaskList=
@@ -134,8 +132,7 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	@Override
 	public ResponseEntity<?> getTaskVariablesFromRuntimeTaskId(
 			String taskId, String scope) throws JsonParseException, JsonMappingException, IOException, JSONException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
-			List<ActivitiTaskVariable> activitiTaskVariables = 
+			List<ActivitiTaskVariable> activitiTaskVariables =
 					actitiviInterationImplementation.getTaskVariablesFromRuntimeTaskId(
 							taskId, scope);
 			List<DTOResponseActivitiTaskVariables> dtoResponseActivitiTaskVariables =
@@ -162,8 +159,7 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	@Override
 	public ResponseEntity<?> createTaskVariableFromRuntimeTaskId(
 			String taskId, List<ActivitiTaskVariable> activitiTaskVariables) throws JsonRequestConflictException, JsonRequestException {
-		// TODO Auto-generated method stub
-		List<DTOResponseActivitiTaskVariables> dtoResponseActivitiTaskVariables = 
+		List<DTOResponseActivitiTaskVariables> dtoResponseActivitiTaskVariables =
 				new ArrayList<DTOResponseActivitiTaskVariables>();
 		actitiviInterationImplementation.createTaskVariableFromRuntimeTaskId(taskId, activitiTaskVariables);
 		for(ActivitiTaskVariable activitiTaskVariable: activitiTaskVariables){
@@ -187,7 +183,6 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	@Override
 	public ResponseEntity<DTOResponseActivitiTask> getUserTasksByCandidateGroup(
 			String candidateGroup) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
 		List<ActivitiTask> tasks = actitiviInterationImplementation.getUserTasksByCandidateGroup(candidateGroup);
 		DTOResponseActivitiTask dtoResponseActivitiTask = new DTOResponseActivitiTask();
 		dtoResponseActivitiTask.setActivitiTask(tasks);
@@ -198,7 +193,6 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	@Override
 	public ResponseEntity<DTOResponseActivitiTask> getUserTaskByTaskId(
 			String taskId) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-		// TODO Auto-generated method stub
 			ActivitiTask activitiTask = actitiviInterationImplementation.getUserTaskByTaskId(
 					taskId);
 			DTOResponseActivitiTask dtoResponseActivitiTask = new DTOResponseActivitiTask();
@@ -243,7 +237,6 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 	@Override
 	public ResponseEntity<DTOResponseActivitiTaskVariable> updateActivitiTaskVariable(String id, String name,
                                                                                       DTOActivitiTaskVariable dtoActivitiTaskVariable) throws JsonParseException, JsonMappingException, IOException, ActivitiPutException, JsonRequestException {
-		// TODO Auto-generated method stub
 		ActivitiTaskVariable activitiTaskVariable  =
 				actitiviInterationImplementation.updateActivitiTaskVariable(id,
 				name, dtoActivitiTaskVariable);

@@ -239,7 +239,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
         try {
             jsnobject = new JSONObject(response.getBody());
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         ActivitiProcessDefinition processDefinition = new ActivitiProcessDefinition();
@@ -277,7 +276,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
                 activitiProcessInvolvedPeopleList.add(mapper.readValue(explrObject.toString(), ActivitiProcessInvolvedPeople.class));
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return activitiProcessInvolvedPeopleList.get(0);
@@ -336,7 +334,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
                 activitiProcessList.addActivitiProcess(activitiProcessDef);
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return activitiProcessList.getActivitiProcessList();
@@ -360,7 +357,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
     @Override
     public List<ActivitiFormProperty> getFormPropertiesTaskById(
             String taskId) throws JsonParseException, JsonMappingException, IOException, JSONException, ActivitiGetException, JsonRequestException {
-        // TODO Auto-generated method stub
         ObjectMapper mapper = new ObjectMapper();
         String URL = hostSettings.getActivitiRestEndpoint() + "/service/form/form-data?taskId=" + taskId;
 
@@ -386,7 +382,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
      */
     @Override
     public List<ActivitiTaskVariable> getTaskVariablesFromRuntimeTaskId(String taskId, String scope) throws JsonParseException, JsonMappingException, IOException, JSONException, ActivitiGetException, JsonRequestException {
-        // TODO Auto-generated method stub
         ObjectMapper mapper = new ObjectMapper();
         String URL = hostSettings.getActivitiRestEndpointTasks() + taskId +
                 "/variables?scope=" + scope;
@@ -409,7 +404,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
     @Override
     public void createTaskVariables(String taskId,
                                     List<ActivitiTaskVariable> activitiTaskVariables) throws JsonRequestConflictException, JsonRequestException {
-        // TODO Auto-generated method stub
 
         //JSONObject request = new JSONObject();
         //per migliorare la complete salvando le variabili basta passare una lista di variabili
@@ -447,7 +441,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
      */
     public List<ActivitiTask> getUserTasksByCandidateGroup(String candidateGroup)
             throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-        // TODO Auto-generated method stub
         ObjectMapper mapper = new ObjectMapper();
         String URL = hostSettings.getActivitiRestEndpointTasks() + "?candidateGroup=" + candidateGroup;
         ResponseEntity<String> response = requestActiviti.get(URL, String.class);
@@ -476,7 +469,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
     @Override
     public ActivitiTask getUserTaskByTaskId(String taskId)
             throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-        // TODO Auto-generated method stub
         ObjectMapper mapper = new ObjectMapper();
         String URL = hostSettings.getActivitiRestEndpointTasks() + taskId;
         ResponseEntity<String> response = requestActiviti.get(URL, String.class);
@@ -533,7 +525,7 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
 					 FlowElement.class);
 			 flowElements.add(flowElement);*/
         }
-		 /*ProcessDefinitionModel processDefinitionModel =
+         /*ProcessDefinitionModel processDefinitionModel =
 				 mapper.readValue(jsnobject.toString(), 
 						 ProcessDefinitionModel.class);
 		 List<Process> processes = processDefinitionModel.getProcesses();
@@ -596,7 +588,6 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
      */
     @Override
     public void submitFormDataAndCompleteTask(String taskId, List<ActivitiFormVariableProperty> activitiFormVariableProperties) throws ActivitiPostException, JsonRequestConflictException, JsonRequestException {
-        // TODO Auto-generated method stub
 
         JSONArray properties = new JSONArray();
         for (ActivitiFormVariableProperty activitiFormVariableProperty : activitiFormVariableProperties) {
@@ -620,8 +611,7 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
 
     public ActivitiTaskVariable updateActivitiTaskVariable(String id, String name,
                                                            DTOActivitiTaskVariable dtoActivitiTaskVariable) throws
-            JsonParseException, JsonMappingException, IOException, ActivitiPutException, JsonRequestException {
-        // TODO Auto-generated method stub
+            IOException, ActivitiPutException, JsonRequestException {
         ObjectMapper mapper = new ObjectMapper();
         JSONObject requestObject = new JSONObject();
         requestObject.put("name", dtoActivitiTaskVariable.getName());

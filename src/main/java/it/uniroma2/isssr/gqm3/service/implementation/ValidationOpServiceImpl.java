@@ -83,7 +83,6 @@ public class ValidationOpServiceImpl implements ValidationOpService {
     //va testato
     @Override
     public ResponseEntity<?> getValidationOpListByMeasureTaskId(String measureTaskId, Phase phase) throws EntityNotFoundException, AnomalySystemException {
-        // TODO Auto-generated method stub
         /**
          * passo 1: trovo il measure task
          */
@@ -178,7 +177,6 @@ public class ValidationOpServiceImpl implements ValidationOpService {
      */
     @Override
     public ResponseEntity<?> createValidationOp(DTOValidationOp dtoValidationOp) throws BodyEmptyException, IdKeyNullException, EntityNotFoundException, AnomalySystemException {
-        // TODO Auto-generated method stub
 
         /**
          *  Leggo il DTO del body e setto ValidationOp
@@ -355,7 +353,6 @@ public class ValidationOpServiceImpl implements ValidationOpService {
     @Override
     public ResponseEntity<?> updateValidationOp(String id,
                                                 DTOValidationOp dtoValidationOp) throws BodyEmptyException, EntityNotFoundException, IdKeyNullException, AnomalySystemException {
-        // TODO Auto-generated method stub
         ValidationOp validationOp = validationOpRepository.findOne(id);
 
         if (dtoValidationOp == null) {
@@ -489,7 +486,6 @@ public class ValidationOpServiceImpl implements ValidationOpService {
      */
     @Override
     public ResponseEntity<?> deleteValidationOp(String id) throws AnomalySystemException, EntityNotFoundException {
-        // TODO Auto-generated method stub
 
         ValidationOp validationOp = validationOpRepository.findOne(id);
         if (validationOp == null) {
@@ -590,7 +586,6 @@ public class ValidationOpServiceImpl implements ValidationOpService {
      */
     @Override
     public ResponseEntity<?> getValidationOp(String id) throws EntityNotFoundException {
-        // TODO Auto-generated method stub
         ValidationOp validationOp = validationOpRepository.findOne(id);
         if (validationOp == null) {
             //ritorno HttpStatus.NOT_FOUND

@@ -30,8 +30,6 @@ import java.util.List;
  *
  */
 
-// TODO: Auto-generated Javadoc
-
 public class DTOResponseStrategicPlan extends DTO {
 
 	/** The Constant serialVersionUID. */

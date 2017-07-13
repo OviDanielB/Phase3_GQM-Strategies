@@ -1,6 +1,7 @@
 package it.uniroma2.isssr.gqm3.rest;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import it.uniroma2.isssr.gqm3.service.MeasureTaskService;
 import it.uniroma2.isssr.gqm3.service.ValidationOpService;
@@ -9,11 +10,13 @@ import it.uniroma2.isssr.gqm3.model.rest.DTOMeasureTask;
 import it.uniroma2.isssr.gqm3.model.rest.DTOValidationOp;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseMeasureTask;
 import it.uniroma2.isssr.gqm3.model.validation.Phase;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * <p>Title: RestVariableActivitiPresentation</p>
@@ -188,7 +191,7 @@ public class RestValidationOpPresentation {
     @RequestMapping(value = "/measureTask",
             method = RequestMethod.POST)
     public ResponseEntity<DTOResponseMeasureTask> createMeasureTask(
-            @RequestBody DTOMeasureTask dtoMeasureTask) {
+            @RequestBody DTOMeasureTask dtoMeasureTask) throws JsonProcessingException, BusException, UnsupportedEncodingException {
         return measureTaskService.createMeasureTask(dtoMeasureTask);
     }
 

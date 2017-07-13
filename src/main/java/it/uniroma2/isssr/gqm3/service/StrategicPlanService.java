@@ -1,5 +1,6 @@
 package it.uniroma2.isssr.gqm3.service;
 
+import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.model.Attribute;
 import it.uniroma2.isssr.gqm3.model.StrategicPlan;
 import it.uniroma2.isssr.gqm3.model.StrategyWorkflowRelation;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 
 /**
  * <p>Title: StrategicPlanService</p>
@@ -135,8 +135,7 @@ public interface StrategicPlanService {
 	 * @param name the name
 	 * @return the response entity
 	 */
-	public ResponseEntity<DTOResponseSWRelation> setMetaWorkflow(String strategicPlanId, String strategyId, String name);
-
+	public ResponseEntity<DTOResponseSWRelation> setMetaWorkflow(String strategicPlanId, String strategyId, String name) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException;
 
 
 	public ResponseEntity<DTOResponseSWRelation> getMetaWorkflows(String id);

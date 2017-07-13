@@ -75,6 +75,27 @@ public class StrategyServiceImpl implements StrategyService {
     @Autowired
     BusInterationImplementation busInterationImplementation;
 
+    @Override
+    public ResponseEntity<DTOResponseStrategy> createStrategy(String name, String description,
+                                                              String organizationalUnit, String organizationalUnitId) {
+        // TODO Auto-generated method stub
+
+        // per ora gestisco il campo version e release settandoli entrambi a 0
+        // nella creazione
+        Strategy strategy = new Strategy(name, description, organizationalUnit, 0, 0);
+        strategy.setOrganizationalunitId(organizationalUnitId);
+        strategyRepository.save(strategy);
+
+        DTOResponseStrategy dtoResponse = new DTOResponseStrategy();
+        dtoResponse.setStrategyid(strategy.getId());
+        dtoResponse.setStrategyName(strategy.getName());
+        dtoResponse.setStrategyDescription(strategy.getDescription());
+
+        ResponseEntity<DTOResponseStrategy> responseEntity = new ResponseEntity<DTOResponseStrategy>(dtoResponse,
+                HttpStatus.OK);
+        return responseEntity;
+
+    }
 
     /**
      * Metodo che restituisce la risposta della chiamata REST. La risposta è un
@@ -91,10 +112,9 @@ public class StrategyServiceImpl implements StrategyService {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategies() {
         /*
-         * // TODO Auto-generated method stub
-		 * 
+		 *
 		 * List<Strategy> strategies = strategyRepository.findAll();
-		 * 
+		 *
 		 * DTOResponse dtoResponse = new DTOResponse();
 		 * dtoResponse.setStrategies(strategies); ResponseEntity<DTOResponse>
 		 * responseEntity = new
@@ -104,11 +124,11 @@ public class StrategyServiceImpl implements StrategyService {
         return busInteration.getStrategies();
     }
 
+
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategy() {
         /*
-         * // TODO Auto-generated method stub
-		 * 
+		 *
 		 * List<Strategy> strategies = strategyRepository.findAll();
 		 * 
 		 * DTOResponse dtoResponse = new DTOResponse();
@@ -154,7 +174,7 @@ public class StrategyServiceImpl implements StrategyService {
                 } else {
                     Strategy toUpdate = mongoStrategy.get(0); // deve esserne
                     // presente solo
-                    // uno TODO
+                    // uno
                     // mettere un
                     // controllo di
                     // univocità
@@ -204,8 +224,7 @@ public class StrategyServiceImpl implements StrategyService {
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
 	/*	
-		// TODO Auto-generated method stub
-		
+
 		List<Strategy> strategies = strategyRepository.findAll();
 		
 		DTOResponse dtoResponse = new DTOResponse();

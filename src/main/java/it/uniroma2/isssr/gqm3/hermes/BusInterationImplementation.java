@@ -76,7 +76,6 @@ public class BusInterationImplementation implements BusInteration {
 
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategies() {
-        // TODO Auto-generated method stub
         List<Strategy> strategies = bus2Fase3Implementation.getStrategiesList();
         DTOResponseStrategy dtoResponse = new DTOResponseStrategy();
         dtoResponse.setStrategies(strategies);
@@ -86,7 +85,6 @@ public class BusInterationImplementation implements BusInteration {
     /*
 	@Override
 	public ResponseEntity<DTOResponseStrategy> getStrategies() {
-		// TODO Auto-generated method stub
 
 		List<Strategy> strategies =null;// bus2fase32Implementation.getStrategies();
 		DTOResponseStrategy dtoResponse =null;// new DTOResponseStrategy();
@@ -106,7 +104,6 @@ public class BusInterationImplementation implements BusInteration {
 
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
-        // TODO Auto-generated method stub
         List<Strategy> strategies = bus2Fase3Implementation.getStrategiesList();
         //List<StrategicPlan> strategicPlans = strategicPlanService.getStrategicPlansList();
         List<StrategicPlan> strategicPlans = strategicPlanRepository.findAll();
@@ -167,15 +164,12 @@ public class BusInterationImplementation implements BusInteration {
                 String response = message.send(hostSettings.getBusUri());
                 return response;
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
                 return "It cannot stringify dto object to a json string";
             } catch (BusException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
                 return "Error caused from bus interation";
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
                 return "IO Error sending message";
             }

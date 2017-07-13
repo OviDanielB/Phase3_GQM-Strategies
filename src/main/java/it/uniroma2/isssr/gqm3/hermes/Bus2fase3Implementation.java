@@ -86,13 +86,7 @@ public class Bus2fase3Implementation implements Bus2fase3 {
     }
 
 
-    /**
-     * Descrizione del metodo
-     *
-     * @param
-     * @return
-     * @throws
-     */
+
     public ArrayList<DTOStrategyFrom1> getStrategiesF1() {
         ArrayList<DTOStrategyFrom1> ls = new ArrayList<DTOStrategyFrom1>();
         String response = "", organizationalUnitId = "", organizationalUnitName = "", version = "", id = "";
@@ -110,16 +104,7 @@ public class Bus2fase3Implementation implements Bus2fase3 {
             BusMessage busMessage = new BusMessage(BusMessage.OPERATION_READ, "phase1", jsonRead.toString());
             response = busMessage.send(hostSettings.getBusUri());
             jsonResponse = new org.json.JSONArray(response);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        } catch (BusException e) {
-            // TODO Auto-generated catch block
+        } catch (IOException | JSONException | BusException e) {
             e.printStackTrace();
             return null;
         }
@@ -151,22 +136,8 @@ public class Bus2fase3Implementation implements Bus2fase3 {
                     ob.setOrganizationalUnitName(organizationalUnitName);
                     ob.setVersion(Integer.parseInt(version));
                     ls.add(ob);
-                } catch (JsonParseException e) {
-                    // TODO Auto-generated catch block
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
-                    continue;
-                } catch (JsonMappingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    continue;
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    continue;
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    continue;
                 }
 
             }
@@ -175,12 +146,6 @@ public class Bus2fase3Implementation implements Bus2fase3 {
         } else {
             return null;
         }
-    }
-
-
-    @Override
-    public void saveOnBus(String taskId, String processInstanceId) {
-        // TODO Auto-generated method stub
     }
 
 }

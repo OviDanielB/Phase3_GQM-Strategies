@@ -49,7 +49,6 @@ public class ActivitiProcessServiceImplementation implements ActivitiProcessServ
     @Override
     public HttpEntity<byte[]> getProcessInstanceState(
             String id) throws IOException {
-        // TODO Auto-generated method stub
         DTOResponseActivitiProcessState dtoResponseActivitiProcessState =
                 new DTOResponseActivitiProcessState();
         byte[] image = actitiviInterationImplementation.getProcessInstanceState(id);
@@ -67,7 +66,6 @@ public class ActivitiProcessServiceImplementation implements ActivitiProcessServ
      */
     @Override
     public ResponseEntity<DTOResponseActivitiProcess> getProcess(String username, String password) throws JsonParseException, JsonMappingException, IOException {
-        // TODO Auto-generated method stub
         return actitiviInterationImplementation.getProcess(username, password);
     }
     /**

@@ -2,6 +2,7 @@ package it.uniroma2.isssr.gqm3.rest;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.model.rest.response.activiti.DTOResponseActivitiProcess;
 import it.uniroma2.isssr.gqm3.model.rest.response.activiti.DTOResponseActivitiTask;
@@ -42,6 +43,7 @@ import java.io.IOException;
  */
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8082")
 @RequestMapping("/activiti/")
 public class RestActivitiPresentation {
 
@@ -71,6 +73,9 @@ public class RestActivitiPresentation {
 
     @Autowired
     ActivitiProcessService processService;
+
+    @Autowired
+    HostSettings hostSettings;
 
     /********************************************************************************************/
     /**
@@ -216,7 +221,7 @@ public class RestActivitiPresentation {
     @RequestMapping(value = "/activitiExplorerLogin/{username}/{password}", method = RequestMethod.GET)
     public void activitiExplorerLogin(HttpServletResponse response, @PathVariable("username") String username,
                                       @PathVariable("password") String password) throws IOException {
-        response.sendRedirect("http://qips.sweng.uniroma2.it/activiti-explorer/?username=" + username
+        response.sendRedirect(hostSettings.getActivitiExplorerConnectionUrl() + "/?username=" + username
                 + "&password=" + password);
     }
 
@@ -230,7 +235,7 @@ public class RestActivitiPresentation {
      */
     @RequestMapping(value = "/activitiExplorerModeler/{id}", method = RequestMethod.GET)
     public void activitiExplorerModeler(HttpServletResponse response, @PathVariable("id") String id) throws IOException {
-        response.sendRedirect("http://qips.sweng.uniroma2.it/activiti-explorer/modeler.html?modelId=" + id);
+        response.sendRedirect(hostSettings.getActivitiExplorerConnectionUrl() + "/modeler.html?modelId=" + id);
     }
 
     /**
