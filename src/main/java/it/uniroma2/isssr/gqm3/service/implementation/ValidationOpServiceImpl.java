@@ -319,7 +319,7 @@ public class ValidationOpServiceImpl implements ValidationOpService {
 
 	
 	/* Esempio body put (basta mandare il body corrente come se fosse una nuova create,
-	 * ma l'id resta uguale). Il taskId deve essere uguale, perché il sistema
+     * ma l'id resta uguale). Il taskId deve essere uguale, perché il sistema
 	 * è fatto che da errore se si cambia taskId ad un documento che ha già quell'id!
 	 * 
 	 * 
@@ -626,13 +626,15 @@ public class ValidationOpServiceImpl implements ValidationOpService {
             String businessWorkflowProcessDefinitionId) throws IOException, ActivitiGetException, JsonRequestException {
         List<WorkflowData> workflowDataList = workflowDataRepository.findByBusinessWorkflowProcessDefinitionId(businessWorkflowProcessDefinitionId);
         if (workflowDataList.isEmpty()) {
-            log.warn("1");
+            log.warn("no workflowdata found for businessWorkflowProcessDefinition: " + businessWorkflowProcessDefinitionId);
             //return httpstatus.notfound()
         }
         if (workflowDataList.size() > 1) {
             log.warn("2");
             //return httpstatus.notfound()
         }
+
+        //TODO: indexOutOfBound
         WorkflowData workflowData = workflowDataList.get(0);
         log.warn("3");
 

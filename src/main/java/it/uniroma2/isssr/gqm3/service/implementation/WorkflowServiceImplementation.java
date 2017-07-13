@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * @author emanuele
@@ -67,6 +68,7 @@ public class WorkflowServiceImplementation {
         workflowData.setBusinessWorkflowModelId(businessWorkflow.getModelId());
         workflowData.setMetaWorkflowName(metaWorkflow.getName());
         workflowData.setMetaWorkflowProcessInstanceId(metaWorkflow.getProcessInstanceId());
+        workflowData.setMeasureTasksList(new ArrayList<>());
 
 		/* save on local mongodb */
         workflowDataRepository.save(workflowData);

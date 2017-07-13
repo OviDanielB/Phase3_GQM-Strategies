@@ -29,7 +29,7 @@ import java.util.List;
  * @version 1.0
  *
  */
-@Service("Bus32Sevice")
+@Service("Bus32Service")
 public interface Bus2fase3 {
 	/**
 	 * Gets the strategies.

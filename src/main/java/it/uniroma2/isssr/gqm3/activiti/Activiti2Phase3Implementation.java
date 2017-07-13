@@ -480,8 +480,11 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
 
     @Override
     public List<FlowElement> getFlowElementsList(String username, String password, String businessWorkflowProcessDefinitionId) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-        String URL = hostSettings.getActivitiRestEndpointProcessDefinitions() +
+        String URL = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/"+
                 businessWorkflowProcessDefinitionId + "/model";
+
+        // debug
+        System.out.println(URL);
 
         ResponseEntity<String> response = requestActiviti.get(URL, String.class);
         JSONObject jsnobject = new JSONObject(response.getBody());
