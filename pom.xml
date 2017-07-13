@@ -6,8 +6,8 @@
 
     <groupId>it.uniroma2.isssr</groupId>
     <artifactId>gqm_phase3</artifactId>
-    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <!--<scope>provided</scope>-->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,11 +74,14 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>2.5.0</version>
         </dependency>
+
+
         <dependency>
-            <groupId>it.uniroma2.isssr</groupId>
-            <artifactId>integrazione</artifactId>
+            <groupId>it.uniroma2.isssr.integrazione</groupId>
+            <artifactId>BusDriver</artifactId>
             <version>0.9.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
@@ -110,7 +113,32 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>gqm3</finalName>
+                    <mainClass>it.uniroma2.isssr.Gqm3Application</mainClass>
+                    <finalName>phase3</finalName>
+                    <!--<layout>JAR</layout> -->
+                    <addResources>true</addResources>
+                    <executable>true</executable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create a jar with a manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>it.uniroma2.isssr.Gqm3Application</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
