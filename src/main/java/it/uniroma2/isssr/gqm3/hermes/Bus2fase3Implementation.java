@@ -101,7 +101,7 @@ public class Bus2fase3Implementation implements Bus2fase3 {
             jsonRead.put("instance", "");
             jsonRead.put("busVersion", "");
             jsonRead.put("tags", "[]");
-            BusMessage busMessage = new BusMessage(BusMessage.OPERATION_READ, "phase1", jsonRead.toString());
+            BusMessage busMessage = new BusMessage(BusMessage.OPERATION_READ, "phase2", jsonRead.toString());
             response = busMessage.send(hostSettings.getBusUri());
             jsonResponse = new org.json.JSONArray(response);
         } catch (IOException | JSONException | BusException e) {

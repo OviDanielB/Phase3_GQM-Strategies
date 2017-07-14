@@ -127,13 +127,13 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
 
 
         // Set task list
-        List<MeasureTask> measureTasksList = workflowData.getMeasureTasksList();
-        for (MeasureTask measureTask : measureTasksList) {
+        List<MeasureTask> originalMeasureTasksList = workflowData.getMeasureTasksList();
+        List<MeasureTask> newMeasureTasksList = new ArrayList<>();
+        for (MeasureTask measureTask : originalMeasureTasksList) {
             if (measureTaskRepository.findByTaskId(measureTask.getTaskId()) == null)
-                measureTaskRepository.save(measureTask);
+                newMeasureTasksList.add(measureTaskRepository.save(measureTask));
         }
-        s.setMeasureTasksList(measureTasksList);
-
+        s.setMeasureTasksList(newMeasureTasksList);
         // Save workflowData on local mongodb
         workflowDataRepository.save(s);
 

@@ -241,7 +241,7 @@ public class JsonRequestActiviti {
 	public <T> ResponseEntity<T> postMetaWorkflowMultiPart(String restAddress, Class<T> T, String metaWorkflowName,
                                                            String multiPartContent) throws JsonRequestException {
 
-		System.out.println(hostSettings.getActivitiRestConnectionUrl() + restAddress);// DEBUG
+//		System.out.println(hostSettings.getActivitiRestConnectionUrl() + restAddress);// DEBUG
 
 		HttpEntity<MultiValueMap<String, Object>> multiPartRequest = buildMultiPartMetaWorkflowRequest(metaWorkflowName,
 				multiPartContent);
