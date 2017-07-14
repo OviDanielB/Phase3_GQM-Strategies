@@ -27,7 +27,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,8 +77,8 @@
 
 
         <dependency>
-            <groupId>it.uniroma2.isssr.integrazione</groupId>
-            <artifactId>BusDriver</artifactId>
+            <groupId>it.uniroma2.isssr</groupId>
+            <artifactId>integrazione</artifactId>
             <version>0.9.5</version>
         </dependency>
 

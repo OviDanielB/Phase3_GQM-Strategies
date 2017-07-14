@@ -117,7 +117,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     @RequestMapping(value = "/measurement-plan", method = RequestMethod.POST)
     @ApiOperation(value = "Save a measurement plan", notes = "This endpoint saves a measurement plan.")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
-    public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) throws JsonRequestException, BusRequestException, BusException, IOException {
+    public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) {
 
 
         // Retrieve workflowData
@@ -127,14 +127,22 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
 
 
         // Set task list
-        List<MeasureTask> measureTasksList = measureTaskRepository.save(workflowData.getMeasureTasksList());
+        List<MeasureTask> measureTasksList = workflowData.getMeasureTasksList();
+        for (MeasureTask measureTask : measureTasksList) {
+            if (measureTaskRepository.findByTaskId(measureTask.getTaskId()) == null)
+                measureTaskRepository.save(measureTask);
+        }
         s.setMeasureTasksList(measureTasksList);
+
         // Save workflowData on local mongodb
         workflowDataRepository.save(s);
 
         // save on bus
-
-        busService2Phase4Implementation.saveWorkflowData(workflowData);
+        try {
+            busService2Phase4Implementation.saveWorkflowData(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         return ResponseEntity.status(HttpStatus.OK).body("The measurement plan has been successfully saved");

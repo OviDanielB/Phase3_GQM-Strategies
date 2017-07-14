@@ -60,6 +60,7 @@ import java.io.UnsupportedEncodingException;
  * @version 1.0
  */
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/validation/")
 public class RestValidationOpPresentation {
 
