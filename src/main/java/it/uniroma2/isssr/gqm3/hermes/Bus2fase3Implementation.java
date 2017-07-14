@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.model.Strategy;
-import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom1;
+import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom2;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategy;
 import it.uniroma2.isssr.gqm3.repository.StrategyRepository;
 import it.uniroma2.isssr.integrazione.BusException;
@@ -87,11 +87,11 @@ public class Bus2fase3Implementation implements Bus2fase3 {
 
 
 
-    public ArrayList<DTOStrategyFrom1> getStrategiesF1() {
-        ArrayList<DTOStrategyFrom1> ls = new ArrayList<DTOStrategyFrom1>();
+    public ArrayList<DTOStrategyFrom2> getStrategiesF2() {
+        ArrayList<DTOStrategyFrom2> ls = new ArrayList<>();
         String response = "", organizationalUnitId = "", organizationalUnitName = "", version = "", id = "";
 
-        DTOStrategyFrom1 ob = null;
+        DTOStrategyFrom2 ob = null;
         org.json.JSONArray jsonResponse = null;
         JSONObject jsonobj = null;
         try {
@@ -131,7 +131,7 @@ public class Bus2fase3Implementation implements Bus2fase3 {
                     String paylodas = jsonobj.getString("payload");
 //			paylodas= new String(Base64.getDecoder().decode(paylodas));
                     jsonobj = new JSONObject(paylodas);
-                    ob = obM.readValue(jsonobj.toString(), DTOStrategyFrom1.class);
+                    ob = obM.readValue(jsonobj.toString(), DTOStrategyFrom2.class);
                     ob.setOrganizationalUnitId(organizationalUnitId);
                     ob.setOrganizationalUnitName(organizationalUnitName);
                     ob.setVersion(Integer.parseInt(version));

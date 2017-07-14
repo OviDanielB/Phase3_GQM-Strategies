@@ -153,14 +153,14 @@ public class BusInterationImplementation implements BusInteration {
 
         Strategy strategy = strategyRepository.findOne(strategyId);
         DTOResponseStrategy dtoStrategy = new DTOResponseStrategy();
-        String json = "{  \"subject\" : \" Alert on terminal strategy \", \"body\" : \"Please modify strategy with the id: " + strategy.getIdF1() + "\"  };";
+        String json = "{  \"subject\" : \" Alert on terminal strategy \", \"body\" : \"Please modify strategy with the id: " + strategy.getIdF2() + "\"  };";
         if (strategy != null) {
             dtoStrategy.setStrategyid(strategy.getId());
             dtoStrategy.setStrategyDescription(strategy.getDescription());
             dtoStrategy.setStrategyName(strategy.getName());
-            dtoStrategy.setError("Please modify strategy with the id: " + strategy.getIdF1());
+            dtoStrategy.setError("Please modify strategy with the id: " + strategy.getIdF2());
             try {
-                BusMessage message = new BusMessage(BusMessage.OPERATION_MESSAGE, "phase3", "phase1", json);
+                BusMessage message = new BusMessage(BusMessage.OPERATION_MESSAGE, "phase3", "phase2", json);
                 String response = message.send(hostSettings.getBusUri());
                 return response;
             } catch (JSONException e) {

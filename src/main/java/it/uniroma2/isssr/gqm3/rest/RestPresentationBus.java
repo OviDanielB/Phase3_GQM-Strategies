@@ -35,7 +35,7 @@ public class RestPresentationBus {
             e.printStackTrace();
         }
         if (typeobj.equals("base64-TerminalStrategy")) {
-            strategyService.updateStrategyF1();
+            strategyService.updateStrategyF2();
             return new ResponseEntity<DTOLevel3Request>(dtoLevel3Request, HttpStatus.OK);
         }
 
@@ -55,7 +55,7 @@ public class RestPresentationBus {
 
     @RequestMapping(value = "/tryStrategy", method = RequestMethod.GET)
     public ResponseEntity tryStrategy() {
-        ResponseEntity result = strategyService.updateStrategyF1();
+        ResponseEntity result = strategyService.updateStrategyF2();
         DTO dto = new DTO();
         dto.setMessage("done");
         return result;

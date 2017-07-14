@@ -79,9 +79,8 @@ public class RestPresentation {
 
     @RequestMapping(value = "/getStrategiesF2", method = RequestMethod.GET)
     public ResponseEntity<DTOResponseStrategy> getStrategiesF2() {
-        strategyService.updateStrategyF1();
+        strategyService.updateStrategyF2();
         return bus2Fase3.getStrategies();
-
     }
 
 }
