@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8082")
+@CrossOrigin(origins = "*")
 @RequestMapping("/strategy/")
 public class RestPresentation {
 
