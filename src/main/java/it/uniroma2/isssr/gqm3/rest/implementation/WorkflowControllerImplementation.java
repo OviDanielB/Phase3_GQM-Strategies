@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8082")
+@CrossOrigin(origins = "*")
 @Api(value = "Workflow Controller", description = "Workflow Controller API")
 public class WorkflowControllerImplementation implements WorkflowController {
 

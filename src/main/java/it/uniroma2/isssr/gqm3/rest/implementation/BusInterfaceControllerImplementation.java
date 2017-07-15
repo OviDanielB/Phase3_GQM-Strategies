@@ -29,6 +29,7 @@ import it.uniroma2.isssr.gqm3.model.*;
 import it.uniroma2.isssr.gqm3.repository.MetricRepository;
 import it.uniroma2.isssr.gqm3.repository.SystemStateRepository;
 import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
+import it.uniroma2.isssr.gqm3.tools.BusObjectTypes;
 import it.uniroma2.isssr.gqm3.tools.JsonRequestActiviti;
 import it.uniroma2.isssr.gqm3.tools.XmlTools;
 import it.uniroma2.isssr.integrazione.BusException;
@@ -57,6 +58,7 @@ import java.net.URLDecoder;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "*")
 @Api(value = "busInterface", description = "Bus Interface API")
 public class BusInterfaceControllerImplementation implements
         BusInterfaceController {
@@ -64,24 +66,17 @@ public class BusInterfaceControllerImplementation implements
     private final Logger LOG = LoggerFactory
             .getLogger(BusInterfaceControllerImplementation.class);
 
-    private final HostSettings hostSettings;
-
-    private final MetricRepository metricRepository;
-
-    private final SystemStateRepository systemStateRepository;
-
-    private final WorkflowDataRepository workflowDataRepository;
-
+    @Autowired
+    private HostSettings hostSettings;
+    @Autowired
+    private MetricRepository metricRepository;
+    @Autowired
+    private SystemStateRepository systemStateRepository;
+    @Autowired
+    private WorkflowDataRepository workflowDataRepository;
     @Autowired
     private FeedbackControllerImplementation feedbackControllerImplementation;
 
-    @Autowired
-    public BusInterfaceControllerImplementation(HostSettings hostSettings, MetricRepository metricRepository, SystemStateRepository systemStateRepository, WorkflowDataRepository workflowDataRepository) {
-        this.hostSettings = hostSettings;
-        this.metricRepository = metricRepository;
-        this.systemStateRepository = systemStateRepository;
-        this.workflowDataRepository = workflowDataRepository;
-    }
 
     @RequestMapping(value = "/bus/notifications", method = RequestMethod.POST)
     @ApiOperation(value = "Receive Notifications", notes = "This endpoint manages all notifications from bus. Supported notifications are: Creating of some new users, "
@@ -292,6 +287,114 @@ public class BusInterfaceControllerImplementation implements
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
+    /* Save on Bus the Measurement Plan */
+    private Boolean saveWorkflowData(PostWorkflowToBeSaved workflowToBeSaved) throws JsonProcessingException,
+            IOException, ModelXmlNotFoundException, JSONException,
+            BusException, BusRequestException, IllegalSaveWorkflowRequestBodyException {
+
+        WorkflowData workflowData = workflowDataRepository.findByBusinessWorkflowModelId(workflowToBeSaved.getModelId()).get(0);
+
+        JSONObject payload = new JSONObject();
+        payload.put("_id", workflowData.get_id());
+        payload.put("businessWorkflowName", workflowData.getBusinessWorkflowName());
+        payload.put("metaWorkflowName", workflowData.getMetaWorkflowName());
+        payload.put("metaWorkflowProcessInstanceId", workflowData.getMetaWorkflowProcessInstanceId());
+        payload.put("businessWorkflowModelId", workflowData.getBusinessWorkflowModelId());
+        payload.put("businessWorkflowProcessDefinitionId", workflowData.getBusinessWorkflowProcessDefinitionId());
+        payload.put("businessWorkflowProcessInstanceId", workflowData.getBusinessWorkflowProcessInstanceId());
+        payload.put("measureTasksList", workflowData.getMeasureTasksList().toString());
+        payload.put("ended", workflowData.isEnded().toString());
+        String pl = payload.toString();
+
+        JSONObject jo = new JSONObject();
+        jo.put("objIdLocalToPhase", workflowData.get_id());
+        jo.put("typeObj", BusObjectTypes.WORKFLOW_DATA);
+        jo.put("instance", workflowData.getBusinessWorkflowName());
+        jo.put("tags", "[]");
+        jo.put("payload", pl);
+
+        BusMessage busMessage = new BusMessage(
+                BusMessage.OPERATION_UPDATE,
+                hostSettings.getPhaseName(), jo.toString());
+
+        String busResponse = busMessage.send(hostSettings.getBusUri());
+        System.out.println(busResponse);
+
+        BusReadResponse busResponseParsed;
+
+        ObjectMapper mapper = new ObjectMapper();
+        busResponseParsed = mapper.readValue(busResponse,
+                    BusReadResponse.class);
+        if (!busResponseParsed.getErr().equals("0")) {
+            busMessage = new BusMessage(BusMessage.OPERATION_CREATE,
+                    hostSettings.getPhaseName(), jo.toString());
+            busResponse = busMessage.send(hostSettings.getBusUri());
+            busResponseParsed = mapper.readValue(busResponse,
+                    BusReadResponse.class);
+            if (!busResponseParsed.getErr().equals("0")) {
+                throw new BusRequestException(
+                        busResponseParsed.getErr());
+            }
+        }
+        return true;
+    }
+
+    // TODO delete, it's PHASE 4
+    @RequestMapping(value = "/bus/workflowData", method = RequestMethod.GET)
+    @ApiOperation(value = "Get Workflow data", notes = "This endpoint retrieves the workflows previously exported")
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
+    public ResponseEntity<ArrayList<WorkflowData>> getWorkflowData()
+            throws BusException, IOException {
+        if (hostSettings.isBus()) {
+            JSONObject jo = new JSONObject();
+            jo.put("objIdLocalToPhase", "");
+            jo.put("typeObj", BusObjectTypes.WORKFLOW_DATA);
+            jo.put("instance", "");
+            jo.put("busVersion", "");
+            jo.put("tags", "[]");
+
+            BusMessage busMessage = new BusMessage(BusMessage.OPERATION_READ,
+                    hostSettings.getPhaseName(), jo.toString());
+
+
+            String busResponse;
+            busResponse = busMessage.send(hostSettings.getBusUri());
+            System.out.println(busResponse);
+
+            ObjectMapper mapper = new ObjectMapper();
+            List<BusReadResponse> readResponseList = mapper.readValue(
+                    busResponse,
+                    mapper.getTypeFactory().constructCollectionType(List.class,
+                            BusReadResponse.class));
+
+            ArrayList<WorkflowData> wfList = new ArrayList<>();
+            for (BusReadResponse response : readResponseList) {
+                WorkflowData workflow = mapper.treeToValue(
+                        response.getPayload(), WorkflowData.class);
+                wfList.add(workflow);
+            }
+
+            return new ResponseEntity<ArrayList<WorkflowData>>(wfList,
+                    HttpStatus.OK);
+        }
+
+        throw new BusException("ERROR: BUS Not present!");
+
+    }
+
+    /**
+     *  Save on bus the Workflow Xml
+     * @param workflowToBeSaved Contains the parameters of the workflow wanted to be saved to
+     *                          the bus (modelId and name)
+     * @param response          The HttpServletResponse
+     * @return
+     * @throws JsonProcessingException
+     * @throws IOException
+     * @throws ModelXmlNotFoundException
+     * @throws JSONException
+     * @throws BusException
+     * @throws BusRequestException
+     */
     @RequestMapping(value = "/bus/workflows", method = RequestMethod.POST)
     @ApiOperation(value = "Save Workflow", notes = "This endpoint saves a workflow definition")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
@@ -333,7 +436,7 @@ public class BusInterfaceControllerImplementation implements
                 // String pl = payload.toString();
                 JSONObject jo = new JSONObject();
                 jo.put("objIdLocalToPhase", workflowToBeSaved.getModelId());
-                jo.put("typeObj", "WorkflowXml");
+                jo.put("typeObj", BusObjectTypes.WORKFLOW_XML);
                 jo.put("instance", workflowToBeSaved.getName());
                 jo.put("tags", "[]");
                 jo.put("payload", pl);
@@ -359,7 +462,8 @@ public class BusInterfaceControllerImplementation implements
                                 busResponseParsed.getErr());
                     }
                 }
-                return new ResponseEntity<String>(busResponse, HttpStatus.OK);
+                if (saveWorkflowData(workflowToBeSaved))
+                    return new ResponseEntity<String>(busResponse, HttpStatus.OK);
             } else
                 System.out.println(xml);
 
@@ -388,7 +492,7 @@ public class BusInterfaceControllerImplementation implements
             // String pl = payload.toString();
             JSONObject jo = new JSONObject();
             jo.put("objIdLocalToPhase", "");
-            jo.put("typeObj", "WorkflowXml");
+            jo.put("typeObj", BusObjectTypes.WORKFLOW_XML);
             jo.put("instance", "");
             jo.put("busVersion", "");
             jo.put("tags", "[]");

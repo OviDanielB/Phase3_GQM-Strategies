@@ -43,7 +43,7 @@ import java.io.IOException;
  */
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8082")
+@CrossOrigin(origins = "*")
 @RequestMapping("/activiti/")
 public class RestActivitiPresentation {
 
