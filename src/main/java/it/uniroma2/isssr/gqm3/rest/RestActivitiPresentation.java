@@ -235,6 +235,8 @@ public class RestActivitiPresentation {
      */
     @RequestMapping(value = "/activitiExplorerModeler/{id}", method = RequestMethod.GET)
     public void activitiExplorerModeler(HttpServletResponse response, @PathVariable("id") String id) throws IOException {
+        // TODO complete task start and go to POPULATE METAWORKFLOW
+
         response.sendRedirect(hostSettings.getActivitiExplorerConnectionUrl() + "/modeler.html?modelId=" + id);
     }
 

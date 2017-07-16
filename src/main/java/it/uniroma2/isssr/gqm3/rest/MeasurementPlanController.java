@@ -1,8 +1,6 @@
 package it.uniroma2.isssr.gqm3.rest;
 
-import it.uniroma2.isssr.gqm3.Exception.BusRequestException;
-import it.uniroma2.isssr.gqm3.Exception.JsonRequestException;
-import it.uniroma2.isssr.gqm3.Exception.ProcessDefinitionImageNotFoundException;
+import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.model.WorkflowData;
 import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.http.MediaType;
@@ -22,6 +20,6 @@ public interface MeasurementPlanController {
      * @throws JsonRequestException
      */
     @RequestMapping(value = "/measurement-plan", method = RequestMethod.POST)
-    ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) throws JsonRequestException, BusRequestException, BusException, IOException;
+    ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) throws JsonRequestException, BusRequestException, BusException, IOException, IllegalSaveWorkflowRequestBodyException, ModelXmlNotFoundException;
 
 }

@@ -5,9 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.uniroma2.isssr.HostSettings;
-import it.uniroma2.isssr.gqm3.Exception.BusRequestException;
-import it.uniroma2.isssr.gqm3.Exception.JsonRequestException;
-import it.uniroma2.isssr.gqm3.Exception.ProcessDefinitionImageNotFoundException;
+import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.FlowElement;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.GroupActiviti;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessDefinitionModel;
@@ -58,7 +56,8 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     private WorkflowDataRepository workflowDataRepository;
 
     @Autowired
-    private BusService2Phase4Implementation busService2Phase4Implementation;
+//    private BusService2Phase4Implementation busService2Phase4Implementation;
+    private BusInterfaceControllerImplementation busInterfaceControllerImplentation;
 
     @RequestMapping(value = "/measurement-plan", method = RequestMethod.GET)
     @ApiOperation(value = "Get a measurement plan", notes = "This endpoint returns a measurement plan that needs to fill" +
@@ -117,7 +116,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     @RequestMapping(value = "/measurement-plan", method = RequestMethod.POST)
     @ApiOperation(value = "Save a measurement plan", notes = "This endpoint saves a measurement plan.")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
-    public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) {
+    public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) throws BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, ModelXmlNotFoundException, IOException {
 
 
         // Retrieve workflowData
@@ -154,12 +153,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
         workflowDataRepository.save(s);
 
         // save on bus
-        try {
-            busService2Phase4Implementation.saveWorkflowData(s);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        busInterfaceControllerImplentation.saveWorkflowData(s);
 
         return ResponseEntity.status(HttpStatus.OK).body("The measurement plan has been successfully saved");
 

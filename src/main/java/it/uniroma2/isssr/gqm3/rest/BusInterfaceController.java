@@ -92,7 +92,7 @@ public interface BusInterfaceController {
                                                  HttpServletResponse response)
             throws JsonParseException, JsonMappingException, JSONException, IOException, BusRequestException,
             BusException, ParseException, JsonRequestException, IllegalReceiveMessageRequestBodyException,
-            IssueMessageCatcherNotFoundException, WorkflowDataException, JsonRequestConflictException;
+            IssueMessageCatcherNotFoundException, WorkflowDataException, JsonRequestConflictException, IllegalSaveWorkflowRequestBodyException, ModelXmlNotFoundException;
 
     /**
      * Not Implemented

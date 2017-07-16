@@ -38,10 +38,10 @@ public interface WorkflowController {
      */
     @RequestMapping(value = "/workflows/create", method = RequestMethod.POST)
     ResponseEntity<?> createWorkflow(HttpServletResponse response,
-                                     @RequestBody PostCreateWorkflow createWorkflowBody) throws UnsupportedEncodingException,
+                                     @RequestBody PostCreateWorkflow createWorkflowBody) throws IOException,
             IOException, IllegalCharacterRequestException, ActivitiEntityAlreadyExistsException, JsonRequestException,
             MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, BusinessWorkflowNotCreatedException,
-            ModelXmlNotFoundException, ProcessDefinitionNotFoundException, JsonRequestConflictException, BusException, BusRequestException;
+            ModelXmlNotFoundException, ProcessDefinitionNotFoundException, JsonRequestConflictException, BusException, BusRequestException, IllegalSaveWorkflowRequestBodyException;
 
     /**
      * This is the endpoint to deploy a workflow model in Activiti if it does not exist
@@ -59,7 +59,7 @@ public interface WorkflowController {
     @RequestMapping(value = "/workflows/deployments", method = RequestMethod.POST)
     ResponseEntity<?> deployWorkflowModel(@RequestBody PostDeploy deployBody)
             throws JsonRequestException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException,
-            WorkflowDataException, IOException, ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException;
+            WorkflowDataException, IOException, ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException;
 
     /**
      * This is the endpoint to obtain information about the status of deployment of a processDefinition
@@ -90,7 +90,7 @@ public interface WorkflowController {
     @RequestMapping(value = "/workflows/processinstances", method = RequestMethod.POST)
     ResponseEntity<?> startWorkflowProcessInstance(@RequestBody PostStartProcessInstance startProcessInstanceBody)
             throws JsonRequestException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException,
-            MetaWorkflowNotStartedException, WorkflowDataException, JsonRequestConflictException;
+            MetaWorkflowNotStartedException, WorkflowDataException, JsonRequestConflictException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException;
 
     /**
      * This is the endpoint to check if a process definition already has a process instances, i.e. to mantain a one-to-one relation between process definitions and proccess instances

@@ -89,7 +89,7 @@ public class BusInterfaceControllerImplementation implements
             BusRequestException, BusException, ParseException,
             JsonRequestException, IllegalReceiveMessageRequestBodyException,
             IssueMessageCatcherNotFoundException, WorkflowDataException,
-            JsonRequestConflictException {
+            JsonRequestConflictException, IllegalSaveWorkflowRequestBodyException, ModelXmlNotFoundException {
 
         String data = busNotification.getData();
 
@@ -288,11 +288,9 @@ public class BusInterfaceControllerImplementation implements
     }
 
     /* Save on Bus the Measurement Plan */
-    private Boolean saveWorkflowData(PostWorkflowToBeSaved workflowToBeSaved) throws JsonProcessingException,
+    public Boolean saveWorkflowData(WorkflowData workflowData) throws JsonProcessingException,
             IOException, ModelXmlNotFoundException, JSONException,
             BusException, BusRequestException, IllegalSaveWorkflowRequestBodyException {
-
-        WorkflowData workflowData = workflowDataRepository.findByBusinessWorkflowModelId(workflowToBeSaved.getModelId()).get(0);
 
         JSONObject payload = new JSONObject();
         payload.put("_id", workflowData.get_id());
@@ -462,7 +460,9 @@ public class BusInterfaceControllerImplementation implements
                                 busResponseParsed.getErr());
                     }
                 }
-                if (saveWorkflowData(workflowToBeSaved))
+                if (saveWorkflowData(
+                        workflowDataRepository.findByBusinessWorkflowModelId(
+                                workflowToBeSaved.getModelId()).get(0)))
                     return new ResponseEntity<String>(busResponse, HttpStatus.OK);
             } else
                 System.out.println(xml);

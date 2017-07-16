@@ -6,6 +6,8 @@ import it.uniroma2.isssr.gqm3.model.BusinessWorkflow;
 import it.uniroma2.isssr.gqm3.model.MetaWorkflow;
 import it.uniroma2.isssr.gqm3.model.WorkflowData;
 import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
+import it.uniroma2.isssr.gqm3.rest.implementation.BusInterfaceControllerImplementation;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,10 +33,11 @@ public class WorkflowServiceImplementation {
     private WorkflowDataRepository workflowDataRepository;
 
     @Autowired
-    private BusService2Phase4Implementation busService2Phase4Implementation;
+//    private BusService2Phase4Implementation busService2Phase4Implementation;
+    private BusInterfaceControllerImplementation busInterfaceControllerImplementation;
 
 
-    public ResponseEntity<String> createWorkflow(String workflowName) throws IllegalCharacterRequestException, JsonRequestException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, ProcessDefinitionNotFoundException, MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, JsonRequestConflictException, BusinessWorkflowNotCreatedException {
+    public ResponseEntity<String> createWorkflow(String workflowName) throws IllegalCharacterRequestException, JsonRequestException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, ProcessDefinitionNotFoundException, MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, JsonRequestConflictException, BusinessWorkflowNotCreatedException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
         for (char character : ILLEGAL_CHARACTERS) {
             if (workflowName.indexOf(character) >= 0) {
@@ -73,12 +76,9 @@ public class WorkflowServiceImplementation {
 		/* save on local mongodb */
         workflowDataRepository.save(workflowData);
 
-        /* save on bus */
-        try {
-            busService2Phase4Implementation.saveWorkflowData(workflowData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        /* save on bus not necessary */
+//        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
+
 
         JSONObject response = new JSONObject();
         response.put("metaWorkflowProcessInstanceId", metaWorkflow.getProcessInstanceId());
