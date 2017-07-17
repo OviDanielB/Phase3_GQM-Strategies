@@ -122,16 +122,11 @@ public class BusInterfaceControllerImplementation implements
                     readBody.put("instance", instance);
                     readBody.put("busVersion", "");
                     readBody.put("tags", "[]");
-                    BusMessage readIssueMessage = new BusMessage(
-                            BusMessage.OPERATION_READ, phase,
-                            readBody.toString());
-                    String readResponseString = readIssueMessage
-                            .send(hostSettings.getBusUri());
+                    BusMessage readIssueMessage = new BusMessage(BusMessage.OPERATION_READ, phase, readBody.toString());
+                    String readResponseString = readIssueMessage.send(hostSettings.getBusUri());
                     ObjectMapper mapper = new ObjectMapper();
                     System.out.println(readResponseString);
-                    List<BusReadResponse> readResponses = mapper.readValue(
-                            readResponseString,
-                            mapper.getTypeFactory().constructCollectionType(
+                    List<BusReadResponse> readResponses = mapper.readValue(readResponseString, mapper.getTypeFactory().constructCollectionType(
                                     List.class, BusReadResponse.class));
                     BusReadResponse readResponse = readResponses.get(0);
                     if (readResponse == null) {
@@ -293,6 +288,8 @@ public class BusInterfaceControllerImplementation implements
             BusException, BusRequestException, IllegalSaveWorkflowRequestBodyException {
 
         JSONObject payload = new JSONObject();
+        ObjectMapper mapper = new ObjectMapper();
+
         payload.put("_id", workflowData.get_id());
         payload.put("businessWorkflowName", workflowData.getBusinessWorkflowName());
         payload.put("metaWorkflowName", workflowData.getMetaWorkflowName());
@@ -300,7 +297,8 @@ public class BusInterfaceControllerImplementation implements
         payload.put("businessWorkflowModelId", workflowData.getBusinessWorkflowModelId());
         payload.put("businessWorkflowProcessDefinitionId", workflowData.getBusinessWorkflowProcessDefinitionId());
         payload.put("businessWorkflowProcessInstanceId", workflowData.getBusinessWorkflowProcessInstanceId());
-        payload.put("measureTasksList", workflowData.getMeasureTasksList().toString());
+
+        payload.put("measureTasksList", mapper.writeValueAsString(workflowData.getMeasureTasksList()));
         payload.put("ended", workflowData.isEnded().toString());
         String pl = payload.toString();
 
@@ -320,12 +318,10 @@ public class BusInterfaceControllerImplementation implements
 
         BusReadResponse busResponseParsed;
 
-        ObjectMapper mapper = new ObjectMapper();
         busResponseParsed = mapper.readValue(busResponse,
                     BusReadResponse.class);
         if (!busResponseParsed.getErr().equals("0")) {
-            busMessage = new BusMessage(BusMessage.OPERATION_CREATE,
-                    hostSettings.getPhaseName(), jo.toString());
+            busMessage = new BusMessage(BusMessage.OPERATION_CREATE, hostSettings.getPhaseName(), jo.toString());
             busResponse = busMessage.send(hostSettings.getBusUri());
             busResponseParsed = mapper.readValue(busResponse,
                     BusReadResponse.class);
@@ -336,6 +332,52 @@ public class BusInterfaceControllerImplementation implements
         }
         return true;
     }
+
+//    /* Save on Bus the Measure Task*/
+//    public Boolean saveMeasureTask(MeasureTask measureTask) throws JsonProcessingException,
+//            IOException, ModelXmlNotFoundException, JSONException,
+//            BusException, BusRequestException, IllegalSaveWorkflowRequestBodyException {
+//        JSONObject payload = new JSONObject();
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        payload.put("_id", measureTask.get_id());
+//        payload.put("taskId", measureTask.getTaskId());
+//        payload.put("metric", mapper.writeValueAsString(measureTask.getMetric()));
+//        payload.put("metric", measureTask.getMetric());
+//        payload.put("means", measureTask.getMeans());
+//        payload.put("responsible", measureTask.getResponsible());
+//        payload.put("source", measureTask.getSource());
+//
+//        JSONObject jo = new JSONObject();
+//        jo.put("objIdLocalToPhase", measureTask.get_id());
+//        jo.put("typeObj", BusObjectTypes.MEASURE_TASK);
+//        jo.put("instance", measureTask.getClass());
+//        jo.put("tags", "[]");
+//        jo.put("payload", payload.toString());
+//
+//        BusMessage busMessage = new BusMessage(
+//                BusMessage.OPERATION_UPDATE,
+//                hostSettings.getPhaseName(), jo.toString());
+//
+//        String busResponse = busMessage.send(hostSettings.getBusUri());
+//        System.out.println(busResponse);
+//
+//        BusReadResponse busResponseParsed;
+//
+//        busResponseParsed = mapper.readValue(busResponse,
+//                BusReadResponse.class);
+//        if (!busResponseParsed.getErr().equals("0")) {
+//            busMessage = new BusMessage(BusMessage.OPERATION_CREATE, hostSettings.getPhaseName(), jo.toString());
+//            busResponse = busMessage.send(hostSettings.getBusUri());
+//            busResponseParsed = mapper.readValue(busResponse,
+//                    BusReadResponse.class);
+//            if (!busResponseParsed.getErr().equals("0")) {
+//                throw new BusRequestException(
+//                        busResponseParsed.getErr());
+//            }
+//        }
+//        return true;
+//    }
 
     // TODO delete, it's PHASE 4
     @RequestMapping(value = "/bus/workflowData", method = RequestMethod.GET)
@@ -482,6 +524,9 @@ public class BusInterfaceControllerImplementation implements
                     e.getMessage());
         }
     }
+
+
+
 
     @RequestMapping(value = "/bus/workflows", method = RequestMethod.GET)
     @ApiOperation(value = "Get Workflows", notes = "This endpoint retrieves the workflows previously exported")
@@ -745,7 +790,7 @@ public class BusInterfaceControllerImplementation implements
             jsonGetUsers.put("instance", "");
             jsonGetUsers.put("busVersion", "");
 
-            busMessage = new BusMessage(BusMessage.OPERATION_GETUSERS, "phase3", jsonGetUsers.toString());
+            busMessage = new BusMessage(BusMessage.OPERATION_GETUSERS, "phase", jsonGetUsers.toString());
             responseFromBus = busMessage.send(address);
             users = mapper.readValue(responseFromBus, mapper.getTypeFactory()
                     .constructCollectionType(List.class, User.class));

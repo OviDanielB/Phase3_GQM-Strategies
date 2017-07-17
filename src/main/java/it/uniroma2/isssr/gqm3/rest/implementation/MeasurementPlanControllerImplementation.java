@@ -66,6 +66,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     public ResponseEntity<?> getMeasurementPlan(@RequestParam(value = "modelId") String modelId)
             throws JsonRequestException {
 
+        System.out.println(modelId);
         List<WorkflowData> listStrategy = workflowDataRepository.findByBusinessWorkflowModelId(modelId);
         WorkflowData workflowData = listStrategy.get(0);
 
@@ -120,8 +121,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
 
 
         // Retrieve workflowData
-        List<WorkflowData> listStrategy = workflowDataRepository
-                .findByBusinessWorkflowModelId(workflowData.getBusinessWorkflowModelId());
+        List<WorkflowData> listStrategy = workflowDataRepository.findByBusinessWorkflowModelId(workflowData.getBusinessWorkflowModelId());
         WorkflowData s = listStrategy.get(0);
 
 
@@ -131,7 +131,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
         for (MeasureTask measureTask : originalMeasureTasksList) {
             List<MeasureTask> measureTasks = measureTaskRepository.findByTaskId(measureTask.getTaskId());
             MeasureTask m;
-            if (measureTasks == null) {
+            if (measureTasks.size() == 0) {
                 m = measureTask;
             } else {
                 m = measureTasks.get(0);
@@ -147,6 +147,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
             }
             newMeasureTasksList.add(m);
             measureTaskRepository.save(m);
+//            busInterfaceControllerImplentation.saveMeasureTask(m);
         }
         s.setMeasureTasksList(newMeasureTasksList);
         // Save workflowData on local mongodb

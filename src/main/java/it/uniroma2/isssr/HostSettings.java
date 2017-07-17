@@ -18,88 +18,88 @@ import org.springframework.context.annotation.Configuration;
 public class HostSettings {
 
     @Value("${host.address}")
-    private  String address;
+    private String address;
 
     @Value("${host.port}")
-    private  String port;
+    private String port;
 
     @Value("${host.activiti.address}")
-    public  String activitiAddress;
+    public String activitiAddress;
 
     @Value("${host.activiti.port}")
-    private  String activitiPort;
+    private String activitiPort;
 
     @Value("${host.activiti.username}")
-    private  String activitiUsername;
+    private String activitiUsername;
 
     @Value("${host.activiti.password}")
-    private  String activitiPassword;
+    private String activitiPassword;
 
     @Value("${host.activiti.modeler.uri}")
-    private  String activitiModelerUri;
+    private String activitiModelerUri;
 
     @Value("${host.activiti.explorer.endpoint}")
-    private  String activitiExplorerEndpoint;
+    private String activitiExplorerEndpoint;
 
     @Value("${host.activiti.rest.endpoint.models}")
-    private  String activitiRestEndpointModels;
+    private String activitiRestEndpointModels;
 
     @Value("${host.activiti.rest.endpoint.deployments}")
-    private  String activitiRestEndpointDeployments;
+    private String activitiRestEndpointDeployments;
 
     @Value("${host.activiti.rest.endpoint.processdefinitions}")
-    private  String activitiRestEndpointProcessDefinitions;
+    private String activitiRestEndpointProcessDefinitions;
 
     @Value("${host.activiti.rest.endpoint.processistances.model.suffix}")
-    private  String activitiRestEndpointProcessDefinitionsModelSuffix;
+    private String activitiRestEndpointProcessDefinitionsModelSuffix;
 
     @Value("${host.activiti.rest.endpoint.processistances.image.suffix}")
-    private  String activitiRestEndpointProcessDefinitionsImageSuffix;
+    private String activitiRestEndpointProcessDefinitionsImageSuffix;
 
     @Value("${host.activiti.rest.endpoint.processistances}")
-    private  String activitiRestEndpointProcessInstances;
+    private String activitiRestEndpointProcessInstances;
 
     @Value("${host.activiti.rest.endpoint.executions}")
-    private  String activitiRestEndpointExecutions;
+    private String activitiRestEndpointExecutions;
 
     @Value("${host.activiti.rest.endpoint.query.executions}")
-    private  String activitiRestEndpointQueryExecutions;
+    private String activitiRestEndpointQueryExecutions;
 
     @Value("${host.activiti.rest.endpoint.tasks}")
-    private  String activitiRestEndpointTasks;
+    private String activitiRestEndpointTasks;
 
     @Value("${host.activiti.rest.endpoint.tasks.variables.suffix}")
-    private  String activitiRestEndpointTasksVariablesSuffix;
+    private String activitiRestEndpointTasksVariablesSuffix;
 
     @Value("${host.activiti.rest.endpoint.query.tasks}")
-    private  String activitiRestEndpointQueryTasks;
+    private String activitiRestEndpointQueryTasks;
 
     @Value("${host.activiti.rest.endpoint.history.historictaskinstances}")
-    private  String activitiRestEndpointHistoryHistoricTaskInstances;
+    private String activitiRestEndpointHistoryHistoricTaskInstances;
 
     @Value("${host.activiti.rest.endpoint.identity.groups}")
-    private  String activitiRestEndpointIdentityGroups;
+    private String activitiRestEndpointIdentityGroups;
 
     @Value("${host.activiti.rest.endpoint.identity.users}")
-    private  String activitiRestEndpointIdentityUsers;
+    private String activitiRestEndpointIdentityUsers;
 
     @Value("${host.activiti.rest.endpoint}")
-    private  String activitiRestEndpoint;
+    private String activitiRestEndpoint;
 
     @Value("${host.activiti.task.variable.state}")
-    private  String activitiTaskVariableState;
+    private String activitiTaskVariableState;
 
     @Value("${host.activiti.task.variable.responsible}")
-    private  String activitiTaskVariableResponsible;
+    private String activitiTaskVariableResponsible;
 
     @Value("${host.activiti.task.variable.assignee}")
-    private  String activitiTaskVariableAssignee;
+    private String activitiTaskVariableAssignee;
 
     @Value("${host.activiti.task.variable.errormessage}")
-    private  String activitiTaskVariableErrormessage;
+    private String activitiTaskVariableErrormessage;
 
     @Value("${host.activiti.task.variable.idcollecteddata}")
-    private  String activitiTaskVariableIdCollectedData;
+    private String activitiTaskVariableIdCollectedData;
 
     @Value("${host.metaworkflow.prefix}")
     private String metaworkflowPrefix;
@@ -108,76 +108,76 @@ public class HostSettings {
     private String metaworkflowSuffix;
 
     @Value("${host.metaworkflow.path}")
-    private  String metaworkflowPath;
+    private String metaworkflowPath;
 
     @Value("${host.metaworkflow.processidentifiername}")
-    private  String metaworkflowProcessIdentifierName;
+    private String metaworkflowProcessIdentifierName;
 
     @Value("${host.metaworkflow.name}")
-    private  String metaworkflowName;
+    private String metaworkflowName;
 
     @Value("${host.debug}")
-    private  boolean debug;
+    private boolean debug;
 
     @Value("${host.mongodb.username}")
-    private  String mongodbUsername;
+    private String mongodbUsername;
 
     @Value("${host.mongodb.password}")
-    private  String mongodbPassword;
+    private String mongodbPassword;
 
     @Value("${host.mongodb.database}")
-    private  String mongodbDatabase;
+    private String mongodbDatabase;
 
     @Value("${host.mongodb.host}")
-    private  String mongodbHost;
+    private String mongodbHost;
 
     @Value("${host.mongodb.port}")
     private  Integer mongodbPort;
 
     @Value("${host.webapp.endpoint.backend}")
-    private  String webappBackendEndpoint;
+    private String webappBackendEndpoint;
 
     @Value("${host.webapp.endpoint.frontend}")
-    private  String webappFrontendEndpoint;
+    private String webappFrontendEndpoint;
 
     @Value("${host.webapp.endpoint.deploy}")
-    private  String deployEndpoint;
+    private String deployEndpoint;
 
     @Value("${host.webapp.endpoint.start}")
-    private  String startEndpoint;
+    private String startEndpoint;
 
     @Value("${host.webapp.endpoint.export}")
-    private  String exportEndpoint;
+    private String exportEndpoint;
 
     @Value("${host.webapp.endpoint.measure-planning}")
-    private  String measurePlanningEndpoint;
+    private String measurePlanningEndpoint;
 
     @Value("${host.webapp.endpoint.validation-planning}")
-    private  String validationPlanningEndpoint;
+    private String validationPlanningEndpoint;
 
     @Value("${host.webapp.endpoint.workflowdata-plans-uri}")
-    private  String workflowDataPlansUri;
+    private String workflowDataPlansUri;
 
     @Value("${host.bus}")
-    private  Boolean bus;
+    private Boolean bus;
 
     @Value("${host.bus.address}")
-    private  String busAddress;
+    private String busAddress;
 
     @Value("${host.bus.port}")
-    private  String busPort;
+    private String busPort;
 
     @Value("${host.bus.endpoint}")
-    private  String busEndpoint;
+    private String busEndpoint;
 
     @Value("${host.bus.phase.name}")
-    private  String phaseName;
+    private String phaseName;
 
     @Value("${host.bus.phase.typeObject.user.create}")
-    private  String userCreateTypeObject;
+    private String userCreateTypeObject;
 
     @Value("${host.bus.phase.typeObject.user.delete}")
-    private  String userDeleteTypeObject;
+    private String userDeleteTypeObject;
 
     public  enum state {
         MODIFIED(0), NOT_MODIFIED(1), NEW(2);
