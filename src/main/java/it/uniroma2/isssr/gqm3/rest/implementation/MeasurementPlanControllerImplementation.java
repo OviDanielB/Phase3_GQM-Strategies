@@ -154,7 +154,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
         workflowDataRepository.save(s);
 
         // save on bus
-        busInterfaceControllerImplentation.saveWorkflowData(s);
+//        busInterfaceControllerImplentation.saveWorkflowData(s);
 
         return ResponseEntity.status(HttpStatus.OK).body("The measurement plan has been successfully saved");
 
