@@ -1,6 +1,6 @@
 package it.uniroma2.isssr.gqm3.model.rest;
 
-public class DTOStrategyFrom1 extends DTO {
+public class DTOStrategyFrom2 extends DTO {
 
 	/**
 	 * 

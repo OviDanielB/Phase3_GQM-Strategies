@@ -2,7 +2,7 @@
 package it.uniroma2.isssr.gqm3.hermes;
 
 import it.uniroma2.isssr.gqm3.model.Strategy;
-import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom1;
+import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom2;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public interface Bus2fase3 {
 
 	ResponseEntity<DTOResponseStrategy> getStrategies();
 	
-	ArrayList<DTOStrategyFrom1> getStrategiesF1();
+	ArrayList<DTOStrategyFrom2> getStrategiesF2();
 
 	/**
 	 * Gets the strategies.

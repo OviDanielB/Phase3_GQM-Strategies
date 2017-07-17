@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8082")
+@CrossOrigin(origins = "*")
 @Api(value = "Measurement Plan", description = "Measurement Plan API")
 public class MeasurementPlanControllerImplementation implements MeasurementPlanController {
 
@@ -117,7 +117,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     @RequestMapping(value = "/measurement-plan", method = RequestMethod.POST)
     @ApiOperation(value = "Save a measurement plan", notes = "This endpoint saves a measurement plan.")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
-    public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) throws JsonRequestException, BusRequestException, BusException, IOException {
+    public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) {
 
 
         // Retrieve workflowData
@@ -127,14 +127,38 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
 
 
         // Set task list
-        List<MeasureTask> measureTasksList = measureTaskRepository.save(workflowData.getMeasureTasksList());
-        s.setMeasureTasksList(measureTasksList);
+        List<MeasureTask> originalMeasureTasksList = workflowData.getMeasureTasksList();
+        List<MeasureTask> newMeasureTasksList = new ArrayList<>();
+        for (MeasureTask measureTask : originalMeasureTasksList) {
+            List<MeasureTask> measureTasks = measureTaskRepository.findByTaskId(measureTask.getTaskId());
+            MeasureTask m;
+            if (measureTasks == null) {
+                m = measureTask;
+            } else {
+                m = measureTasks.get(0);
+
+                m.set_id(measureTask.get_id());
+                m.setTaskId(measureTask.getTaskId());
+                m.setMeans(measureTask.getMeans());
+                m.setMetric(measureTask.getMetric());
+                m.setResponsible(measureTask.getResponsible());
+                m.setSource(measureTask.getSource());
+                m.setValidationIdList(measureTask.getValidationIdList());
+
+            }
+            newMeasureTasksList.add(m);
+            measureTaskRepository.save(m);
+        }
+        s.setMeasureTasksList(newMeasureTasksList);
         // Save workflowData on local mongodb
         workflowDataRepository.save(s);
 
         // save on bus
-
-        busService2Phase4Implementation.saveWorkflowData(workflowData);
+        try {
+            busService2Phase4Implementation.saveWorkflowData(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         return ResponseEntity.status(HttpStatus.OK).body("The measurement plan has been successfully saved");

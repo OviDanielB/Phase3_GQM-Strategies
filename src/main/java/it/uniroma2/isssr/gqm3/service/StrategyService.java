@@ -40,7 +40,7 @@ public interface StrategyService {
 
     ResponseEntity<DTOResponseStrategy> getStrategy();
 
-    ResponseEntity updateStrategyF1();
+    ResponseEntity updateStrategyF2();
 
     /**
      * Gets the strategies whit a not utilized organizational unit.
