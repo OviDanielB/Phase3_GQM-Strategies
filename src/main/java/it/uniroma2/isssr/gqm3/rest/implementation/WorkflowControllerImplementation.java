@@ -120,7 +120,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
 
         /* update workflowData on bus */
         /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
-        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
+//        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
 
         JSONObject response = new JSONObject();
         response.put("businessWorkflowProcessDefinitionId", businessWorkflowProcessDefinitionId);

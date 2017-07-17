@@ -1,5 +1,6 @@
 package it.uniroma2.isssr.gqm3.service.implementation;
 
+import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.activiti.ActivitiInterationImplementation;
 import it.uniroma2.isssr.gqm3.service.ValidationOpService;
@@ -71,6 +72,9 @@ public class ValidationOpServiceImpl implements ValidationOpService {
 
     @Autowired
     Bus2fase3 bus2Fase3;
+
+    @Autowired
+    HostSettings hostSettings;
 
     /**
      * Metodo che restituisce una ResponseEntity, che contiene nel body un
@@ -151,11 +155,8 @@ public class ValidationOpServiceImpl implements ValidationOpService {
 
         //le devo ritornare in modo che siano una lista di oggetti con HttpStatus.Ok
 
-        ResponseEntity<List<DTOResponseValidationOp>> responseEntity =
-                new ResponseEntity<List<DTOResponseValidationOp>>(
-                        dtoResponseValidationOpList, HttpStatus.OK);
-        return responseEntity;
-
+        return new ResponseEntity<List<DTOResponseValidationOp>>(
+                dtoResponseValidationOpList, HttpStatus.OK);
 
     }
 
@@ -644,7 +645,7 @@ public class ValidationOpServiceImpl implements ValidationOpService {
 
         //dentro ogni measureTask c'è un taskId ed una metrica
         List<FlowElement> flowElementList = activitiInterationImplementation.getFlowElementsList(
-                "kermit", "kermit", businessWorkflowProcessDefinitionId);
+                hostSettings.getActivitiUsername(), hostSettings.getActivitiPassword(), businessWorkflowProcessDefinitionId);
 
         List<MetricTask> metricTasks = new ArrayList<MetricTask>();
         for (int i = 0; i < measureTasksList.size(); i++) {

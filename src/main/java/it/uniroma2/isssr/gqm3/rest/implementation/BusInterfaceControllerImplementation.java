@@ -502,8 +502,7 @@ public class BusInterfaceControllerImplementation implements
                                 busResponseParsed.getErr());
                     }
                 }
-                if (saveWorkflowData(
-                        workflowDataRepository.findByBusinessWorkflowModelId(
+                if (saveWorkflowData(workflowDataRepository.findByBusinessWorkflowModelId(
                                 workflowToBeSaved.getModelId()).get(0)))
                     return new ResponseEntity<String>(busResponse, HttpStatus.OK);
             } else
