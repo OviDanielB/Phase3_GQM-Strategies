@@ -1,11 +1,13 @@
 package it.uniroma2.isssr.gqm3.service.implementation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.service.StrategicPlanService;
+import it.uniroma2.isssr.integrazione.BusException;
 import it.uniroma2.isssr.integrazione.BusMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -365,7 +367,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 
     @Override
     public ResponseEntity<DTOResponseSWRelation> setMetaWorkflow(String strategicPlanId, String strategyId,
-                                                                 String name) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException {
+                                                                 String name) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
         ResponseEntity<DTOResponseSWRelation> responseEntity;
         StrategicPlan strategicP = strategicPlanRepository.findOne(strategicPlanId);
         Strategy strategy = strategyRepository.findOne(strategyId);

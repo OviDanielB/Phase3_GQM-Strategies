@@ -8,8 +8,10 @@ import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseAttribute;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseMetaWorkflow;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseSWRelation;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategicPlan;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +137,7 @@ public interface StrategicPlanService {
 	 * @param name the name
 	 * @return the response entity
 	 */
-	public ResponseEntity<DTOResponseSWRelation> setMetaWorkflow(String strategicPlanId, String strategyId, String name) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException;
+	public ResponseEntity<DTOResponseSWRelation> setMetaWorkflow(String strategicPlanId, String strategyId, String name) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException;
 
 
 	public ResponseEntity<DTOResponseSWRelation> getMetaWorkflows(String id);

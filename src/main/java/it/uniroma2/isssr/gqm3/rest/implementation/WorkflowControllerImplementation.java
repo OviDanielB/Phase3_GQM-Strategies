@@ -24,6 +24,7 @@ import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
 import it.uniroma2.isssr.gqm3.service.implementation.BusService2Phase4Implementation;
 import it.uniroma2.isssr.gqm3.service.implementation.WorkflowServiceImplementation;
 import it.uniroma2.isssr.gqm3.tools.JsonRequestActiviti;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8082")
+@CrossOrigin(origins = "*")
 @Api(value = "Workflow Controller", description = "Workflow Controller API")
 public class WorkflowControllerImplementation implements WorkflowController {
 
@@ -48,11 +49,14 @@ public class WorkflowControllerImplementation implements WorkflowController {
     @Autowired
     private WorkflowDataRepository workflowDataRepository;
 
-    @Autowired
-    private BusService2Phase4Implementation busService2Phase4Implementation;
+//    @Autowired
+//    private BusService2Phase4Implementation busService2Phase4Implementation;
 
     @Autowired
     private WorkflowServiceImplementation workflowServiceImplementation;
+
+    @Autowired
+    private BusInterfaceControllerImplementation busInterfaceControllerImplementation;
 
     @RequestMapping(value = "/workflows/create", method = RequestMethod.POST)
     @ApiOperation(value = "Create Workflow", notes = "This endpoint creates and starts a meta-workflow instance and creates an empty model of the related business workflow")
@@ -62,7 +66,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
                                                  @RequestBody PostCreateWorkflow createWorkflowBody) throws IllegalCharacterRequestException,
             ActivitiEntityAlreadyExistsException, JsonRequestException, BusinessWorkflowNotCreatedException,
             MetaWorkflowNotDeployedException, ModelXmlNotFoundException, MetaWorkflowNotStartedException,
-            ProcessDefinitionNotFoundException, JsonRequestConflictException {
+            ProcessDefinitionNotFoundException, JsonRequestConflictException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
         return workflowServiceImplementation.createWorkflow(createWorkflowBody.getName());
     }
@@ -72,7 +76,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
     public ResponseEntity<String> deployWorkflowModel(@RequestBody PostDeploy deployBody) throws JsonRequestException,
-            ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, IOException, MetaWorkflowNotDeployedException, WorkflowDataException {
+            ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, IOException, MetaWorkflowNotDeployedException, WorkflowDataException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException {
 
 
         String modelId = deployBody.getModelId();
@@ -116,11 +120,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
 
         /* update workflowData on bus */
         /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
-        try {
-            busService2Phase4Implementation.saveWorkflowData(workflowData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
 
         JSONObject response = new JSONObject();
         response.put("businessWorkflowProcessDefinitionId", businessWorkflowProcessDefinitionId);
@@ -136,7 +136,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
     public ResponseEntity<String> startWorkflowProcessInstance(
             @RequestBody PostStartProcessInstance startProcessInstanceBody)
             throws JsonRequestException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException,
-            MetaWorkflowNotStartedException, WorkflowDataException, JsonRequestConflictException {
+            MetaWorkflowNotStartedException, WorkflowDataException, JsonRequestConflictException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
 
         String processDefinitionId = startProcessInstanceBody.getProcessDefinitionId();
@@ -164,11 +164,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
 
         /* update workflowData on bus */
         /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
-        try {
-            busService2Phase4Implementation.saveWorkflowData(workflowData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
 
         JSONObject response = new JSONObject();
         response.put("businessWorkflowProcessInstanceId", businessWorkflow.getProcessInstanceId());

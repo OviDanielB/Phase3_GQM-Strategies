@@ -3,6 +3,7 @@ package it.uniroma2.isssr.gqm3.rest;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.dto.EndingMessage;
 import it.uniroma2.isssr.gqm3.dto.IssueMessage;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ public interface FeedbackController {
 	 */
 	@RequestMapping(value = "/BusinessIssueMessages", method = RequestMethod.POST)
     ResponseEntity<?> receiveIssueMessage(@RequestBody IssueMessage issueMessage, HttpServletResponse response)
-			throws WorkflowDataException, IssueMessageCatcherNotFoundException, IllegalReceiveMessageRequestBodyException, JsonRequestException, JsonRequestConflictException, IOException;
+            throws WorkflowDataException, IssueMessageCatcherNotFoundException, IllegalReceiveMessageRequestBodyException, JsonRequestException, JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException;
 	
 	/**
 	 * This is the endpoint that receive an ending workflow message and terminate the specificated workflow
@@ -40,6 +41,6 @@ public interface FeedbackController {
 	 */
 	@RequestMapping(value = "/BusinessEndingMessages", method = RequestMethod.POST)
     ResponseEntity<?> receiveEndingMessage(@RequestBody EndingMessage endingMessage, HttpServletResponse response)
-            throws WorkflowDataException, IssueMessageCatcherNotFoundException, JsonRequestException, IllegalReceiveMessageRequestBodyException, JsonRequestConflictException, IOException;
+			throws WorkflowDataException, IssueMessageCatcherNotFoundException, JsonRequestException, IllegalReceiveMessageRequestBodyException, JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException;
 
 }

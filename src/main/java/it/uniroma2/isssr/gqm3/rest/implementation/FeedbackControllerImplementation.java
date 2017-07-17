@@ -2,6 +2,7 @@ package it.uniroma2.isssr.gqm3.rest.implementation;
 
 import io.swagger.annotations.Api;
 import it.uniroma2.isssr.gqm3.service.implementation.BusService2Phase4Implementation;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -40,7 +41,8 @@ public class FeedbackControllerImplementation implements FeedbackController {
     private WorkflowDataRepository workflowDataRepository;
 
     @Autowired
-    private BusService2Phase4Implementation busService2Phase4Implementation;
+//    private BusService2Phase4Implementation busService2Phase4Implementation;
+    private BusInterfaceControllerImplementation busInterfaceControllerImplementation;
 
     private void receiveMessage(WorkflowMessage workflowMessage)
             throws IllegalReceiveMessageRequestBodyException,
@@ -72,7 +74,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
     public void receiveFeedbackMessage(IssueMessage issueMessage)
             throws IllegalReceiveMessageRequestBodyException,
             JsonRequestException, IssueMessageCatcherNotFoundException,
-            WorkflowDataException, JsonRequestConflictException, IOException {
+            WorkflowDataException, JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException {
 
         WorkflowMessage workflowMessage = new WorkflowMessage(issueMessage);
 
@@ -96,9 +98,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
         workflowDataRepository.save(workflowData);
 
         /* save on bus*/
-        busService2Phase4Implementation.saveWorkflowData(workflowData);
-
-
+        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
     }
 
     @RequestMapping(value = "/BusinessIssueMessages", method = RequestMethod.POST)
@@ -108,7 +108,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
             @RequestBody IssueMessage issueMessage, HttpServletResponse response)
             throws WorkflowDataException, IssueMessageCatcherNotFoundException,
             IllegalReceiveMessageRequestBodyException, JsonRequestException,
-            JsonRequestConflictException, IOException {
+            JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException {
 
         receiveFeedbackMessage(issueMessage);
 
@@ -125,7 +125,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
             HttpServletResponse response) throws WorkflowDataException,
             IssueMessageCatcherNotFoundException, JsonRequestException,
             IllegalReceiveMessageRequestBodyException,
-            JsonRequestConflictException, IOException {
+            JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException {
 
         WorkflowMessage workflowMessage = new WorkflowMessage(endingMessage);
 
@@ -150,7 +150,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
         workflowDataRepository.save(workflowData);
 
         /* update workflows on bus */
-        busService2Phase4Implementation.saveWorkflowData(workflowData);
+        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
 
         JSONObject json = new JSONObject();
         json.put("result", "ok");

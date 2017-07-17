@@ -7,9 +7,12 @@ import it.uniroma2.isssr.gqm3.model.rest.DTOStrategicPlan;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseMetaWorkflow;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseSWRelation;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategicPlan;
+import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 
 @RestController
@@ -120,7 +123,7 @@ public class RestStrategicPlanPresentation {
      * @return the strategic plan
      */
     @RequestMapping(value = "/setMetaWorkflow", method = RequestMethod.POST)
-    public ResponseEntity<DTOResponseSWRelation> setMetaWorkflows(@RequestBody DTOMetaWorkflow dtoMetaWorkflow) throws IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, ProcessDefinitionNotFoundException, JsonRequestException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException {
+    public ResponseEntity<DTOResponseSWRelation> setMetaWorkflows(@RequestBody DTOMetaWorkflow dtoMetaWorkflow) throws IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, ProcessDefinitionNotFoundException, JsonRequestException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
         return strategicPlanService.setMetaWorkflow(dtoMetaWorkflow.getStrategcPlanId(), dtoMetaWorkflow.getStrategyId(), dtoMetaWorkflow.getName());
 

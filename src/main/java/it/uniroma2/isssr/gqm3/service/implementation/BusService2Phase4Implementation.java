@@ -12,6 +12,7 @@ import it.uniroma2.isssr.gqm3.Exception.BusRequestException;
 import it.uniroma2.isssr.gqm3.dto.bus.BusReadResponse;
 import it.uniroma2.isssr.gqm3.model.*;
 import it.uniroma2.isssr.gqm3.model.validation.ValidationOp;
+import it.uniroma2.isssr.gqm3.tools.BusObjectTypes;
 import it.uniroma2.isssr.integrazione.BusException;
 import it.uniroma2.isssr.integrazione.BusMessage;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -37,37 +38,51 @@ public class BusService2Phase4Implementation {
     @Autowired
     HostSettings hostSettings;
 
-    public ResponseEntity saveWorkflowData(WorkflowData workflowData) throws IOException {
+    public ResponseEntity saveWorkflowData(WorkflowData workflowData) throws IOException, BusException {
 
         JSONObject payload = new JSONObject();
-
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonWorkflowData = "";
-        try {
-            jsonWorkflowData = mapper.writeValueAsString(workflowData);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        String encoded = java.util.Base64.getEncoder().encodeToString(
-                jsonWorkflowData.getBytes("utf-8"));
-        payload.put("object", encoded);
-
+        payload.put("_id", workflowData.get_id());
+        payload.put("businessWorkflowName", workflowData.getBusinessWorkflowName());
+        payload.put("metaWorkflowName", workflowData.getMetaWorkflowName());
+        payload.put("metaWorkflowProcessInstanceId", workflowData.getMetaWorkflowProcessInstanceId());
+        payload.put("businessWorkflowModelId", workflowData.getBusinessWorkflowModelId());
+        payload.put("businessWorkflowProcessDefinitionId", workflowData.getBusinessWorkflowProcessDefinitionId());
+        payload.put("businessWorkflowProcessInstanceId", workflowData.getBusinessWorkflowProcessInstanceId());
+        payload.put("measureTasksList", workflowData.getMeasureTasksList().toString());
+        payload.put("ended", workflowData.isEnded().toString());
+        String pl = payload.toString();
 
         JSONObject jo = new JSONObject();
         jo.put("objIdLocalToPhase", workflowData.get_id());
-        jo.put("typeObj", WorkflowData.class.getSimpleName());
-        jo.put("instance", workflowData.get_id());
-        jo.put("payloadEncode", "base64");
+        jo.put("typeObj", BusObjectTypes.WORKFLOW_DATA);
+        jo.put("instance", workflowData.getBusinessWorkflowName());
         jo.put("tags", "[]");
-        jo.put("payload", payload.toString());
+        jo.put("payload", pl);
+//        JSONObject payload = new JSONObject();
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        String jsonWorkflowData = "";
+//        try {
+//            jsonWorkflowData = mapper.writeValueAsString(workflowData);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        String encoded = java.util.Base64.getEncoder().encodeToString(
+//                jsonWorkflowData.getBytes("utf-8"));
+//        payload.put("object", encoded);
+//
+//
+//        JSONObject jo = new JSONObject();
+//        jo.put("objIdLocalToPhase", workflowData.get_id());
+//        jo.put("typeObj", WorkflowData.class.getSimpleName());
+//        jo.put("instance", workflowData.get_id());
+//        jo.put("payloadEncode", "base64");
+//        jo.put("tags", "[]");
+//        jo.put("payload", payload.toString());
 
-        BusMessage busMessage = null;
-        try {
-            busMessage = new BusMessage(BusMessage.OPERATION_UPDATE, hostSettings.getPhaseName(), jo.toString());
-        } catch (BusException e) {
-            e.printStackTrace();
-        }
+        BusMessage busMessage = new BusMessage(BusMessage.OPERATION_UPDATE,
+                hostSettings.getPhaseName(), jo.toString());
 
         String busResponse = busMessage.send(hostSettings.getBusUri());
         BusReadResponse busResponseParsed;
@@ -92,7 +107,6 @@ public class BusService2Phase4Implementation {
                 }
             }
         }
-
         return new ResponseEntity<String>(busResponse, HttpStatus.OK);
     }
 
@@ -116,6 +130,7 @@ public class BusService2Phase4Implementation {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        // TODO check if read of this message from phase4 is ok
         payload.put("object", encoded);
 
 
