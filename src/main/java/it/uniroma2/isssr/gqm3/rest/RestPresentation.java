@@ -1,7 +1,6 @@
 
 package it.uniroma2.isssr.gqm3.rest;
 
-import it.uniroma2.isssr.gqm3.model.rest.DTOStrategy;
 import it.uniroma2.isssr.gqm3.service.StrategyService;
 import it.uniroma2.isssr.gqm3.hermes.Bus2fase3;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategy;
@@ -42,23 +41,13 @@ public class RestPresentation {
     Bus2fase3 bus2Fase3;
 
 
-    @RequestMapping(value = "/createStrategy", method = RequestMethod.POST)
-    public ResponseEntity<DTOResponseStrategy> createStrategy(@RequestBody DTOStrategy dtoStrategy) {
-
-        return strategyService.createStrategy(dtoStrategy.getName(), dtoStrategy.getDescription(), dtoStrategy.getOrganizationalUnit(), dtoStrategy.getOrganizationalUnitId());
-
-    }
-
     /**
-     * Questo metodo deve essere richiesto al bus!
-     * Ma non faccio la modifica qui, ma in strategyService.
-     *
+     * Aggiorno le strategie su mongodb con quelle presenti sul bus.
      * @return the strategies
      */
-
     @RequestMapping(value = "/getStrategies", method = RequestMethod.GET)
     public ResponseEntity<DTOResponseStrategy> getStrategies() {
-
+        strategyService.updateStrategyF2();
         return strategyService.getStrategies();
 
     }
@@ -77,6 +66,7 @@ public class RestPresentation {
     }
 
 
+    /* Equals to '/getStrategies' */
     @RequestMapping(value = "/getStrategiesF2", method = RequestMethod.GET)
     public ResponseEntity<DTOResponseStrategy> getStrategiesF2() {
         strategyService.updateStrategyF2();

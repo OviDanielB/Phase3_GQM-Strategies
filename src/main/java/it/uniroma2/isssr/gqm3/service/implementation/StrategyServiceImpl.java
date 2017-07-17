@@ -76,27 +76,6 @@ public class StrategyServiceImpl implements StrategyService {
     @Autowired
     BusInterationImplementation busInterationImplementation;
 
-    @Override
-    public ResponseEntity<DTOResponseStrategy> createStrategy(String name, String description,
-                                                              String organizationalUnit, String organizationalUnitId) {
-        // TODO Auto-generated method stub
-
-        // per ora gestisco il campo version e release settandoli entrambi a 0
-        // nella creazione
-        Strategy strategy = new Strategy(name, description, organizationalUnit, 0, 0);
-        strategy.setOrganizationalunitId(organizationalUnitId);
-        strategyRepository.save(strategy);
-
-        DTOResponseStrategy dtoResponse = new DTOResponseStrategy();
-        dtoResponse.setStrategyid(strategy.getId());
-        dtoResponse.setStrategyName(strategy.getName());
-        dtoResponse.setStrategyDescription(strategy.getDescription());
-
-        ResponseEntity<DTOResponseStrategy> responseEntity = new ResponseEntity<DTOResponseStrategy>(dtoResponse,
-                HttpStatus.OK);
-        return responseEntity;
-
-    }
 
     /**
      * Metodo che restituisce la risposta della chiamata REST. La risposta è un
@@ -153,10 +132,9 @@ public class StrategyServiceImpl implements StrategyService {
         for (Strategy strategy : actualStrategies) {
 
             Boolean notFound = true;
-            for (DTOStrategyFrom2 dtoStrategyFrom1 : upToDateStr)
-                if (dtoStrategyFrom1.getId().equals(strategy.getIdF2())) {
+            for (DTOStrategyFrom2 dtoStrategyFrom2 : upToDateStr)
+                if (dtoStrategyFrom2.getId().equals(strategy.getIdF2())) {
                     notFound = false;
-                    break;
                 }
 
             if (notFound)
@@ -164,39 +142,48 @@ public class StrategyServiceImpl implements StrategyService {
 
         }
 
+        if (upToDateStr == null) {
+            strategyRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
         // aggiorno i valori nuovi
-        // TODO devo controllare se la version è la stessa o è più recente
         for (DTOStrategyFrom2 dtoSF2 : upToDateStr) {
 
-            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue()
-                    || dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue()) {
+            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() ||
+                    dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue()) {
+
                 Query query = new Query();
                 query.addCriteria(Criteria.where("idF2").is(dtoSF2.getId()));
                 List<Strategy> mongoStrategy = mongoTemplate.find(query, Strategy.class);
+
+                // strategy is marked as MODIFIED but it doesn't exist, so we create it
                 if (mongoStrategy.isEmpty()) {
-                    // se è vuoto la crea
-                    Strategy newStrategy = new Strategy(dtoSF2.getTitle(), dtoSF2.getDescription(),
-                            dtoSF2.getOrganizationalUnitName(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
+                    Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
+                            dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
                             dtoSF2.getVersion(), 0);
                     newStrategy.setIdF2(dtoSF2.getId());
                     strategyRepository.save(newStrategy);
+
                 } else {
 
                     Strategy toUpdate = mongoStrategy.get(0);
 
-                    if(mongoStrategy.size() > 1){
+                    if (mongoStrategy.size() > 1) {
                         //TODO: resolve unexpected state
                         System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
                     }
 
                     if (toUpdate.getVersion() < dtoSF2.getVersion()) {
-                        toUpdate.setName(dtoSF2.getTitle());
+                        toUpdate.setIdF2(dtoSF2.getId());
+                        toUpdate.setName(dtoSF2.getName());
                         toUpdate.setDescription(dtoSF2.getDescription());
-                        toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnitName());
+                        toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
                         toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
                         toUpdate.setStatus(dtoSF2.getRevisited());
                         toUpdate.setVersion(dtoSF2.getVersion());
 
+                        strategyRepository.save(toUpdate);
                     }
                 }
 

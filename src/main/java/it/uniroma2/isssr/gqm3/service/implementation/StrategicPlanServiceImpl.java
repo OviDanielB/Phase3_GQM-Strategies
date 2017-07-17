@@ -120,13 +120,13 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             for (int i = 0; i < strategyId.size(); i++) {
                 Strategy s = strategyRepository.findOne(strategyId.get(i));
                 if (i == 0) {
-                    tempOU = s.getOrganizational_Unit();
+                    tempOU = s.getOrganizationalunit();
                     if (tempOU == null) {
                         strategyResult.clear();
                         break;
                     }
                 } else {
-                    tempOU2 = s.getOrganizational_Unit();
+                    tempOU2 = s.getOrganizationalunit();
                     if (!tempOU.equals(tempOU2)) {
                         strategyResult.clear();
                         break;
@@ -222,6 +222,9 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
     public ResponseEntity<DTOResponseStrategicPlan> getStrategicPlan(String strategicPlanId) {
 
         StrategicPlan strategicP = strategicPlanRepository.findOne(strategicPlanId);
+        if (strategicP == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         DTOResponseStrategicPlan dtoResponse = new DTOResponseStrategicPlan();
         dtoResponse.setId(strategicP.getId());
         dtoResponse.setName(strategicP.getName());
