@@ -39,8 +39,11 @@ class MongoConfiguration extends AbstractMongoConfiguration {
 
 	@Bean
 	public MongoDbFactory mongoDbFactory() throws Exception {
-		user = hostSettings.getMongodbUsername();
-		password = hostSettings.getMongodbPassword();
+		//user = hostSettings.getMongodbUsername();
+		//password = hostSettings.getMongodbPassword();
+		// TODO configuration not working with mongo user and password
+		user = null;
+		password = null;
 		database = hostSettings.getMongodbDatabase();
 		port = hostSettings.getMongodbPort();
 		host = hostSettings.getMongodbHost();
