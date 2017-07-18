@@ -163,6 +163,8 @@ public class RestStrategicPlanPresentation {
     public ResponseEntity<DTOResponseMetaWorkflow> getStrategiesWithOrganizationalUnitOfStrategicPlan(@RequestParam("id") String id) {
         return strategicPlanService.getStrategiesWithOrganizationalUnitOfStrategicPlan(id);
     }
+
+
 	
 	
 	/*

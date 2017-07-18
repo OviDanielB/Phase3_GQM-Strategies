@@ -31,12 +31,7 @@ public interface StrategyService {
      * @return the strategies
      */
 
-    ResponseEntity<DTOResponseStrategy> createStrategy(String name,
-                                                       String description, String organizationalUnit,
-                                                       String organizationalUnitId);
-
     ResponseEntity<DTOResponseStrategy> getStrategies();
-
 
     ResponseEntity<DTOResponseStrategy> getStrategy();
 

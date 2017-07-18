@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
 import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormProperty;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormVariableProperty;
@@ -161,6 +162,70 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
         }
         return activitiTaskList;
 
+    }
+
+    @Override
+    public List<ActivitiProcessDef> getProcessesDefinitions()
+            throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = hostSettings.getActivitiRestEndpointProcessDefinitions();
+
+        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        //per via della paginazione
+        Long size = jsonObject.getLong("size");
+        log.warn(size.toString());
+        Long start = jsonObject.getLong("start");
+        log.warn(start.toString());
+        Long total = jsonObject.getLong("total");
+        log.warn(total.toString());
+        List<ActivitiProcessDef> activitiTaskList = new ArrayList<ActivitiProcessDef>();
+        while (total - start > 0) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            response = requestActiviti.get(url + "?start=" + start, String.class);
+            jsonObject = new JSONObject(response.getBody());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                activitiTaskList.add(mapper.readValue(explrObject.toString(), ActivitiProcessDef.class));
+            }
+            start = start + size;
+        }
+        return activitiTaskList;
+    }
+
+    @Override
+    public ActivitiTask getTaskByExecutionId(String executionId)
+            throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = hostSettings.getActivitiRestEndpointTasks();
+
+        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        //per via della paginazione
+        Long size = jsonObject.getLong("size");
+        log.warn(size.toString());
+        Long start = jsonObject.getLong("start");
+        log.warn(start.toString());
+        Long total = jsonObject.getLong("total");
+        log.warn(total.toString());
+        List<ActivitiTask> activitiTaskList = new ArrayList<ActivitiTask>();
+        while (total - start > 0) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            response = requestActiviti.get(url + "?executionId=" + executionId, String.class);
+            jsonObject = new JSONObject(response.getBody());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                activitiTaskList.add(mapper.readValue(explrObject.toString(), ActivitiTask.class));
+            }
+            start = start + size;
+        }
+        if (activitiTaskList.size() != 0)
+            return activitiTaskList.get(0);
+        return null;
     }
 
     /**
@@ -339,6 +404,80 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
         return activitiProcessList.getActivitiProcessList();
 
     }
+
+    @Override
+    public ActivitiProcessDef getProcessByProcessDefinitionId(String username, String password, String processDefinitionId)
+            throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
+
+        List<ActivitiProcessDef> activitiProcessDefs = getProcessesDefinitions();
+
+        for (ActivitiProcessDef p : activitiProcessDefs) {
+            if (p.getProcessDefinitionId().equals(processDefinitionId)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+//        return null;
+//        ObjectMapper mapper = new ObjectMapper();
+//        String plainCreds = username + ":" + password;
+//        byte[] plainCredsBytes = plainCreds.getBytes();
+//        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+//        String base64Creds = new String(base64CredsBytes);
+//        RestTemplate template = new RestTemplate();
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Authorization", "Basic " + base64Creds);
+//        String URL = hostSettings.getActivitiRestConnectionUrl() + hostSettings.getActivitiRestEndpointProcessInstances();
+//        HttpEntity<String> request = new HttpEntity<String>(headers);
+//        ResponseEntity<String> response =
+//                template.exchange(URL, HttpMethod.GET, request, String.class);
+//        ActivitiProcessList activitiProcessList;
+//        JSONObject jsnobject;
+//        try {
+//            jsnobject = new JSONObject(response.getBody());
+//
+//            JSONArray jsonArray = jsnobject.getJSONArray("data");
+//            activitiProcessList = new ActivitiProcessList();
+//
+//
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject explrObject = jsonArray.getJSONObject(i);
+//
+//                ActivitiProcessDefinition processDefinition = new ActivitiProcessDefinition();
+//                ActivitiProcessInvolvedPeople activitiProcessInvolvedPeople = new ActivitiProcessInvolvedPeople();
+//                ActivitiProcess activitiProcess = new ActivitiProcess();
+//                ActivitiProcessDef activitiProcessDef = new ActivitiProcessDef();
+//                activitiProcess = mapper.readValue(explrObject.toString(), ActivitiProcess.class);
+//                if (activitiProcess.getProcessDefinitionId().equals(processDefinitionId)) {
+//                    processDefinition = getProcessDefinition(username, password, activitiProcess.getProcessDefinitionId());
+//                    activitiProcessInvolvedPeople = getInvolvedPeople(username, password, activitiProcess.getId());
+//                    activitiProcessDef.setActivityId(activitiProcess.getActivityId());
+//                    activitiProcessDef.setBusinessKey(activitiProcess.getBusinessKey());
+//                    activitiProcessDef.setCompleted(activitiProcess.getCompleted());
+//                    activitiProcessDef.setEnded(activitiProcess.getEnded());
+//                    activitiProcessDef.setId(activitiProcess.getId());
+//                    activitiProcessDef.setName(processDefinition.getName());
+//                    activitiProcessDef.setProcessDefinitionId(activitiProcess.getProcessDefinitionId());
+//                    activitiProcessDef.setProcessDefinitionUrl(activitiProcess.getProcessDefinitionUrl());
+//                    activitiProcessDef.setSuspended(activitiProcess.getSuspended());
+//                    activitiProcessDef.setTenantId(activitiProcess.getTenantId());
+//                    activitiProcessDef.setUrl(activitiProcess.getUrl());
+//                    activitiProcessDef.setVariables(activitiProcess.getVariables());
+//                    activitiProcessDef.setDescription(processDefinition.getDescription());
+//                    activitiProcessDef.setVersion(processDefinition.getVersion());
+//                    activitiProcessDef.setActivitiProcessAuthor(activitiProcessInvolvedPeople.getUser());
+//
+//                    activitiProcessList.addActivitiProcess(activitiProcessDef);
+//
+//                    return activitiProcess;
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
 
     /**
@@ -637,6 +776,72 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
     }
 
 
+    @Override
+    public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = hostSettings.getActivitiRestEndpointTasks() + "?processDefinitionId=" +processDefinitionId;
+
+        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        //per via della paginazione
+        Long size = jsonObject.getLong("size");
+        log.warn(size.toString());
+        Long start = jsonObject.getLong("start");
+        log.warn(start.toString());
+        Long total = jsonObject.getLong("total");
+        log.warn(total.toString());
+        List<ActivitiTask> activitiTaskList = new ArrayList<ActivitiTask>();
+        while (total - start > 0) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            response = requestActiviti.get(url + "?processDefinitionId=" + processDefinitionId, String.class);
+            jsonObject = new JSONObject(response.getBody());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                activitiTaskList.add(mapper.readValue(explrObject.toString(), ActivitiTask.class));
+            }
+            start = start + size;
+        }
+        if (activitiTaskList.size() != 0)
+            return activitiTaskList.get(0);
+        return null;
+    }
+
+    @Override
+    public ProcessInstance getProcessInstanceFromKey(String processDefinitionKey) throws JsonRequestException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = hostSettings.getActivitiRestEndpointProcessInstances() + "?processDefinitionKey=" + processDefinitionKey;
+
+        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
+        System.out.println("key "+processDefinitionKey+"url: "+url+" response: "+response);
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        //per via della paginazione
+        Long size = jsonObject.getLong("size");
+        log.warn(size.toString());
+        Long start = jsonObject.getLong("start");
+        log.warn(start.toString());
+        Long total = jsonObject.getLong("total");
+        log.warn(total.toString());
+        List<ProcessInstance> activitiInstanceList = new ArrayList<ProcessInstance>();
+        while (total - start > 0) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            response = requestActiviti.get(url + "?processDefinitionKey=" + processDefinitionKey, String.class);
+            jsonObject = new JSONObject(response.getBody());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                activitiInstanceList.add(mapper.readValue(explrObject.toString(), ProcessInstance.class));
+            }
+            start = start + size;
+        }
+        if (activitiInstanceList.size() != 0)
+            return activitiInstanceList.get(0);
+        return null;
+    }
 }
 	
 	

@@ -254,5 +254,4 @@ public class ActivitiTaskServiceImplementation implements ActivitiTaskService{
 		
 	}
 	
-	
 }

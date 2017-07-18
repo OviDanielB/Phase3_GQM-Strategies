@@ -55,11 +55,9 @@ public class WorkflowServiceImplementation {
         metaWorkflow.checkAlreadyExist(metaWorkflowName);
         BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings, workflowName);
         businessWorkflow.checkAlreadyExist(workflowName);
-        try {
-            metaWorkflow.deploy();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        metaWorkflow.deploy();
+
         metaWorkflow.start();
 
         businessWorkflow.setMetaWorkflowProcessInstanceId(metaWorkflow.getProcessInstanceId());

@@ -86,14 +86,12 @@ public class Bus2fase3Implementation implements Bus2fase3 {
     }
 
 
-
     public ArrayList<DTOStrategyFrom2> getStrategiesF2() {
         ArrayList<DTOStrategyFrom2> ls = new ArrayList<>();
-        String response = "", organizationalUnitId = "", organizationalUnitName = "", version = "", id = "";
+        String response;
 
-        DTOStrategyFrom2 ob = null;
-        org.json.JSONArray jsonResponse = null;
-        JSONObject jsonobj = null;
+        org.json.JSONArray jsonResponse;
+        JSONObject jsonobj;
         try {
             JSONObject jsonRead = new JSONObject();
             jsonRead.put("objIdLocalToPhase", "");
@@ -101,51 +99,43 @@ public class Bus2fase3Implementation implements Bus2fase3 {
             jsonRead.put("instance", "");
             jsonRead.put("busVersion", "");
             jsonRead.put("tags", "[]");
+
             BusMessage busMessage = new BusMessage(BusMessage.OPERATION_READ, "phase2", jsonRead.toString());
             response = busMessage.send(hostSettings.getBusUri());
             jsonResponse = new org.json.JSONArray(response);
+
         } catch (IOException | JSONException | BusException e) {
             e.printStackTrace();
             return null;
         }
-        ObjectMapper obM = new ObjectMapper();
-        obM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        if (jsonResponse != null) {
-            for (int i = 0; i < jsonResponse.length(); i++) {
-                try {
-                    jsonobj = jsonResponse.getJSONObject(i);
-                    id = jsonobj.getString("instance");
-                    version = jsonobj.getString("busVersion");
-                    JSONArray tags = jsonobj.getJSONArray("tags");
-                    for (int j = 0; j < tags.length(); j++) {
-                        JSONObject singleTag = tags.getJSONObject(j);
-                        if (singleTag.getString("key").equals("OrgUnitId")) {
-                            organizationalUnitId = singleTag.getString("value");
-                        } else {
-                            if (singleTag.getString("key").equals("OrgUnitName")) {
-                                organizationalUnitName = singleTag.getString("value");
-                            }
-                        }
 
-                    }
-                    String paylodas = jsonobj.getString("payload");
-//			paylodas= new String(Base64.getDecoder().decode(paylodas));
-                    jsonobj = new JSONObject(paylodas);
-                    ob = obM.readValue(jsonobj.toString(), DTOStrategyFrom2.class);
-                    ob.setOrganizationalUnitId(organizationalUnitId);
-                    ob.setOrganizationalUnitName(organizationalUnitName);
-                    ob.setVersion(Integer.parseInt(version));
-                    ls.add(ob);
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
+        for (int i = 0; i < jsonResponse.length(); i++) {
 
+            try {
+
+                jsonobj = jsonResponse.getJSONObject(i);
+
+                String payloads = jsonobj.getString("payload");
+                DTOStrategyFrom2 ob = new DTOStrategyFrom2();
+
+                jsonobj = new JSONObject(payloads);
+                ob.setId(jsonobj.getString("id"));
+                ob.setName(jsonobj.getString("name"));
+                ob.setDescription(jsonobj.getString("description"));
+                ob.setOrganizationalUnit(jsonobj.getString("organizationalUnit"));
+                ob.setOrganizationalUnitId(jsonobj.getString("organizationalUnitId"));
+                ob.setRevisited(jsonobj.getInt("status"));
+                ob.setVersion(jsonobj.getInt("version"));
+
+                ls.add(ob);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            return ls;
-        } else {
-            return null;
         }
+
+        return ls;
     }
 
 }

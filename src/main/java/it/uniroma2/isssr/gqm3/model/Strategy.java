@@ -140,20 +140,6 @@ public class Strategy {
 		this.description = description;
 	}
 
-	
-	
-
-	public String getOrganizational_Unit() {
-		return organizationalunit;
-	}
-
-
-	public void setOrganizational_Unit(String organizational_Unit) {
-		this.organizationalunit = organizational_Unit;
-	}
-	
-	
-
 	public String getOrganizationalunit() {
 		return organizationalunit;
 	}
@@ -169,8 +155,7 @@ public class Strategy {
 	public void setOrganizationalunitId(String organizationalUnitId) {
 		this.organizationalunitId = organizationalUnitId;
 	}
-	
-	
+
 
 	public int getStatus() {
 		return status;
