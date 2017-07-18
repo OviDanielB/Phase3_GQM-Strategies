@@ -19,6 +19,7 @@ import java.util.Map;
     "ended",
     "processDefinitionId",
     "processDefinitionUrl",
+    "processDefinitionKey",
     "activityId",
     "variables",
     "tenantId",
@@ -40,6 +41,8 @@ public class ProcessInstance implements ActivitiEntity{
     private String processDefinitionId;
     @JsonProperty("processDefinitionUrl")
     private String processDefinitionUrl;
+    @JsonProperty("processDefinitionKey")
+    private String processDefinitionKey;
     @JsonProperty("activityId")
     private String activityId;
     @JsonProperty("variables")
@@ -269,6 +272,14 @@ public class ProcessInstance implements ActivitiEntity{
     @JsonProperty("completed")
     public void setCompleted(Boolean completed) {
         this.completed = completed;
+    }
+
+    public String getProcessDefinitionKey() {
+        return processDefinitionKey;
+    }
+
+    public void setProcessDefinitionKey(String processDefinitionKey) {
+        this.processDefinitionKey = processDefinitionKey;
     }
 
     @JsonAnyGetter

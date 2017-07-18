@@ -3,9 +3,11 @@ package it.uniroma2.isssr.gqm3.activiti;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import it.uniroma2.isssr.gqm3.Exception.*;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
 import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormProperty;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormVariableProperty;
+import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcess;
 import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcessDef;
 import it.uniroma2.isssr.gqm3.model.activiti.task.ActivitiTask;
 import it.uniroma2.isssr.gqm3.model.activiti.task.ActivitiTaskVariable;
@@ -138,6 +140,16 @@ public class ActivitiInterationImplementation implements ActivitiInteration {
                                                            DTOActivitiTaskVariable dtoActivitiTaskVariable) throws IOException, ActivitiPutException, JsonRequestException {
         return activiti2fase32Implementation.updateActivitiTaskVariable(id,
                 name, dtoActivitiTaskVariable);
+    }
+
+    @Override
+    public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException {
+        return activiti2fase32Implementation.getTaskByProcessDefinitionId(processDefinitionId);
+    }
+
+    @Override
+    public ProcessInstance getProcessInstanceFromKey(String processDefinitionKey) throws ActivitiGetException, IOException, JsonRequestException {
+        return activiti2fase32Implementation.getProcessInstanceFromKey(processDefinitionKey);
     }
 
 

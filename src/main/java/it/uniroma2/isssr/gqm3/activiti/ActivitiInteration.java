@@ -3,9 +3,12 @@ package it.uniroma2.isssr.gqm3.activiti;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import it.uniroma2.isssr.gqm3.Exception.*;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
 import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormProperty;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormVariableProperty;
+import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcess;
+import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcessDef;
 import it.uniroma2.isssr.gqm3.model.activiti.task.ActivitiTask;
 import it.uniroma2.isssr.gqm3.model.activiti.task.ActivitiTaskVariable;
 import it.uniroma2.isssr.gqm3.model.activiti.user.ActivitiUser;
@@ -73,5 +76,7 @@ public interface ActivitiInteration {
     public ActivitiTaskVariable updateActivitiTaskVariable(String id, String name,
                                                            DTOActivitiTaskVariable dtoActivitiTaskVariable) throws JsonParseException, JsonMappingException, IOException, ActivitiPutException, JsonRequestException;
 
+    ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException;
 
+    ProcessInstance getProcessInstanceFromKey(String processDefinitionKey) throws ActivitiGetException, IOException, JsonRequestException;
 }

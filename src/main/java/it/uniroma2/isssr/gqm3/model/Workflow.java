@@ -1,6 +1,7 @@
 package it.uniroma2.isssr.gqm3.model;
 
 
+import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.ActivitiEntity;
@@ -53,7 +54,6 @@ public abstract class Workflow {
         this.hostSettings = hostSettings;
         this.jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
     }
-
 
     public void start() throws MetaWorkflowNotStartedException, JsonRequestException, JsonRequestConflictException {
 
@@ -118,10 +118,9 @@ public abstract class Workflow {
 
 
         String restAddressProcessDefinition = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/" + this.getProcessDefinitionId();
-
+        System.out.println("deldep: "+restAddressProcessDefinition);
         ResponseEntity<ProcessDefinition> postDeploymentResponse = jsonRequestActiviti
-                .get(
-                        restAddressProcessDefinition,
+                .get(restAddressProcessDefinition,
                         ProcessDefinition.class);
 
         ProcessDefinition processDefinition = postDeploymentResponse.getBody();
@@ -133,7 +132,7 @@ public abstract class Workflow {
         } else {
 
             String restAddressDeployment = hostSettings.getActivitiRestEndpointDeployments() + "/" + processDefinition.getDeploymentId();
-
+            System.out.println("restaddDEP "+restAddressDeployment);
             jsonRequestActiviti.delete(restAddressDeployment);
         }
     }

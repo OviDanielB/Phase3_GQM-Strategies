@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
+import it.uniroma2.isssr.gqm3.activiti.ActivitiInterationImplementation;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
 import it.uniroma2.isssr.gqm3.model.rest.response.activiti.DTOResponseActivitiProcess;
 import it.uniroma2.isssr.gqm3.model.rest.response.activiti.DTOResponseActivitiTask;
 import it.uniroma2.isssr.gqm3.service.ActivitiProcessService;
@@ -62,6 +64,9 @@ public class RestActivitiPresentation {
      */
     @Autowired
     ActivitiProcessService activitiProcessService;
+
+    @Autowired
+    ActivitiInterationImplementation activitiInterationImplementation;
 
     /**
      * Iniezione attraverso l'annotazione autowired della dipendenza da Service
@@ -255,6 +260,13 @@ public class RestActivitiPresentation {
     public ResponseEntity<DTOResponseActivitiProcess> getProcess(@PathVariable("username") String username,
                                                                  @PathVariable("password") String password) throws JsonParseException, JsonMappingException, IOException {
         return processService.getProcess(username, password);
+
+    }
+
+    @RequestMapping(value = "/instances",
+            method = RequestMethod.GET)
+    public ProcessInstance getProcessInstanceFromKey(@RequestParam("processDefinitionKey") String processDefinitionKey) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
+        return activitiInterationImplementation.getProcessInstanceFromKey(processDefinitionKey);
 
     }
 
