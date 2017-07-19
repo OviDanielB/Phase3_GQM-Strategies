@@ -166,12 +166,13 @@ public class WorkflowControllerImplementation implements WorkflowController {
         metaWorkflow.updateVariable("businessWorkflowProcessInstanceId", businessWorkflowProcessInstanceId);
         workflowData.setBusinessWorkflowProcessInstanceId(businessWorkflowProcessInstanceId);
 
-        /* save update workflowDara on local mongodb */
-        workflowDataRepository.save(workflowData);
-
-        /* update workflowData on bus */
-        /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
-        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
+        //TODO to remove? Only in "Export Workflow" task
+//        /* save update workflowDara on local mongodb */
+//        workflowDataRepository.save(workflowData);
+//
+//        /* update workflowData on bus */
+//        /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
+//        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
 
         JSONObject response = new JSONObject();
         response.put("businessWorkflowProcessInstanceId", businessWorkflow.getProcessInstanceId());

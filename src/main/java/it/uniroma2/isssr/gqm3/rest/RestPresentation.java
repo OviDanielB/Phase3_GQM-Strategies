@@ -60,7 +60,7 @@ public class RestPresentation {
      */
     @RequestMapping(value = "/getStrategiesFree", method = RequestMethod.GET)
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
-
+        strategyService.updateStrategyF2();
         return strategyService.getStrategiesFree();
 
     }

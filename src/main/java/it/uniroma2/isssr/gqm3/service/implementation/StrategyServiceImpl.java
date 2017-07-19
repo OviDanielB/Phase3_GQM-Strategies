@@ -122,7 +122,7 @@ public class StrategyServiceImpl implements StrategyService {
 
     public ResponseEntity updateStrategyF2() {
 
-        // strategia attualmente salvate so mongodb
+        // strategie attualmente salvate su mongodb
         List<Strategy> actualStrategies = strategyRepository.findAll();
 
         // strategie presenti sul bus

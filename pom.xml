@@ -77,8 +77,8 @@
 
 
         <dependency>
-            <groupId>it.uniroma2.isssr.integrazione</groupId>
-            <artifactId>BusDriver</artifactId>
+            <groupId>it.uniroma2.isssr</groupId>
+            <artifactId>integrazione</artifactId>
             <version>0.9.5</version>
         </dependency>
 

@@ -197,8 +197,8 @@ public class HostSettings {
         return getConnectionUrl() + webappBackendEndpoint;
     }
 
-    public String getWebappFrontendUri() {
-        return getConnectionUrl() + webappFrontendEndpoint;
+    public String getWebappFrontendUrl() {
+        return webappFrontendEndpoint;
     }
 
     public String getDeployEndpoint() {
