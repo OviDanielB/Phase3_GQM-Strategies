@@ -85,8 +85,8 @@ public class WorkflowControllerImplementation implements WorkflowController {
     public ResponseEntity<String> deployWorkflowModel(@RequestBody PostDeploy deployBody) throws JsonRequestException,
             ProcessDefinitionNotFoundException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, IOException, MetaWorkflowNotDeployedException, WorkflowDataException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException {
 
-
         String modelId = deployBody.getModelId();
+
         List<WorkflowData> workflowDatas = workflowDataRepository.findByBusinessWorkflowModelId(modelId);
         if (workflowDatas.size() != 1) {
             throw new WorkflowDataException();
@@ -110,10 +110,16 @@ public class WorkflowControllerImplementation implements WorkflowController {
         if (businessWorkflowProcessDefinitionId != null
                 && !businessWorkflowProcessDefinitionId.isEmpty()) {
 
-            businessWorkflow.setProcessDefinitionId(businessWorkflowProcessDefinitionId);
+//            businessWorkflow.setProcessDefinitionId(businessWorkflowProcessDefinitionId);
             businessWorkflow.deleteDeployment();
-        }
 
+            // save local data
+            workflowData.setBusinessWorkflowProcessDefinitionId("");
+            if (workflowData.getBusinessWorkflowProcessInstanceId() != null
+                    && !workflowData.getMetaWorkflowProcessInstanceId().isEmpty())
+                workflowData.setBusinessWorkflowProcessInstanceId("");
+            workflowDataRepository.save(workflowData);
+        }
         businessWorkflow.deploy();
 
         MetaWorkflow metaWorkflow = new MetaWorkflow(hostSettings, metaWorkflowProcessInstanceId);
@@ -190,8 +196,10 @@ public class WorkflowControllerImplementation implements WorkflowController {
     public ResponseEntity<String> getWorkflowProcessDefinitionId(@PathVariable(value = "modelId") String modelId)
             throws JsonRequestException, ActivitiEntityAlreadyExistsException, WorkflowDataException,
             ProcessDefinitionNotFoundException {
+        System.out.println("MODELID "+modelId);
         List<WorkflowData> workflowDatas = workflowDataRepository.findByBusinessWorkflowModelId(modelId);
         if (workflowDatas.size() != 1) {
+            System.out.println("SIZE "+workflowDatas.size());
             throw new WorkflowDataException();
         }
         WorkflowData workflowData = workflowDatas.get(0);
@@ -272,6 +280,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
             throws JsonRequestException, ActivitiEntityAlreadyExistsException, WorkflowDataException,
             ProcessDefinitionNotFoundException, ActivitiGetException, IOException, JsonRequestConflictException {
 
+        System.out.println("DEF" +processDefinitionId);
         ActivitiTask task = activitiInteractionImplementation.getTaskByProcessDefinitionId(processDefinitionId);
 
         JsonRequestActiviti jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
@@ -286,7 +295,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
         if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<String>(responseEntity.getBody().toString(), HttpStatus.OK);
         }
     }
 }

@@ -41,7 +41,6 @@ public class JsonRequestActiviti {
 		this.headers = new HttpHeaders();
 		this.headers.add("Authorization", "Basic " + base64Creds);
 		this.entity = new HttpEntity<String>(this.headers);
-
 	}
 
 	/**

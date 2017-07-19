@@ -1,7 +1,6 @@
 package it.uniroma2.isssr.gqm3.model;
 
 
-import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.ActivitiEntity;
@@ -12,6 +11,7 @@ import it.uniroma2.isssr.gqm3.dto.activiti.entitylist.ActivitiEntityList;
 import it.uniroma2.isssr.gqm3.dto.activiti.entitylist.ProcessDefinitionList;
 import it.uniroma2.isssr.gqm3.dto.post.PostProcessInstance;
 import it.uniroma2.isssr.gqm3.dto.post.PostQueryMessageIssueCatcher;
+import it.uniroma2.isssr.gqm3.dto.put.PutVariables;
 import it.uniroma2.isssr.gqm3.dto.response.ResponseDeployment;
 import it.uniroma2.isssr.gqm3.dto.response.ResponseProcessInstance;
 import it.uniroma2.isssr.gqm3.dto.response.ResponseQueryMessageIssueCatcher;
@@ -108,32 +108,37 @@ public abstract class Workflow {
 
     public void deleteProcessInstance() throws JsonRequestException {
 
-        String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId();
+        if (this.getProcessInstanceId() != null) {
+            String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId();
 
-        jsonRequestActiviti.delete(restAddress);
+            jsonRequestActiviti.delete(restAddress);
+        }
     }
 
 
     public void deleteDeployment() throws JsonRequestException {
 
+        if (this.getProcessDefinitionId() != null) {
+            String restAddressProcessDefinition = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/" + this.getProcessDefinitionId();
 
-        String restAddressProcessDefinition = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/" + this.getProcessDefinitionId();
-        System.out.println("deldep: "+restAddressProcessDefinition);
-        ResponseEntity<ProcessDefinition> postDeploymentResponse = jsonRequestActiviti
-                .get(restAddressProcessDefinition,
-                        ProcessDefinition.class);
+            ResponseEntity<ProcessDefinition> postDeploymentResponse = jsonRequestActiviti
+                    .get(restAddressProcessDefinition,
+                            ProcessDefinition.class);
 
-        ProcessDefinition processDefinition = postDeploymentResponse.getBody();
+            ProcessDefinition processDefinition = postDeploymentResponse.getBody();
 
-        if (processDefinition == null ||
-                processDefinition.getDeploymentId() == null ||
-                processDefinition.getDeploymentId().isEmpty()) {
-            return;
-        } else {
+            if (processDefinition == null ||
+                    processDefinition.getDeploymentId() == null ||
+                    processDefinition.getDeploymentId().isEmpty()) {
+                return;
+            } else {
 
-            String restAddressDeployment = hostSettings.getActivitiRestEndpointDeployments() + "/" + processDefinition.getDeploymentId();
-            System.out.println("restaddDEP "+restAddressDeployment);
-            jsonRequestActiviti.delete(restAddressDeployment);
+                String restAddressDeployment = hostSettings.getActivitiRestEndpointDeployments() + "/" + this.processDefinitionId;// processDefinition.getDeploymentId();
+
+                deleteProcessInstance();
+
+                jsonRequestActiviti.delete(restAddressDeployment);
+            }
         }
     }
 
@@ -146,15 +151,21 @@ public abstract class Workflow {
 
         Variable modelIdVariable = new Variable();
         modelIdVariable.setName(key);
+        modelIdVariable.setType("string");
         modelIdVariable.setValue(value);
+        modelIdVariable.setScope("local");
 
         ArrayList<Variable> updateVariableBody = new ArrayList<Variable>();
         updateVariableBody.add(modelIdVariable);
+        PutVariables putBody = new PutVariables();
+        putBody.setVariables(updateVariableBody);
 
         String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId()
                 + "/variables";
 
-        jsonRequestActiviti.put(restAddress, updateVariableBody, String.class);
+        System.out.println(restAddress);
+
+        jsonRequestActiviti.put(restAddress, updateVariableBody , String.class);
 
     }
 
@@ -163,7 +174,7 @@ public abstract class Workflow {
         String restAddress = hostSettings.getActivitiRestEndpointProcessInstances() + "/" + this.getProcessInstanceId()
                 + "/variables";
 
-        jsonRequestActiviti.put(restAddress, variables, String.class);
+        jsonRequestActiviti.put(restAddress, variables.toString(), String.class);
 
     }
 
