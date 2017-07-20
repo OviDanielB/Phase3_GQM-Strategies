@@ -2,11 +2,14 @@ package it.uniroma2.isssr.gqm3.service.implementation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.service.StrategicPlanService;
+import it.uniroma2.isssr.gqm3.service.StrategyService;
 import it.uniroma2.isssr.integrazione.BusException;
 import it.uniroma2.isssr.integrazione.BusMessage;
 import org.json.JSONException;
@@ -107,6 +110,9 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
     @Autowired
     WorkflowServiceImplementation workflowServiceImplementation;
 
+    @Autowired
+    StrategyService strategyService;
+
     @Override
     public ResponseEntity<DTOResponseStrategicPlan> createStrategicPlan(ArrayList<String> strategyId, String name,
                                                                         String description, float version, String release) {
@@ -132,11 +138,10 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
                         break;
                     }
                 }
-                if (s != null) {
-                    StrategyWorkflowRelation swr = new StrategyWorkflowRelation(s);
-                    // sWRRRepository.save(swr);
-                    strategyResult.add(swr);
-                }
+                StrategyWorkflowRelation swr = new StrategyWorkflowRelation(s);
+                // sWRRRepository.save(swr);
+                strategyResult.add(swr);
+
             }
 
         Query query = new Query();
@@ -148,7 +153,6 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
         if (!strategyResult.isEmpty()) {
 
             StrategicPlan strategicP = new StrategicPlan(strategyResult, name, description, tempOU, version, release);
-
             /* save on mongodb */
             strategicPlanRepository.save(strategicP);
 
@@ -163,6 +167,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             dtoResponse.setStrategyToWorkflowId(strategyResult);
             dtoResponse.setVersion(strategicP.getVersion());
             dtoResponse.setRelease(strategicP.getRelease());
+
             ResponseEntity<DTOResponseStrategicPlan> responseEntity = new ResponseEntity<DTOResponseStrategicPlan>(
                     dtoResponse, HttpStatus.OK);
             return responseEntity;
@@ -466,6 +471,9 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 
     @Override
     public ResponseEntity<DTOResponseMetaWorkflow> getStrategyWithWorkflow(String strategicPlanId) {
+
+        strategyService.updateStrategyF2();
+
         ArrayList<Strategy> result = new ArrayList<Strategy>();
         DTOResponseMetaWorkflow dtoResponseswRelation = new DTOResponseMetaWorkflow();
         ResponseEntity<DTOResponseMetaWorkflow> response = null;
@@ -490,10 +498,6 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 
     }
 
-
-    /**
-     * Restituisce tutte le strategie con Unità Organizzativa dello Strategic Plan
-     */
     @Override
     public ResponseEntity<DTOResponseMetaWorkflow> getStrategiesWithOrganizationalUnitOfStrategicPlan(String id) {
         StrategicPlan strategicPlan = strategicPlanRepository.findOne(id);
@@ -503,8 +507,6 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
         String orgUnit = strategicPlan.getOrganizationalUnit();
 
         List<Strategy> strategies = strategyRepository.findAll();
-
-        StrategyWorkflowRelation strategyWorkflowRelation = new StrategyWorkflowRelation();//strategia da costruire e inserire nella lista
 
 		/*elimino dalla lista le strategie con unità organizzativa differente da quella dello strategic plan*/
 
@@ -529,7 +531,9 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             }
         }
 
+        //strategia da costruire e inserire nella lista
         for (int y = 0; y < strategies.size(); y++) {
+            StrategyWorkflowRelation strategyWorkflowRelation = new StrategyWorkflowRelation();
             strategyWorkflowRelation.set_id(null);
             strategyWorkflowRelation.setWorkflow(null);
             strategyWorkflowRelation.setStrategy(strategies.get(y));
@@ -541,6 +545,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
                 dtoResponse, HttpStatus.OK);
         return responseEntity;
     }
+
 
     @Override
     public ResponseEntity<DTOResponseStrategicPlan> updateStrategiesOfStrategicPlan(String id,
