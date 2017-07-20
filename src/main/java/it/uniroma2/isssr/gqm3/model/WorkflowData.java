@@ -145,4 +145,18 @@ public class WorkflowData {
 		this.measureTasksList = measureTasksList;
 	}
 
+	@Override
+	public String toString() {
+		return "WorkflowData{" +
+				"_id='" + _id + '\'' +
+				", businessWorkflowName='" + businessWorkflowName + '\'' +
+				", metaWorkflowName='" + metaWorkflowName + '\'' +
+				", metaWorkflowProcessInstanceId='" + metaWorkflowProcessInstanceId + '\'' +
+				", businessWorkflowModelId='" + businessWorkflowModelId + '\'' +
+				", businessWorkflowProcessDefinitionId='" + businessWorkflowProcessDefinitionId + '\'' +
+				", businessWorkflowProcessInstanceId='" + businessWorkflowProcessInstanceId + '\'' +
+				", ended=" + ended +
+				", measureTasksList=" + measureTasksList +
+				'}';
+	}
 }

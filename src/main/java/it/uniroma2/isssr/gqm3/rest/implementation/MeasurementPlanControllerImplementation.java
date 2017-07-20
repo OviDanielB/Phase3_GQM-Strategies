@@ -133,6 +133,7 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
     public ResponseEntity<?> saveMeasurementPlan(@RequestBody WorkflowData workflowData) throws BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, ModelXmlNotFoundException, IOException {
 
+        System.out.println(workflowData.toString());
 
         // Retrieve workflowData
         List<WorkflowData> listStrategy = workflowDataRepository.findByBusinessWorkflowModelId(workflowData.getBusinessWorkflowModelId());

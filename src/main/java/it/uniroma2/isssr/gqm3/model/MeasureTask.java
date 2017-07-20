@@ -2,6 +2,9 @@ package it.uniroma2.isssr.gqm3.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import it.uniroma2.isssr.gqm3.model.ontologyPhase2.Ontology;
+import it.uniroma2.isssr.gqm3.model.ontologyPhase2.attribute.*;
+import it.uniroma2.isssr.gqm3.model.ontologyPhase2.attribute.Attribute;
 import it.uniroma2.isssr.gqm3.model.validation.ValidationOp;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -32,6 +35,48 @@ public class MeasureTask {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @DBRef
     private List<ValidationOp> validationIdList;
+
+    /* newly added attributes */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String attribute;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Ontology ontology;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String scope;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String time;
+
+    public Ontology getOntology() {
+        return ontology;
+    }
+
+    public void setOntology(Ontology ontology) {
+        this.ontology = ontology;
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public String get_id() {
         return _id;
