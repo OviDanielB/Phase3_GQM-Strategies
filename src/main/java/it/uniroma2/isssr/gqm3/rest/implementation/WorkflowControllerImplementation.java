@@ -107,8 +107,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
         businessWorkflow.setModelId(modelId);
         businessWorkflow.setName(businessWorkflowName);
 
-        if (businessWorkflowProcessDefinitionId != null
-                && !businessWorkflowProcessDefinitionId.isEmpty()) {
+        if (businessWorkflowProcessDefinitionId != null && !businessWorkflowProcessDefinitionId.isEmpty()) {
 
 //            businessWorkflow.setProcessDefinitionId(businessWorkflowProcessDefinitionId);
             businessWorkflow.deleteDeployment();
@@ -172,10 +171,10 @@ public class WorkflowControllerImplementation implements WorkflowController {
         metaWorkflow.updateVariable("businessWorkflowProcessInstanceId", businessWorkflowProcessInstanceId);
         workflowData.setBusinessWorkflowProcessInstanceId(businessWorkflowProcessInstanceId);
 
-        //TODO to remove? Only in "Export Workflow" task
 //        /* save update workflowDara on local mongodb */
-//        workflowDataRepository.save(workflowData);
+        workflowDataRepository.save(workflowData);
 //
+        //TODO to remove? Only in "Export Workflow" task
 //        /* update workflowData on bus */
 //        /* saveWorkflowData() try to update an existing workflowData. Create it wheter it doen't exist*/
 //        busInterfaceControllerImplementation.saveWorkflowData(workflowData);
