@@ -2,7 +2,7 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
   <message id="workflowIssueMessageId" name="workflowIssueMessage"></message>
   <message id="workflowEndingMessageId" name="workflowEndingMessage"></message>
-  <process id="Workflow2133424_workflow_handler" name="Workflow2133424_workflow_handler" isExecutable="true">
+    <process id="businessProcessManagementId" name="Business Process Management" isExecutable="true">
     <documentation>Workflow for management of a workflow for the realization of a business process.</documentation>
     <startEvent id="start" name="start" activiti:initiator="issueMessage"></startEvent>
     <userTask id="workflowCreationTaskId" name="Populate the Business Workflow" activiti:candidateGroups="Workflow Developer">
