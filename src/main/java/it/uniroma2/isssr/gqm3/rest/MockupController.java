@@ -48,6 +48,11 @@ public class MockupController {
         metric.setScaleType(metricDto.getScaleType());
         metric.setId(metricDto.getId());
         metric.setDescription(metricDto.getDescription());
+        metric.setHasMax(metricDto.getHasMax());
+        metric.setHasMin(metricDto.getHasMin());
+        metric.setSet(metricDto.getSet());
+        metric.setMin(metricDto.getMin());
+        metric.setMax(metricDto.getMax());
 
         /* save on local mongodb */
         metricRepository.save(metric);

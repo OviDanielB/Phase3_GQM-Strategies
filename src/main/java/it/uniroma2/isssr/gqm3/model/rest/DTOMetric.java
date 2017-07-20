@@ -20,6 +20,19 @@ public class DTOMetric {
     private String name;
     @JsonProperty("id")
     private String id;
+    @JsonProperty("set")
+    private String set;
+    @JsonProperty("hasMax")
+    private Boolean hasMax;
+    @JsonProperty("hasMin")
+    private Boolean hasMin;
+    @JsonProperty("min")
+    private Double min;
+    @JsonProperty("max")
+    private Double max;
+
+
+
 
     public Boolean getOrdered() {
         return ordered;
@@ -83,5 +96,45 @@ public class DTOMetric {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSet() {
+        return set;
+    }
+
+    public void setSet(String set) {
+        this.set = set;
+    }
+
+    public Boolean getHasMax() {
+        return hasMax;
+    }
+
+    public void setHasMax(Boolean hasMax) {
+        this.hasMax = hasMax;
+    }
+
+    public Boolean getHasMin() {
+        return hasMin;
+    }
+
+    public void setHasMin(Boolean hasMin) {
+        this.hasMin = hasMin;
+    }
+
+    public Double getMin() {
+        return min;
+    }
+
+    public void setMin(Double min) {
+        this.min = min;
+    }
+
+    public Double getMax() {
+        return max;
+    }
+
+    public void setMax(Double max) {
+        this.max = max;
     }
 }

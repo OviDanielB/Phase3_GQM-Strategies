@@ -77,7 +77,7 @@ public class MetaWorkflow extends Workflow {
 		ArrayList<String> addressVariablesName = new ArrayList<>(Arrays.asList("webappUrl", "deployEndpoint",
 				"startEndpoint", "exportEndpoint", "measurePlanningEndpoint", "validationPlanningEndpoint",
 				"workflowDataPlansUri", "activitiExplorerUri", "activitiModelerUri"));
-		ArrayList<String> addressVariablesValue = new ArrayList<>(Arrays.asList(hostSettings.getWebappFrontendUri(),
+		ArrayList<String> addressVariablesValue = new ArrayList<>(Arrays.asList(hostSettings.getWebappFrontendUrl(),
 				hostSettings.getDeployEndpoint(), hostSettings.getStartEndpoint(), hostSettings.getExportEndpoint(),
 				hostSettings.getMeasurePlanningEndpoint(), hostSettings.getValidationPlanningEndpoint(),
 				hostSettings.getStrategyPlansUri(), hostSettings.getActivitiExplorerConnectionUrl(),
