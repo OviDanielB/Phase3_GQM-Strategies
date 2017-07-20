@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
+import it.uniroma2.isssr.gqm3.model.ontologyPhase2.Ontology;
+import it.uniroma2.isssr.gqm3.repository.OntologyRepository;
 import it.uniroma2.isssr.gqm3.rest.BusInterfaceController;
 import it.uniroma2.isssr.gqm3.dto.ErrorResponse;
 import it.uniroma2.isssr.gqm3.dto.IssueMessage;
@@ -76,6 +78,8 @@ public class BusInterfaceControllerImplementation implements
     private WorkflowDataRepository workflowDataRepository;
     @Autowired
     private FeedbackControllerImplementation feedbackControllerImplementation;
+    @Autowired
+    private OntologyRepository ontologyRepository;
 
 
     @RequestMapping(value = "/bus/notifications", method = RequestMethod.POST)
@@ -583,9 +587,59 @@ public class BusInterfaceControllerImplementation implements
         systemStateRepository.deleteAll();
         refreshUsers();
         refreshMetrics();
+        deleteAllAndUpdateLocalOntologies();
 
         return ResponseEntity.status(HttpStatus.OK).body("Done.");
 
+    }
+
+    public Boolean deleteAllAndUpdateLocalOntologies(){
+
+        JSONObject jo = new JSONObject();
+        jo.put("objIdLocalToPhase", "");
+        jo.put("typeObj", BusObjectTypes.ONTOLOGY);
+        jo.put("instance", "");
+        jo.put("busVersion", "");
+        jo.put("tags", "[]");
+
+        BusMessage message = null;
+        Ontology ontology = null;
+        try {
+            message = new BusMessage(BusMessage.OPERATION_READ,"phase2", jo.toString());
+            String busResponse = message.send(hostSettings.getBusUri());
+            System.out.println(busResponse);
+
+            ObjectMapper mapper = new ObjectMapper();
+            List<BusReadResponse> readResponseList = mapper.readValue(
+                    busResponse,
+                    mapper.getTypeFactory().constructCollectionType(List.class,
+                            BusReadResponse.class));
+
+            /* delete all ontologies */
+            ontologyRepository.deleteAll();
+
+            List<Ontology> ontologyList = new ArrayList<>();
+            for(BusReadResponse e: readResponseList) {
+                try {
+                    ontology = mapper.readValue(e.getPayload().toString(), Ontology.class);
+                    System.out.println(ontology.toString());
+
+                    ontologyRepository.save(ontology);
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                    return false;
+                }
+            }
+
+
+
+        } catch (BusException | IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     /**

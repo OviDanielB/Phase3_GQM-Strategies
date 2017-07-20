@@ -12,6 +12,8 @@ import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessDefinitionModel;
 import it.uniroma2.isssr.gqm3.dto.activiti.entitylist.GroupActivitiList;
 import it.uniroma2.isssr.gqm3.dto.response.ResponseMeasurementPlan;
 import it.uniroma2.isssr.gqm3.model.Metric;
+import it.uniroma2.isssr.gqm3.model.ontologyPhase2.Ontology;
+import it.uniroma2.isssr.gqm3.repository.OntologyRepository;
 import it.uniroma2.isssr.gqm3.rest.MeasurementPlanController;
 import it.uniroma2.isssr.gqm3.dto.ErrorResponse;
 import it.uniroma2.isssr.gqm3.model.MeasureTask;
@@ -56,8 +58,20 @@ public class MeasurementPlanControllerImplementation implements MeasurementPlanC
     private WorkflowDataRepository workflowDataRepository;
 
     @Autowired
+    private OntologyRepository ontologyRepository;
+
+    @Autowired
 //    private BusService2Phase4Implementation busService2Phase4Implementation;
     private BusInterfaceControllerImplementation busInterfaceControllerImplentation;
+
+
+    @RequestMapping(value = "/ontologies",method = RequestMethod.GET)
+    public ResponseEntity<List<Ontology>> getOntologies(){
+
+        List<Ontology> ontologyList = ontologyRepository.findAll();
+
+        return new ResponseEntity<List<Ontology>>(ontologyList,HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/measurement-plan", method = RequestMethod.GET)
     @ApiOperation(value = "Get a measurement plan", notes = "This endpoint returns a measurement plan that needs to fill" +

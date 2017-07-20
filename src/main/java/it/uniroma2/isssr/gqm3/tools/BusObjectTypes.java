@@ -11,4 +11,5 @@ public class BusObjectTypes {
     public static final String STRATEGY = "Strategy";
     public static final String METRIC = "Metric";
     public static final String WORKFLOW_XML = "WorkflowXml";
+    public static final String ONTOLOGY = "Ontology";
 }
