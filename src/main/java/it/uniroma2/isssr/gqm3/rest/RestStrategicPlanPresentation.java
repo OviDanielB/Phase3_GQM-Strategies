@@ -125,7 +125,7 @@ public class RestStrategicPlanPresentation {
     @RequestMapping(value = "/setMetaWorkflow", method = RequestMethod.POST)
     public ResponseEntity<DTOResponseSWRelation> setMetaWorkflows(@RequestBody DTOMetaWorkflow dtoMetaWorkflow) throws IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, ProcessDefinitionNotFoundException, JsonRequestException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
-        return strategicPlanService.setMetaWorkflow(dtoMetaWorkflow.getStrategcPlanId(), dtoMetaWorkflow.getStrategyId(), dtoMetaWorkflow.getName());
+        return strategicPlanService.setMetaWorkflow(dtoMetaWorkflow.getStrategcPlanId(), dtoMetaWorkflow.getStrategyId(), dtoMetaWorkflow.getName(), dtoMetaWorkflow.getUpdatedStrategy());
 
     }
 

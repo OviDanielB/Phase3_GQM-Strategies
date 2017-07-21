@@ -375,7 +375,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 
     @Override
     public ResponseEntity<DTOResponseSWRelation> setMetaWorkflow(String strategicPlanId, String strategyId,
-                                                                 String name) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
+                                                                 String name, String isUpdatedStrategy) throws ProcessDefinitionNotFoundException, IllegalCharacterRequestException, BusinessWorkflowNotCreatedException, JsonRequestException, ActivitiEntityAlreadyExistsException, MetaWorkflowNotStartedException, JsonRequestConflictException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
         ResponseEntity<DTOResponseSWRelation> responseEntity;
         StrategicPlan strategicP = strategicPlanRepository.findOne(strategicPlanId);
         Strategy strategy = strategyRepository.findOne(strategyId);
@@ -395,7 +395,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 //        HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
 
 
-        ResponseEntity response = workflowServiceImplementation.createWorkflow(name);
+        ResponseEntity response = workflowServiceImplementation.createWorkflow(name, isUpdatedStrategy);
 
         if (response.getStatusCode() == HttpStatus.CREATED) {
             JSONObject jsnobject;

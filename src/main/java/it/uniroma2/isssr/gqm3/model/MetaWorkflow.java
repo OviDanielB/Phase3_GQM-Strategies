@@ -37,10 +37,10 @@ public class MetaWorkflow extends Workflow {
 	}
 
 	@Override
-	protected PostProcessInstance buildStartRequestBody() {
+	protected PostProcessInstance buildStartRequestBody(String isStrategyUpdated) {
 		PostProcessInstance processInstanceBody = new PostProcessInstance();
 		processInstanceBody.setProcessDefinitionId(super.getProcessDefinitionId());
-		processInstanceBody.setVariables(initializeMetaWorkflowVariables());
+		processInstanceBody.setVariables(initializeMetaWorkflowVariables(isStrategyUpdated));
 		return processInstanceBody;
 	}
 
@@ -65,7 +65,7 @@ public class MetaWorkflow extends Workflow {
 	 * 
 	 * @return List of variables initialized.
 	 */
-	private ArrayList<Variable> initializeMetaWorkflowVariables() {
+	private ArrayList<Variable> initializeMetaWorkflowVariables(String isStrategyUpdated) {
 
 		ArrayList<Variable> variables = new ArrayList<>();
 
@@ -102,6 +102,11 @@ public class MetaWorkflow extends Workflow {
 			variable.setValue(addressVariablesValue.get(i));
 			variables.add(variable);
 		}
+
+		Variable variable = new Variable();
+		variable.setName("updatedStrategy");
+		variable.setValue(Boolean.valueOf(isStrategyUpdated));
+		variables.add(variable);
 
 		return variables;
 	}
