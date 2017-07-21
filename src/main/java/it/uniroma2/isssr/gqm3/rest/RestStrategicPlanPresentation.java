@@ -164,16 +164,11 @@ public class RestStrategicPlanPresentation {
         return strategicPlanService.getStrategiesWithOrganizationalUnitOfStrategicPlan(id);
     }
 
+	
 
-	
-	
-	/*
 	@RequestMapping(value = "/updateStrategiesOfStrategicPlan", method = RequestMethod.POST)
 	public ResponseEntity<DTOResponseStrategicPlan> updateStrategiesOfStrategicPlan(@RequestBody DTOStrategicPlan dtoStrategicPlan) {
-
 		return strategicPlanService.updateStrategiesOfStrategicPlan(dtoStrategicPlan.getId(), dtoStrategicPlan.getStrategyWorkflowIds());
-
 	}
-    */
 
 }
