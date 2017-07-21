@@ -7,6 +7,7 @@ import it.uniroma2.isssr.gqm3.model.rest.DTOStrategicPlan;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseMetaWorkflow;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseSWRelation;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategicPlan;
+import it.uniroma2.isssr.gqm3.service.StrategyService;
 import it.uniroma2.isssr.integrazione.BusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,9 @@ public class RestStrategicPlanPresentation {
      */
     @Autowired
     StrategicPlanService strategicPlanService;
+
+    @Autowired
+    StrategyService strategyService;
 
     /**
      * Creates the strategic plan.
@@ -161,19 +165,14 @@ public class RestStrategicPlanPresentation {
 
     @RequestMapping(value = "/getStrategiesWithOrganizationalUnitOfStrategicPlan", method = RequestMethod.GET)
     public ResponseEntity<DTOResponseMetaWorkflow> getStrategiesWithOrganizationalUnitOfStrategicPlan(@RequestParam("id") String id) {
+        strategyService.updateStrategyF2();
         return strategicPlanService.getStrategiesWithOrganizationalUnitOfStrategicPlan(id);
     }
 
 
-	
-	
-	/*
-	@RequestMapping(value = "/updateStrategiesOfStrategicPlan", method = RequestMethod.POST)
-	public ResponseEntity<DTOResponseStrategicPlan> updateStrategiesOfStrategicPlan(@RequestBody DTOStrategicPlan dtoStrategicPlan) {
-
-		return strategicPlanService.updateStrategiesOfStrategicPlan(dtoStrategicPlan.getId(), dtoStrategicPlan.getStrategyWorkflowIds());
-
-	}
-    */
+    @RequestMapping(value = "/updateStrategiesOfStrategicPlan", method = RequestMethod.POST)
+    public ResponseEntity<DTOResponseStrategicPlan> updateStrategiesOfStrategicPlan(@RequestBody DTOStrategicPlan dtoStrategicPlan) {
+        return strategicPlanService.updateStrategiesOfStrategicPlan(dtoStrategicPlan.getId(), dtoStrategicPlan.getStrategyWorkflowIds());
+    }
 
 }

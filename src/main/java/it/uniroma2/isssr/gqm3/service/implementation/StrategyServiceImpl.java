@@ -2,7 +2,12 @@
 package it.uniroma2.isssr.gqm3.service.implementation;
 
 import it.uniroma2.isssr.HostSettings;
+import it.uniroma2.isssr.gqm3.Exception.EntityNotFoundException;
+import it.uniroma2.isssr.gqm3.model.StrategicPlan;
+import it.uniroma2.isssr.gqm3.model.StrategyWorkflowRelation;
+import it.uniroma2.isssr.gqm3.model.WorkflowData;
 import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom2;
+import it.uniroma2.isssr.gqm3.repository.StrategicPlanRepository;
 import it.uniroma2.isssr.gqm3.service.StrategyService;
 import it.uniroma2.isssr.gqm3.hermes.Bus2fase3;
 import it.uniroma2.isssr.gqm3.hermes.BusInteration;
@@ -71,6 +76,9 @@ public class StrategyServiceImpl implements StrategyService {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @Autowired
+    StrategicPlanRepository strategicPlanRepository;
+
     /**
      * The bus interation implementation.
      */
@@ -107,114 +115,104 @@ public class StrategyServiceImpl implements StrategyService {
         return busInteration.getStrategies();
     }
 
-
     public ResponseEntity updateStrategyF2() {
 
+        // strategie attualmente salvate su mongodb
+        List<Strategy> actualStrategies = strategyRepository.findAll();
+
+        // strategie presenti sul bus
         List<DTOStrategyFrom2> upToDateStr = bus2Fase3.getStrategiesF2();
 
-        for (DTOStrategyFrom2 dtoStrategy : upToDateStr) {
+        // elimino le strategy presenti su mongodb ma che non sono più presenti sul bus
 
-            Strategy toUpdate = new Strategy();
-            toUpdate.setIdF2(dtoStrategy.getId());
-            toUpdate.setName(dtoStrategy.getName());
-            toUpdate.setDescription(dtoStrategy.getDescription());
-            toUpdate.setOrganizationalunit(dtoStrategy.getOrganizationalUnit());
-            toUpdate.setOrganizationalunitId(dtoStrategy.getOrganizationalUnitId());
-            toUpdate.setStatus(dtoStrategy.getRevisited());
-            toUpdate.setVersion(dtoStrategy.getVersion());
+        if (upToDateStr == null) {
+            strategyRepository.deleteAll();
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
 
-            if ( (toUpdate.getStatus() == HostSettings.state.NEW.getValue() && !alreadyExist(toUpdate))
-                    || toUpdate.getStatus() == HostSettings.state.MODIFIED.getValue())
-                strategyRepository.save(toUpdate);
+        for (Strategy strategy : actualStrategies) {
+            Boolean notFound = true;
+            for (DTOStrategyFrom2 dtoStrategyFrom2 : upToDateStr)
+                if (dtoStrategyFrom2.getId().equals(strategy.getIdF2())) {
+                    notFound = false;
+                }
+            if (notFound)
+                strategyRepository.delete(strategy);
+        }
+
+        // aggiorno i valori nuovi
+        for (DTOStrategyFrom2 dtoSF2 : upToDateStr) {
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("idF2").is(dtoSF2.getId()));
+            List<Strategy> mongoStrategy = mongoTemplate.find(query, Strategy.class);
+
+            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && mongoStrategy.isEmpty()) {
+
+                Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
+                        dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
+                        dtoSF2.getVersion(), 0);
+                newStrategy.setIdF2(dtoSF2.getId());
+                strategyRepository.save(newStrategy);
+
+            } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()) {
+
+                Strategy toUpdate = mongoStrategy.get(0);
+
+                if (mongoStrategy.size() > 1) {
+                    System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
+                }
+
+                if (toUpdate.getVersion() < dtoSF2.getVersion()) {
+                    toUpdate.setIdF2(dtoSF2.getId());
+                    toUpdate.setName(dtoSF2.getName());
+                    toUpdate.setDescription(dtoSF2.getDescription());
+                    toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
+                    toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
+                    toUpdate.setStatus(dtoSF2.getRevisited());
+                    toUpdate.setVersion(dtoSF2.getVersion());
+
+                    /* Update workflowData of the strategy */
+                    try {
+                        updateWorkflowData(toUpdate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    strategyRepository.save(toUpdate);
+
+                }
+            }
 
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
-    private Boolean alreadyExist(Strategy tocheck) {
+    private void updateWorkflowData(Strategy strategy) throws Exception {
 
-        List<Strategy> strategies = strategyRepository.findAll();
-        for (Strategy strategy : strategies)
-            if (Objects.equals(strategy.getIdF2(), tocheck.getIdF2()))
-                return true;
-        return false;
+        List<StrategicPlan> strategicPlans = strategicPlanRepository.findByOrganizationalunit(strategy.getOrganizationalunit());
+        if (strategicPlans == null || strategicPlans.isEmpty())
+            throw new Exception();
+
+        StrategicPlan strategicPlan = strategicPlans.get(0);
+        List<StrategyWorkflowRelation> strategyWorkflowRelations = strategicPlan.getStrategyWorkflowIds();
+
+        for (StrategyWorkflowRelation strategyWorkflowRelation : strategyWorkflowRelations) {
+            if (Objects.equals(strategy.getIdF2(), strategyWorkflowRelation.getStrategy().getIdF2())) {
+
+                /* let unmodified just the modelId */
+                WorkflowData workflowData = strategyWorkflowRelation.getWorkflow();
+                workflowData.setBusinessWorkflowName(null);
+                workflowData.setBusinessWorkflowProcessDefinitionId(null);
+                workflowData.setBusinessWorkflowProcessInstanceId(null);
+                workflowData.setMetaWorkflowName(null);
+                workflowData.setMetaWorkflowProcessInstanceId(null);
+
+            }
+        }
+
     }
-
-
-//    public ResponseEntity updateStrategyF2() {
-//
-//        // strategie attualmente salvate su mongodb
-//        List<Strategy> actualStrategies = strategyRepository.findAll();
-//
-//        // strategie presenti sul bus
-//        List<DTOStrategyFrom2> upToDateStr = bus2Fase3.getStrategiesF2();
-//
-//        // elimino le strategy presenti su mongodb ma che non sono più presenti sul bus
-//        for (Strategy strategy : actualStrategies) {
-//
-//            Boolean notFound = true;
-//            for (DTOStrategyFrom2 dtoStrategyFrom2 : upToDateStr)
-//                if (dtoStrategyFrom2.getId().equals(strategy.getIdF2())) {
-//                    notFound = false;
-//                }
-//
-//            if (notFound)
-//                strategyRepository.delete(strategy);
-//
-//        }
-//
-//        if (upToDateStr == null) {
-//            strategyRepository.deleteAll();
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        }
-//
-//        // aggiorno i valori nuovi
-//        for (DTOStrategyFrom2 dtoSF2 : upToDateStr) {
-//
-//            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() ||
-//                    dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue()) {
-//
-//                Query query = new Query();
-//                query.addCriteria(Criteria.where("idF2").is(dtoSF2.getId()));
-//                List<Strategy> mongoStrategy = mongoTemplate.find(query, Strategy.class);
-//
-//                // strategy is marked as MODIFIED but it doesn't exist, so we create it
-//                if (mongoStrategy.isEmpty()) {
-//                    Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
-//                            dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
-//                            dtoSF2.getVersion(), 0);
-//                    newStrategy.setIdF2(dtoSF2.getId());
-//                    strategyRepository.save(newStrategy);
-//
-//                } else {
-//
-//                    Strategy toUpdate = mongoStrategy.get(0);
-//
-//                    if (mongoStrategy.size() > 1) {
-//                        //TODO: resolve unexpected state
-//                        System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
-//                    }
-//
-//                    if (toUpdate.getVersion() < dtoSF2.getVersion()) {
-//                        toUpdate.setIdF2(dtoSF2.getId());
-//                        toUpdate.setName(dtoSF2.getName());
-//                        toUpdate.setDescription(dtoSF2.getDescription());
-//                        toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
-//                        toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
-//                        toUpdate.setStatus(dtoSF2.getRevisited());
-//                        toUpdate.setVersion(dtoSF2.getVersion());
-//
-//                        strategyRepository.save(toUpdate);
-//                    }
-//                }
-//
-//            }
-//        }
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {

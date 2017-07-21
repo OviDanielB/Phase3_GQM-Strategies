@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author emanuele
@@ -51,17 +52,22 @@ public class WorkflowServiceImplementation {
         String metaWorkflowName = hostSettings.getMetaworkflowPrefix() + workflowName
                 + hostSettings.getMetaworkflowSuffix();
 
+        /* create meta and business workflow */
         MetaWorkflow metaWorkflow = new MetaWorkflow(hostSettings, metaWorkflowName, workflowName);
         metaWorkflow.checkAlreadyExist(metaWorkflowName);
         BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings, workflowName);
         businessWorkflow.checkAlreadyExist(workflowName);
+        businessWorkflow.setMetaWorkflowProcessInstanceId(metaWorkflow.getProcessInstanceId());
 
+
+        /* deploy and start metaworkflow */
         metaWorkflow.deploy();
-
         metaWorkflow.start(isStrategyUpdated);
 
-        businessWorkflow.setMetaWorkflowProcessInstanceId(metaWorkflow.getProcessInstanceId());
-        businessWorkflow.createModel();
+        if (businessWorkflow.getModelId() == null)
+            businessWorkflow.createModel();
+
+
         metaWorkflow.updateVariable("businessWorkflowModelId", businessWorkflow.getModelId());
 
         WorkflowData workflowData = new WorkflowData();
