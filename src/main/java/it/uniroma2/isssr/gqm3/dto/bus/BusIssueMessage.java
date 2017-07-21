@@ -14,12 +14,40 @@ public class BusIssueMessage {
 
 	@JsonProperty("businessWorkflowInstanceId")
 	private String businessWorkflowInstanceId;
-	@JsonProperty("issueMessage")
-	private String issueMessage;
+	@JsonProperty("taskId")
+	private String taskId;
+	@JsonProperty("messageType")
+	private String messageType;
+	@JsonProperty("messageContent")
+	private String messageContent;
 	@JsonProperty("issueMessageResources")
 	private String issueMessageResources;
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+	public String getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
+	}
+
+	public String getMessageContent() {
+		return messageContent;
+	}
+
+	public void setMessageContent(String messageContent) {
+		this.messageContent = messageContent;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
 
 	/**
 	 * 
@@ -38,25 +66,6 @@ public class BusIssueMessage {
 	@JsonProperty("businessWorkflowInstanceId")
 	public void setBusinessWorkflowInstanceId(String businessWorkflowInstanceId) {
 		this.businessWorkflowInstanceId = businessWorkflowInstanceId;
-	}
-
-	/**
-	 * 
-	 * @return The issueMessage
-	 */
-	@JsonProperty("issueMessage")
-	public String getIssueMessage() {
-		return issueMessage;
-	}
-
-	/**
-	 * 
-	 * @param issueMessage
-	 *            The issueMessage
-	 */
-	@JsonProperty("issueMessage")
-	public void setIssueMessage(String issueMessage) {
-		this.issueMessage = issueMessage;
 	}
 
 	/**

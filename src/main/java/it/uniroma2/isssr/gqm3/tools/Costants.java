@@ -40,6 +40,12 @@ public class Costants {
 	public static String REPEAT_MEASURE_TASK_PAGE_1 = "&name=";
 	public static String REPEAT_MEASURE_TASK_PAGE_2 = "&errorMessage=";
 	public static String REPEAT_MEASURE_TASK_PAGE_3 = "&collectedDataId=";
+
+	public static String[] ISSUE_MESSAGES = {"validationIssue", "measurementIssue", "workflowIssue", "strategicIssue"};
+	public static String VALIDATION_ISSUE_MESSAGE = "validationIssue";
+	public static String MEASUREMENT_ISSUE_MESSAGE = "measurementIssue";
+	public static String BUSINESS_WORKFLOW_ISSUE_MESSAGE = "workflowIssue";
+	public static String STRATEGIC_PLAN_ISSUE_MESSAGE = "strategicIssue";
 		
 	public static String REALS = "reals";
 	public static String INTEGERS = "integers";

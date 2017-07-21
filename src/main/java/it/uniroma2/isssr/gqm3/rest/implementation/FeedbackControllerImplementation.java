@@ -1,9 +1,11 @@
 package it.uniroma2.isssr.gqm3.rest.implementation;
 
 import io.swagger.annotations.Api;
+import it.uniroma2.isssr.gqm3.model.*;
+import it.uniroma2.isssr.gqm3.repository.MeasureTaskRepository;
 import it.uniroma2.isssr.gqm3.service.implementation.BusService2Phase4Implementation;
 import it.uniroma2.isssr.integrazione.BusException;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -13,18 +15,11 @@ import it.uniroma2.isssr.gqm3.rest.FeedbackController;
 import it.uniroma2.isssr.gqm3.dto.EndingMessage;
 import it.uniroma2.isssr.gqm3.dto.ErrorResponse;
 import it.uniroma2.isssr.gqm3.dto.IssueMessage;
-import it.uniroma2.isssr.gqm3.model.BusinessWorkflow;
-import it.uniroma2.isssr.gqm3.model.MetaWorkflow;
-import it.uniroma2.isssr.gqm3.model.WorkflowData;
-import it.uniroma2.isssr.gqm3.model.WorkflowMessage;
 import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,6 +27,7 @@ import java.util.List;
 
 @RestController
 @Api(value = "Feedback Controller", description = "Feedback Controller API")
+@CrossOrigin(origins = "*")
 public class FeedbackControllerImplementation implements FeedbackController {
 
     @Autowired
@@ -39,6 +35,9 @@ public class FeedbackControllerImplementation implements FeedbackController {
 
     @Autowired
     private WorkflowDataRepository workflowDataRepository;
+
+    @Autowired
+    private MeasureTaskRepository measureTaskRepository;
 
     @Autowired
 //    private BusService2Phase4Implementation busService2Phase4Implementation;
@@ -49,26 +48,27 @@ public class FeedbackControllerImplementation implements FeedbackController {
             JsonRequestException, IssueMessageCatcherNotFoundException,
             WorkflowDataException, JsonRequestConflictException {
 
-        String businessWorkflowProcessInstanceId = workflowMessage
-                .getBusinessWorkflowProcessInstanceId();
+        String taskId = workflowMessage.getTaskId();
 
-        List<WorkflowData> workflowDatas = workflowDataRepository
-                .findByBusinessWorkflowProcessInstanceId(businessWorkflowProcessInstanceId);
-
-        if (workflowDatas.size() <= 0) {
-            throw new WorkflowDataException();
+        List<MeasureTask> measureTasks = measureTaskRepository.findByTaskId(taskId);
+        MeasureTask measureTask = measureTasks.get(0);
+        List<WorkflowData> workflowDataList = workflowDataRepository.findAll();
+        WorkflowData workflowData = new WorkflowData();
+        for (WorkflowData wd : workflowDataList) {
+            if (wd.getMeasureTasksList().indexOf(measureTask) != 0) {
+                workflowData = wd;
+            }
         }
-        WorkflowData workflowData = workflowDatas.get(0);
 
-        String metaWorkflowProcessInstanceId = workflowData
-                .getMetaWorkflowProcessInstanceId();
+        workflowMessage.setBusinessWorkflowProcessInstanceId(workflowData.getBusinessWorkflowProcessInstanceId());
+
+        String metaWorkflowProcessInstanceId = workflowData.getMetaWorkflowProcessInstanceId();
 
         MetaWorkflow metaWorkflow = new MetaWorkflow(hostSettings,
                 metaWorkflowProcessInstanceId);
-        metaWorkflow.sendMessage(workflowMessage.getMessageType(),
+        metaWorkflow.sendMessage(workflowMessage.getActivitiMessageType(),
                 workflowMessage.getMessageBody());
 
-        return;
     }
 
     public void receiveFeedbackMessage(IssueMessage issueMessage)
@@ -80,13 +80,13 @@ public class FeedbackControllerImplementation implements FeedbackController {
 
         receiveMessage(workflowMessage);
 
-        //TODO end a business workflow if an issue Message arrives?
+        //TODO end a business workflow if
 //        BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings);
 //        businessWorkflow.setProcessInstanceId(issueMessage
 //                .getBusinessWorkflowProcessInstanceId());
 //        businessWorkflow.deleteProcessInstance();
 
-        List<WorkflowData> workflowDatas = workflowDataRepository.findByBusinessWorkflowProcessInstanceId(issueMessage
+        List<WorkflowData> workflowDatas = workflowDataRepository.findByBusinessWorkflowProcessInstanceId(workflowMessage
                 .getBusinessWorkflowProcessInstanceId());
         if (workflowDatas.size() != 1) {
             throw new WorkflowDataException();
@@ -105,8 +105,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
     @RequestMapping(value = "/BusinessIssueMessages", method = RequestMethod.POST)
     @ApiOperation(value = "Receive Issue Messages", notes = "This endpoint receives an issue message")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
-    public ResponseEntity<String> receiveIssueMessage(
-            @RequestBody IssueMessage issueMessage, HttpServletResponse response)
+    public ResponseEntity<String> receiveIssueMessage(@RequestBody IssueMessage issueMessage, HttpServletResponse response)
             throws WorkflowDataException, IssueMessageCatcherNotFoundException,
             IllegalReceiveMessageRequestBodyException, JsonRequestException,
             JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException {
@@ -121,9 +120,8 @@ public class FeedbackControllerImplementation implements FeedbackController {
     @RequestMapping(value = "/BusinessEndingMessages", method = RequestMethod.POST)
     @ApiOperation(value = "Receive Ending Messages", notes = "This endpoint receives an ending message and terminates the specificated workflow")
     @ApiResponses(value = {@ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
-    public ResponseEntity<String> receiveEndingMessage(
-            @RequestBody EndingMessage endingMessage,
-            HttpServletResponse response) throws WorkflowDataException,
+    public ResponseEntity<String> receiveEndingMessage(@RequestBody EndingMessage endingMessage, HttpServletResponse response)
+            throws WorkflowDataException,
             IssueMessageCatcherNotFoundException, JsonRequestException,
             IllegalReceiveMessageRequestBodyException,
             JsonRequestConflictException, IOException, BusRequestException, BusException, ModelXmlNotFoundException, IllegalSaveWorkflowRequestBodyException {
