@@ -105,7 +105,11 @@ public class MetaWorkflow extends Workflow {
 
 		Variable variable = new Variable();
 		variable.setName("updatedStrategy");
-		variable.setValue(Boolean.valueOf(isStrategyUpdated));
+		Boolean val = true;
+		if (Integer.valueOf(isStrategyUpdated) == HostSettings.state.NEW.getValue()) {
+			val = false;
+		}
+		variable.setValue(val);
 		variables.add(variable);
 
 		return variables;
