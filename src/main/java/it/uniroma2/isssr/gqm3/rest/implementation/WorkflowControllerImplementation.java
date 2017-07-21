@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.activiti.ActivitiInterationImplementation;
-import it.uniroma2.isssr.gqm3.dto.post.PostActionTask;
+import it.uniroma2.isssr.gqm3.dto.post.*;
 import it.uniroma2.isssr.gqm3.model.activiti.task.ActivitiTask;
 import it.uniroma2.isssr.gqm3.rest.WorkflowController;
 import it.uniroma2.isssr.gqm3.dto.ErrorResponse;
@@ -17,15 +17,10 @@ import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
 import it.uniroma2.isssr.gqm3.dto.activiti.entitylist.DeploymentList;
 import it.uniroma2.isssr.gqm3.dto.activiti.entitylist.ProcessDefinitionList;
 import it.uniroma2.isssr.gqm3.dto.activiti.entitylist.ProcessInstanceList;
-import it.uniroma2.isssr.gqm3.dto.post.PostCreateWorkflow;
-import it.uniroma2.isssr.gqm3.dto.post.PostDeploy;
-import it.uniroma2.isssr.gqm3.dto.post.PostStartProcessInstance;
 import it.uniroma2.isssr.gqm3.model.BusinessWorkflow;
 import it.uniroma2.isssr.gqm3.model.MetaWorkflow;
 import it.uniroma2.isssr.gqm3.model.WorkflowData;
 import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
-import it.uniroma2.isssr.gqm3.service.implementation.ActivitiTaskServiceImplementation;
-import it.uniroma2.isssr.gqm3.service.implementation.BusService2Phase4Implementation;
 import it.uniroma2.isssr.gqm3.service.implementation.WorkflowServiceImplementation;
 import it.uniroma2.isssr.gqm3.tools.JsonRequestActiviti;
 import it.uniroma2.isssr.integrazione.BusException;
@@ -274,13 +269,14 @@ public class WorkflowControllerImplementation implements WorkflowController {
     @ApiOperation(value = "Complete task specified", notes = "This endpoint checks if a workflow has been started yet")
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "See error code and message", response = ErrorResponse.class)})
-    public ResponseEntity<String> completeTaskByProcessDefinitionId(
-            @RequestParam("processDefinitionId") String processDefinitionId)
+    public ResponseEntity completeTaskByProcessDefinitionId(
+            @RequestBody PostCompleteTask postCompleteTask)
             throws JsonRequestException, ActivitiEntityAlreadyExistsException, WorkflowDataException,
             ProcessDefinitionNotFoundException, ActivitiGetException, IOException, JsonRequestConflictException {
 
-        System.out.println("DEF" +processDefinitionId);
-        ActivitiTask task = activitiInteractionImplementation.getTaskByProcessDefinitionId(processDefinitionId);
+        ActivitiTask task = activitiInteractionImplementation
+                .getTaskByProcessDefinitionId(
+                        postCompleteTask.getProcessDefinitionId(), postCompleteTask.getTaskToComplete());
 
         JsonRequestActiviti jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
 
@@ -294,7 +290,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
         if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<String>(responseEntity.getBody().toString(), HttpStatus.OK);
+            return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
         }
     }
 }

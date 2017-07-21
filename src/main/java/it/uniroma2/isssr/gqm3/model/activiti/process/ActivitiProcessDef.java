@@ -1,6 +1,7 @@
 package it.uniroma2.isssr.gqm3.model.activiti.process;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -13,13 +14,21 @@ import java.util.List;
 
 public class ActivitiProcessDef {
 
+	@JsonProperty("id")
 	private String id;
+	@JsonProperty("url")
 	private String url;
+	@JsonProperty("key")
 	private String businessKey;
+	@JsonProperty("suspended")
 	private String suspended;
+	@JsonProperty("ended")
 	private String ended;
+	@JsonProperty("deploymentId")
 	private String processDefinitionId;
+	@JsonProperty("deploymentUrl")
 	private String processDefinitionUrl;
+
 	private String activityId;
 	private List<String> variables;
 	private String tenantId;

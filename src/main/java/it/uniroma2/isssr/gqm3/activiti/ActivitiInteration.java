@@ -76,7 +76,7 @@ public interface ActivitiInteration {
     public ActivitiTaskVariable updateActivitiTaskVariable(String id, String name,
                                                            DTOActivitiTaskVariable dtoActivitiTaskVariable) throws JsonParseException, JsonMappingException, IOException, ActivitiPutException, JsonRequestException;
 
-    ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException;
+    ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId, String goToTask) throws ActivitiGetException, IOException, JsonRequestException, JsonRequestConflictException;
 
     ProcessInstance getProcessInstanceFromKey(String processDefinitionKey) throws ActivitiGetException, IOException, JsonRequestException;
 }

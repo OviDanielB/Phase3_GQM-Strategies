@@ -205,7 +205,7 @@ public abstract class Workflow {
     public <T extends ActivitiEntityList> void checkAlreadyExists(String name, String restAddress, Class<T> T)
             throws ActivitiEntityAlreadyExistsException, JsonRequestException {
 
-        System.out.print(restAddress);
+        System.out.println(restAddress);
         Map<String, String> queryParams = new LinkedHashMap<String, String>();
         queryParams.put("name", name);
         List<? extends ActivitiEntity> entityList = jsonRequestActiviti

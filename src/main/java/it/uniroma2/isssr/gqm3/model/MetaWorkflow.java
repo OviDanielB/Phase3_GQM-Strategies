@@ -199,6 +199,7 @@ public class MetaWorkflow extends Workflow {
 		for (int i = 0; i < restAddresses.size(); i++) {
 
 			String restAddress = restAddresses.get(i);
+
 			Class<? extends ActivitiEntityList> T = entitylists.get(i);
 			super.checkAlreadyExists(metaWorkflowName, restAddress, T );
 		}

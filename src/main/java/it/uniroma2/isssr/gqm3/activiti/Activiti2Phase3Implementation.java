@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.*;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.Model;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessDefinition;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
+import it.uniroma2.isssr.gqm3.dto.post.PostQueryTask;
 import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormProperty;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormVariableProperty;
@@ -16,6 +19,7 @@ import it.uniroma2.isssr.gqm3.model.activiti.task.ActivitiTaskVariable;
 import it.uniroma2.isssr.gqm3.model.activiti.user.ActivitiUser;
 import it.uniroma2.isssr.gqm3.model.rest.DTOActivitiTaskVariable;
 import it.uniroma2.isssr.gqm3.tools.JsonRequestActiviti;
+import it.uniroma2.isssr.gqm3.tools.MetaworkflowTasks;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -165,7 +169,7 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
     }
 
     @Override
-    public List<ActivitiProcessDef> getProcessesDefinitions()
+    public List<ProcessDefinition> getProcessesDefinitions()
             throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -181,14 +185,14 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
         log.warn(start.toString());
         Long total = jsonObject.getLong("total");
         log.warn(total.toString());
-        List<ActivitiProcessDef> activitiTaskList = new ArrayList<ActivitiProcessDef>();
+        List<ProcessDefinition> activitiTaskList = new ArrayList<>();
         while (total - start > 0) {
             JSONArray jsonArray = jsonObject.getJSONArray("data");
             response = requestActiviti.get(url + "?start=" + start, String.class);
             jsonObject = new JSONObject(response.getBody());
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject explrObject = jsonArray.getJSONObject(i);
-                activitiTaskList.add(mapper.readValue(explrObject.toString(), ActivitiProcessDef.class));
+                activitiTaskList.add(mapper.readValue(explrObject.toString(), ProcessDefinition.class));
             }
             start = start + size;
         }
@@ -406,13 +410,13 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
     }
 
     @Override
-    public ActivitiProcessDef getProcessByProcessDefinitionId(String username, String password, String processDefinitionId)
+    public ProcessDefinition getProcessByProcessDefinitionId(String username, String password, String processDefinitionId)
             throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
 
-        List<ActivitiProcessDef> activitiProcessDefs = getProcessesDefinitions();
+        List<ProcessDefinition> activitiProcessDefs = getProcessesDefinitions();
 
-        for (ActivitiProcessDef p : activitiProcessDefs) {
-            if (p.getProcessDefinitionId().equals(processDefinitionId)) {
+        for (ProcessDefinition p : activitiProcessDefs) {
+            if (p.getDeploymentId().equals(processDefinitionId)) {
                 return p;
             }
         }
@@ -619,7 +623,7 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
 
     @Override
     public List<FlowElement> getFlowElementsList(String username, String password, String businessWorkflowProcessDefinitionId) throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException {
-        String URL = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/"+
+        String URL = hostSettings.getActivitiRestEndpointProcessDefinitions() + "/" +
                 businessWorkflowProcessDefinitionId + "/model";
 
         // debug
@@ -777,35 +781,51 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
 
 
     @Override
-    public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException {
+    public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId, String taskToComplete) throws ActivitiGetException, IOException, JsonRequestException, JsonRequestConflictException {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        String url = hostSettings.getActivitiRestEndpointTasks() + "?processDefinitionId=" +processDefinitionId;
+        String url = hostSettings.getActivitiRestEndpointQueryTasks();
 
-        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+        PostQueryTask postBody = new PostQueryTask();
+        postBody.setProcessDefinitionId(processDefinitionId);
 
-        JSONObject jsonObject = new JSONObject(response.getBody());
-        //per via della paginazione
-        Long size = jsonObject.getLong("size");
-        log.warn(size.toString());
-        Long start = jsonObject.getLong("start");
-        log.warn(start.toString());
-        Long total = jsonObject.getLong("total");
-        log.warn(total.toString());
-        List<ActivitiTask> activitiTaskList = new ArrayList<ActivitiTask>();
-        while (total - start > 0) {
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
-            response = requestActiviti.get(url + "?processDefinitionId=" + processDefinitionId, String.class);
-            jsonObject = new JSONObject(response.getBody());
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject explrObject = jsonArray.getJSONObject(i);
-                activitiTaskList.add(mapper.readValue(explrObject.toString(), ActivitiTask.class));
+        ResponseEntity<String> response;
+
+        String task = "";
+        for (String t : MetaworkflowTasks.getTasks()) {
+            if (t.contains(taskToComplete))
+                postBody.setName(t);
+                response = requestActiviti.post(url, postBody, String.class);
+            JSONObject jsonObject = new JSONObject(response.getBody());
+            //per via della paginazione
+            Long size = jsonObject.getLong("size");
+            log.warn(size.toString());
+            Long start = jsonObject.getLong("start");
+            log.warn(start.toString());
+            Long total = jsonObject.getLong("total");
+            log.warn(total.toString());
+            List<ActivitiTask> activitiTaskList = new ArrayList<ActivitiTask>();
+            while (total - start > 0) {
+                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                response = requestActiviti.post(url, postBody, String.class);
+                jsonObject = new JSONObject(response.getBody());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject explrObject = jsonArray.getJSONObject(i);
+                    activitiTaskList.add(mapper.readValue(explrObject.toString(), ActivitiTask.class));
+                }
+                start = start + size;
             }
-            start = start + size;
+            if (activitiTaskList.size() != 0)
+                return activitiTaskList.get(0);
         }
-        if (activitiTaskList.size() != 0)
-            return activitiTaskList.get(0);
+
+//        String url = hostSettings.getActivitiRestEndpointTasks()
+//                + "?processDefinitionId=" + processDefinitionId
+//                + "&name=" + task;
+//
+//        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
         return null;
     }
 
@@ -817,7 +837,7 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
 
         ResponseEntity<String> response = requestActiviti.get(url, String.class);
 
-        System.out.println("key "+processDefinitionKey+"url: "+url+" response: "+response);
+        System.out.println("key " + processDefinitionKey + "url: " + url + " response: " + response);
 
         JSONObject jsonObject = new JSONObject(response.getBody());
         //per via della paginazione
@@ -841,6 +861,80 @@ public class Activiti2Phase3Implementation implements Activiti2Phase3 {
         if (activitiInstanceList.size() != 0)
             return activitiInstanceList.get(0);
         return null;
+    }
+
+    public ResponseEntity<?> cleanAll() throws JsonRequestException, IOException, ActivitiGetException {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = hostSettings.getActivitiRestEndpointProcessInstances();
+
+        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        //per via della paginazione
+        Long size = jsonObject.getLong("size");
+        log.warn(size.toString());
+        Long start = jsonObject.getLong("start");
+        log.warn(start.toString());
+        Long total = jsonObject.getLong("total");
+        log.warn(total.toString());
+        List<ProcessInstance> activitiInstanceList = new ArrayList<ProcessInstance>();
+        while (total - start > 0) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            response = requestActiviti.get(url, String.class);
+            jsonObject = new JSONObject(response.getBody());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                activitiInstanceList.add(mapper.readValue(explrObject.toString(), ProcessInstance.class));
+            }
+            start = start + size;
+        }
+
+        for (ProcessInstance p : activitiInstanceList) {
+            requestActiviti.delete(url + "/" + p.getId());
+        }
+
+        for (ProcessDefinition d : getProcessesDefinitions()) {
+            requestActiviti.delete(
+                    hostSettings.getActivitiRestEndpointDeployments()
+                            + "/" + d.getDeploymentId());
+        }
+
+        for (Model m : getModels()) {
+            requestActiviti.delete(hostSettings.getActivitiRestEndpointModels()
+                    + '/' + m.getId());
+        }
+        return null;
+    }
+
+    public List<Model> getModels() throws JsonRequestException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        String url = hostSettings.getActivitiRestEndpointModels();
+
+        ResponseEntity<String> response = requestActiviti.get(url, String.class);
+
+        JSONObject jsonObject = new JSONObject(response.getBody());
+        //per via della paginazione
+        Long size = jsonObject.getLong("size");
+        log.warn(size.toString());
+        Long start = jsonObject.getLong("start");
+        log.warn(start.toString());
+        Long total = jsonObject.getLong("total");
+        log.warn(total.toString());
+        List<Model> activitiModelList = new ArrayList<Model>();
+        while (total - start > 0) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            response = requestActiviti.get(url, String.class);
+            jsonObject = new JSONObject(response.getBody());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject explrObject = jsonArray.getJSONObject(i);
+                activitiModelList.add(mapper.readValue(explrObject.toString(), Model.class));
+            }
+            start = start + size;
+        }
+        return activitiModelList;
     }
 }
 	

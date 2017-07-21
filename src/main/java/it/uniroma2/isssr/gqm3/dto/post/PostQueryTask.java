@@ -31,6 +31,10 @@ public class PostQueryTask {
 	private String candidateUser;
 	@JsonProperty("includeTaskLocalVariables")
 	private boolean includeTaskLocalVariables;
+	@JsonProperty("name")
+	private String name;
+	@JsonProperty("processDefinitionId")
+	private String processDefinitionId;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonProperty("taskVariables")
 	private List<TaskVariable> taskVariables;
@@ -66,7 +70,24 @@ public class PostQueryTask {
 	public void setTaskVariables(List<TaskVariable> taskVariables) {
 		this.taskVariables = taskVariables;
 	}
-	
-	
-	
+
+	public Boolean getUnassigned() {
+		return unassigned;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getProcessDefinitionId() {
+		return processDefinitionId;
+	}
+
+	public void setProcessDefinitionId(String processDefinitionId) {
+		this.processDefinitionId = processDefinitionId;
+	}
 }

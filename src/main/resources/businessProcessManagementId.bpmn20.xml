@@ -5,7 +5,7 @@
   <process id="businessProcessManagementId" name="Business Process Management" isExecutable="true">
     <documentation>Workflow for management of a workflow for the realization of a business process.</documentation>
     <startEvent id="start" name="start" activiti:initiator="issueMessage"></startEvent>
-    <userTask id="workflowCreationTaskId" name="Populate the Business Workflow" activiti:candidateGroups="Workflow Developer">
+    <userTask id="workflowCreationTaskId" name="Populate the model of the Business Workflow" activiti:candidateGroups="Workflow Developer">
       <documentation>The Business Workflow "${workflowName}" needs to be populated or edited in order to reflect actual strategy defined in the Strategic Plan.
 
                 &gt;&gt; Click here: ${webappUrl}${activitiModelerUri}?modelId=${businessWorkflowModelId}
@@ -289,7 +289,7 @@
         <activiti:formProperty id="strategicPlannerNote" name="Optional note for the workflow developer" type="string"></activiti:formProperty>
       </extensionElements>
     </userTask>
-    <userTask id="workflowModificationTaskId" name="Modify the Business Workflow" activiti:candidateGroups="Workflow Developer">
+    <userTask id="workflowModificationTaskId" name="Modify the model of the Business Workflow" activiti:candidateGroups="Workflow Developer">
       <documentation>The Business Workflow "${workflowName}" needs to be edited in order to reflect actual strategy defined in the Strategic Plan.
 
                 &gt;&gt; Click here: ${webappUrl}${activitiModelerUri}?modelId=${businessWorkflowModelId}
