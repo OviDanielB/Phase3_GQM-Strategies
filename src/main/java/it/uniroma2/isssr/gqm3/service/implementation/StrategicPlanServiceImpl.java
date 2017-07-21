@@ -379,21 +379,9 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
         ResponseEntity<DTOResponseSWRelation> responseEntity;
         StrategicPlan strategicP = strategicPlanRepository.findOne(strategicPlanId);
         Strategy strategy = strategyRepository.findOne(strategyId);
-        // se ho trovato strategia e strategic plan avvio il metaworkflow poi lo
-        // associo alla strategia
-        // TODO fare il check se l'unità organizzativa è la stessa
-        //// _______________________________________________________________________
 
-//        JSONObject obj = new JSONObject();
-//        obj.put("name", name);
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-////		Map<String, String> params = new HashMap<String, String>();
-////		params.put("name", name);
-//        RestTemplate template = new RestTemplate();
-//        String URL = hostSettings.getGqm31_baseurl() + "/workflows/create";
-//        HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
-
+        if (strategicP == null || strategy == null || !Objects.equals(strategicP.getOrganizationalUnit(), strategy.getOrganizationalunit()))
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         ResponseEntity response = workflowServiceImplementation.createWorkflow(name, isUpdatedStrategy);
 
@@ -408,9 +396,6 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            // jsnobject.getString(key);
-            // trattare poi la risposta
-            // ____________________________________________________________________________
 
             WorkflowData wd = wdRepository.findByBusinessWorkflowModelId(businessModelId).get(0);
             strategicP.setMetaId(strategy, wd);
