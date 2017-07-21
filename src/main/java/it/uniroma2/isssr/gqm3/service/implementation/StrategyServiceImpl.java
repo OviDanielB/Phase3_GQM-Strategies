@@ -178,9 +178,7 @@ public class StrategyServiceImpl implements StrategyService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                     strategyRepository.save(toUpdate);
-
                 }
             }
 
@@ -208,10 +206,8 @@ public class StrategyServiceImpl implements StrategyService {
                 workflowData.setBusinessWorkflowProcessInstanceId(null);
                 workflowData.setMetaWorkflowName(null);
                 workflowData.setMetaWorkflowProcessInstanceId(null);
-
             }
         }
-
     }
 
     @Override
