@@ -75,7 +75,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
             MetaWorkflowNotDeployedException, ModelXmlNotFoundException, MetaWorkflowNotStartedException,
             ProcessDefinitionNotFoundException, JsonRequestConflictException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
-        return workflowServiceImplementation.createWorkflow(createWorkflowBody.getName());
+        return workflowServiceImplementation.createWorkflow(createWorkflowBody.getName(), "true");
     }
 
     @RequestMapping(value = "/workflows/deployments", method = RequestMethod.POST)
@@ -164,7 +164,7 @@ public class WorkflowControllerImplementation implements WorkflowController {
         businessWorkflow.setProcessDefinitionId(processDefinitionId);
         businessWorkflow.setName(businessWorkflowName);
 
-        businessWorkflow.start();
+        businessWorkflow.start("false");
         String metaWorkflowProcessInstanceId = workflowData.getMetaWorkflowProcessInstanceId();
         String businessWorkflowProcessInstanceId = businessWorkflow.getProcessInstanceId();
         MetaWorkflow metaWorkflow = new MetaWorkflow(hostSettings, metaWorkflowProcessInstanceId);

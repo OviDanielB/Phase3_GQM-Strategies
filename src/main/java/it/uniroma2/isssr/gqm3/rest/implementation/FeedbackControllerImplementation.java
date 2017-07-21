@@ -80,10 +80,11 @@ public class FeedbackControllerImplementation implements FeedbackController {
 
         receiveMessage(workflowMessage);
 
-        BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings);
-        businessWorkflow.setProcessInstanceId(issueMessage
-                .getBusinessWorkflowProcessInstanceId());
-        businessWorkflow.deleteProcessInstance();
+        //TODO end a business workflow if an issue Message arrives?
+//        BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings);
+//        businessWorkflow.setProcessInstanceId(issueMessage
+//                .getBusinessWorkflowProcessInstanceId());
+//        businessWorkflow.deleteProcessInstance();
 
         List<WorkflowData> workflowDatas = workflowDataRepository.findByBusinessWorkflowProcessInstanceId(issueMessage
                 .getBusinessWorkflowProcessInstanceId());
@@ -136,6 +137,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
         BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings);
         businessWorkflow.setProcessInstanceId(businessWorkflowProcessInstanceId);
         businessWorkflow.deleteProcessInstance();
+        businessWorkflow.deleteDeployment();
 
         List<WorkflowData> workflowDatas = workflowDataRepository.findByBusinessWorkflowProcessInstanceId(businessWorkflowProcessInstanceId);
         if (workflowDatas.size() != 1) {
@@ -145,6 +147,7 @@ public class FeedbackControllerImplementation implements FeedbackController {
         WorkflowData workflowData = workflowDatas.get(0);
         workflowData.setMetaWorkflowProcessInstanceId(null);
         workflowData.setBusinessWorkflowProcessInstanceId(null);
+        workflowData.setBusinessWorkflowProcessDefinitionId(null);
 
         /* save on local mongodb */
         workflowDataRepository.save(workflowData);

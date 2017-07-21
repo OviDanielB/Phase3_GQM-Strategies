@@ -843,7 +843,7 @@ public class BusInterfaceControllerImplementation implements
             jsonGetUsers.put("instance", "");
             jsonGetUsers.put("busVersion", "");
 
-            busMessage = new BusMessage(BusMessage.OPERATION_GETUSERS, "phase", jsonGetUsers.toString());
+            busMessage = new BusMessage(BusMessage.OPERATION_GETUSERS, "users", jsonGetUsers.toString());
             responseFromBus = busMessage.send(address);
             users = mapper.readValue(responseFromBus, mapper.getTypeFactory()
                     .constructCollectionType(List.class, User.class));

@@ -26,6 +26,9 @@ public class DTOMetaWorkflow extends DTO {
 	@JsonInclude(Include.NON_NULL)
 	private String name;
 
+	/** Is the MetaWorkflow created from an updated strategy? */
+	@JsonInclude(Include.NON_NULL)
+	private String updatedStrategy;
 	/**
 	 * Gets the strategy id.
 	 *
@@ -80,7 +83,12 @@ public class DTOMetaWorkflow extends DTO {
 		this.name = name;
 	}
 
-	
-	
-	
+
+	public String getUpdatedStrategy() {
+		return updatedStrategy;
+	}
+
+	public void setUpdatedStrategy(String updateStrategy) {
+		this.updatedStrategy = updateStrategy;
+	}
 }

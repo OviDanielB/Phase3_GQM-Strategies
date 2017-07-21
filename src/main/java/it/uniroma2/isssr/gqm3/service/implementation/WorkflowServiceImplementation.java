@@ -37,7 +37,7 @@ public class WorkflowServiceImplementation {
     private BusInterfaceControllerImplementation busInterfaceControllerImplementation;
 
 
-    public ResponseEntity<String> createWorkflow(String workflowName) throws IllegalCharacterRequestException, JsonRequestException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, ProcessDefinitionNotFoundException, MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, JsonRequestConflictException, BusinessWorkflowNotCreatedException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
+    public ResponseEntity<String> createWorkflow(String workflowName, String isStrategyUpdated) throws IllegalCharacterRequestException, JsonRequestException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, ProcessDefinitionNotFoundException, MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, JsonRequestConflictException, BusinessWorkflowNotCreatedException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
         for (char character : ILLEGAL_CHARACTERS) {
             if (workflowName.indexOf(character) >= 0) {
@@ -58,7 +58,7 @@ public class WorkflowServiceImplementation {
 
         metaWorkflow.deploy();
 
-        metaWorkflow.start();
+        metaWorkflow.start(isStrategyUpdated);
 
         businessWorkflow.setMetaWorkflowProcessInstanceId(metaWorkflow.getProcessInstanceId());
         businessWorkflow.createModel();
