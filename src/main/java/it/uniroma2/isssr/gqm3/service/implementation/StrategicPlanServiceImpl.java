@@ -2,6 +2,7 @@ package it.uniroma2.isssr.gqm3.service.implementation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -110,6 +111,10 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 
     @Autowired
     StrategyService strategyService;
+
+    @Autowired
+    WorkflowDataRepository workflowDataRepository;
+
 
     @Override
     public ResponseEntity<DTOResponseStrategicPlan> createStrategicPlan(ArrayList<String> strategyId, String name,
@@ -396,14 +401,27 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             }
 
             WorkflowData wd = wdRepository.findByBusinessWorkflowModelId(businessModelId).get(0);
+
+            /* cerco workflow per strategia con stessa if2 della strategia che sto aggiungendo se questa è modified*/
+            WorkflowData workflowData = null;
+            for (StrategyWorkflowRelation strategyWorkflowRelation : strategicP.getStrategyWorkflowIds())
+                if (Objects.equals(strategyWorkflowRelation.getStrategy().getIdF2(), strategy.getIdF2())) {
+                    workflowData = strategyWorkflowRelation.getWorkflow();
+                    break;
+                }
+
+            if (workflowData != null)
+                wd.setBusinessWorkflowModelId(workflowData.getBusinessWorkflowModelId());
+
             strategicP.setMetaId(strategy, wd);
             strategicPlanRepository.save(strategicP);
+            workflowDataRepository.save(wd);
             DTOResponseSWRelation dtoResponse = new DTOResponseSWRelation();
             dtoResponse.push(strategy, wd);
-            responseEntity = new ResponseEntity<DTOResponseSWRelation>(dtoResponse, HttpStatus.OK);
+            responseEntity = new ResponseEntity<>(dtoResponse, HttpStatus.OK);
         } else {
             DTOResponseSWRelation dtoResponse = new DTOResponseSWRelation();
-            responseEntity = new ResponseEntity<DTOResponseSWRelation>(dtoResponse, HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<>(dtoResponse, HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
 
@@ -484,49 +502,41 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
     @Override
     public ResponseEntity<DTOResponseMetaWorkflow> getStrategiesWithOrganizationalUnitOfStrategicPlan(String id) {
         StrategicPlan strategicPlan = strategicPlanRepository.findOne(id);
-        DTOResponseMetaWorkflow dtoResponse = new DTOResponseMetaWorkflow();
         List<StrategyWorkflowRelation> strategyWorkflowRelationList = strategicPlan.getStrategyWorkflowIds();
-
         String orgUnit = strategicPlan.getOrganizationalUnit();
-
         List<Strategy> strategies = strategyRepository.findAll();
 
 		/*elimino dalla lista le strategie con unità organizzativa differente da quella dello strategic plan*/
-
-
-        for (int i = 0; i < strategies.size(); i++) {
-            if (strategies.get(i).getOrganizationalunit().equals(orgUnit)) {
-            } else {
-                strategies.remove(i);
-                i--;
-            }
+        Iterator<Strategy> strategyIterator = strategies.iterator();
+        while (strategyIterator.hasNext()) {
+            Strategy strategy = strategyIterator.next();
+            if (!Objects.equals(strategy.getOrganizationalunit(), orgUnit))
+                strategyIterator.remove();
         }
 
-        for (int x = 0; x < strategies.size(); x++) {
-
-            for (int j = 0; j < strategyWorkflowRelationList.size(); j++) {
-
-                if (strategies.get(x).getId().equals(strategyWorkflowRelationList.get(j).getStrategy().getId())) {
-                    strategies.remove(x);
-                    x--;
-                    break;
-                }
+        strategyIterator = strategies.iterator();
+        while (strategyIterator.hasNext()) {
+            Strategy strategy = strategyIterator.next();
+            for (StrategyWorkflowRelation strategyWorkflowRelation : strategyWorkflowRelationList) {
+                Strategy strategy1 = strategyWorkflowRelation.getStrategy();
+                if (Objects.equals(strategy1.getId(), strategy.getId()))
+                    strategyIterator.remove();
             }
         }
 
         //strategia da costruire e inserire nella lista
-        for (int y = 0; y < strategies.size(); y++) {
+        for (Strategy strategy : strategies) {
             StrategyWorkflowRelation strategyWorkflowRelation = new StrategyWorkflowRelation();
             strategyWorkflowRelation.set_id(null);
             strategyWorkflowRelation.setWorkflow(null);
-            strategyWorkflowRelation.setStrategy(strategies.get(y));
+            strategyWorkflowRelation.setStrategy(strategy);
             strategyWorkflowRelationList.add(strategyWorkflowRelation);
 
         }
+
+        DTOResponseMetaWorkflow dtoResponse = new DTOResponseMetaWorkflow();
         dtoResponse.setStrategyWorkflowRelationList(strategyWorkflowRelationList);
-        ResponseEntity<DTOResponseMetaWorkflow> responseEntity = new ResponseEntity<DTOResponseMetaWorkflow>(
-                dtoResponse, HttpStatus.OK);
-        return responseEntity;
+        return new ResponseEntity<>(dtoResponse, HttpStatus.OK);
     }
 
 

@@ -124,21 +124,21 @@ public class StrategyServiceImpl implements StrategyService {
         List<DTOStrategyFrom2> upToDateStr = bus2Fase3.getStrategiesF2();
 
         // elimino le strategy presenti su mongodb ma che non sono più presenti sul bus
-
-        if (upToDateStr == null) {
-            strategyRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        for (Strategy strategy : actualStrategies) {
-            Boolean notFound = true;
-            for (DTOStrategyFrom2 dtoStrategyFrom2 : upToDateStr)
-                if (dtoStrategyFrom2.getId().equals(strategy.getIdF2())) {
-                    notFound = false;
-                }
-            if (notFound)
-                strategyRepository.delete(strategy);
-        }
+//        if (upToDateStr == null) {
+//            strategyRepository.deleteAll();
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        }
+//
+//        for (Strategy strategy : actualStrategies) {
+//            Boolean notFound = true;
+//            for (DTOStrategyFrom2 dtoStrategyFrom2 : upToDateStr)
+//                if (dtoStrategyFrom2.getId().equals(strategy.getIdF2()) &&
+//                        dtoStrategyFrom2.getVersion()== strategy.getVersion()) {
+//                    notFound = false;
+//                }
+//            if (notFound)
+//                strategyRepository.delete(strategy);
+//        }
 
         // aggiorno i valori nuovi
         for (DTOStrategyFrom2 dtoSF2 : upToDateStr) {
@@ -147,68 +147,69 @@ public class StrategyServiceImpl implements StrategyService {
             query.addCriteria(Criteria.where("idF2").is(dtoSF2.getId()));
             List<Strategy> mongoStrategy = mongoTemplate.find(query, Strategy.class);
 
-            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && mongoStrategy.isEmpty()) {
-
-                Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
-                        dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
-                        dtoSF2.getVersion(), 0);
-                newStrategy.setIdF2(dtoSF2.getId());
-                strategyRepository.save(newStrategy);
-
-            } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()) {
-
-                Strategy toUpdate = mongoStrategy.get(0);
-
-                if (mongoStrategy.size() > 1) {
-                    System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
+            Boolean alreadyPresent = false;
+            for (Strategy strategy : mongoStrategy)
+                if (Objects.equals(strategy.getIdF2(), dtoSF2.getId()) && strategy.getVersion() == dtoSF2.getVersion()) {
+                    alreadyPresent = true;
+                    break;
                 }
+                    if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && !alreadyPresent) {
 
-                if (toUpdate.getVersion() < dtoSF2.getVersion()) {
-                    toUpdate.setIdF2(dtoSF2.getId());
-                    toUpdate.setName(dtoSF2.getName());
-                    toUpdate.setDescription(dtoSF2.getDescription());
-                    toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
-                    toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
-                    toUpdate.setStatus(dtoSF2.getRevisited());
-                    toUpdate.setVersion(dtoSF2.getVersion());
+                        Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
+                                dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
+                                dtoSF2.getVersion(), 0);
+                        newStrategy.setIdF2(dtoSF2.getId());
+                        strategyRepository.save(newStrategy);
 
-                    /* Update workflowData of the strategy */
-                    try {
-                        updateWorkflowData(toUpdate);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()) {
+
+                        Strategy toUpdate = mongoStrategy.get(0);
+
+                        if (mongoStrategy.size() > 1) {
+                            System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
+                        }
+
+                        if (toUpdate.getVersion() < dtoSF2.getVersion()) {
+                            toUpdate.setId(null);
+                            toUpdate.setIdF2(dtoSF2.getId());
+                            toUpdate.setName(dtoSF2.getName());
+                            toUpdate.setDescription(dtoSF2.getDescription());
+                            toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
+                            toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
+                            toUpdate.setStatus(dtoSF2.getRevisited());
+                            toUpdate.setVersion(dtoSF2.getVersion());
+
+                            strategyRepository.save(toUpdate);
+                        }
                     }
-                    strategyRepository.save(toUpdate);
-                }
-            }
 
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void updateWorkflowData(Strategy strategy) throws Exception {
-
-        List<StrategicPlan> strategicPlans = strategicPlanRepository.findByOrganizationalunit(strategy.getOrganizationalunit());
-        if (strategicPlans == null || strategicPlans.isEmpty())
-            throw new Exception();
-
-        StrategicPlan strategicPlan = strategicPlans.get(0);
-        List<StrategyWorkflowRelation> strategyWorkflowRelations = strategicPlan.getStrategyWorkflowIds();
-
-        for (StrategyWorkflowRelation strategyWorkflowRelation : strategyWorkflowRelations) {
-            if (Objects.equals(strategy.getIdF2(), strategyWorkflowRelation.getStrategy().getIdF2())) {
-
-                /* let unmodified just the modelId */
-                WorkflowData workflowData = strategyWorkflowRelation.getWorkflow();
-                workflowData.setBusinessWorkflowName(null);
-                workflowData.setBusinessWorkflowProcessDefinitionId(null);
-                workflowData.setBusinessWorkflowProcessInstanceId(null);
-                workflowData.setMetaWorkflowName(null);
-                workflowData.setMetaWorkflowProcessInstanceId(null);
-            }
-        }
-    }
+//    private void updateWorkflowData(Strategy strategy) throws Exception {
+//
+//        List<StrategicPlan> strategicPlans = strategicPlanRepository.findByOrganizationalunit(strategy.getOrganizationalunit());
+//        if (strategicPlans == null || strategicPlans.isEmpty())
+//            throw new Exception();
+//
+//        StrategicPlan strategicPlan = strategicPlans.get(0);
+//        List<StrategyWorkflowRelation> strategyWorkflowRelations = strategicPlan.getStrategyWorkflowIds();
+//
+//        for (StrategyWorkflowRelation strategyWorkflowRelation : strategyWorkflowRelations) {
+//            if (Objects.equals(strategy.getIdF2(), strategyWorkflowRelation.getStrategy().getIdF2())) {
+//
+//                /* let unmodified just the modelId */
+//                WorkflowData workflowData = strategyWorkflowRelation.getWorkflow();
+//                workflowData.setBusinessWorkflowName(null);
+//                workflowData.setBusinessWorkflowProcessDefinitionId(null);
+//                workflowData.setBusinessWorkflowProcessInstanceId(null);
+//                workflowData.setMetaWorkflowName(null);
+//                workflowData.setMetaWorkflowProcessInstanceId(null);
+//            }
+//        }
+//    }
 
     @Override
     public ResponseEntity<DTOResponseStrategy> getStrategiesFree() {
