@@ -648,15 +648,25 @@ public class ValidationOpServiceImpl implements ValidationOpService {
                 hostSettings.getActivitiUsername(), hostSettings.getActivitiPassword(), businessWorkflowProcessDefinitionId);
 
         List<MetricTask> metricTasks = new ArrayList<MetricTask>();
+
+        MeasureTask currentTask = null;
+        FlowElement currentElement = null;
         for (int i = 0; i < measureTasksList.size(); i++) {
             for (int j = 0; j < flowElementList.size(); j++) {
-                if (measureTasksList.get(i).getTaskId().equals(flowElementList.get(j).getId())) {
-                    metricTasks.add(new MetricTask(
-                            measureTasksList.get(i).getMetric().getName(),
-                            flowElementList.get(j).getName().toString(),
-                            //"",
-                            measureTasksList.get(i).getMetric().getDescription(),
-                            measureTasksList.get(i).getTaskId()));
+                currentTask = measureTasksList.get(i);
+                currentElement = flowElementList.get(j);
+                if (currentTask.getTaskId().equals(currentElement.getId())) {
+
+                    /* new vrsion with ontology */
+                    if(currentTask.getNewVersion() != null){
+                        metricTasks.add(new MetricTask(currentTask.getTaskId(), currentTask.getOntology()));
+                    }else {
+                        metricTasks.add(new MetricTask(
+                                currentTask.getMetric().getName(),
+                                currentElement.getName().toString(),
+                                currentTask.getMetric().getDescription(),
+                                currentTask.getTaskId()));
+                    }
                 }
 
             }
