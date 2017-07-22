@@ -16,7 +16,7 @@ import it.uniroma2.isssr.gqm3.dto.put.PutVariables;
 import it.uniroma2.isssr.gqm3.model.ontologyPhase2.Ontology;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseActivitiTaskVariable;
 import it.uniroma2.isssr.gqm3.model.rest.response.activiti.DTOResponseActivitiTaskVariables;
-import it.uniroma2.isssr.gqm3.repository.OntologyRepository;
+import it.uniroma2.isssr.gqm3.repository.*;
 import it.uniroma2.isssr.gqm3.rest.BusInterfaceController;
 import it.uniroma2.isssr.gqm3.dto.ErrorResponse;
 import it.uniroma2.isssr.gqm3.dto.IssueMessage;
@@ -33,9 +33,7 @@ import it.uniroma2.isssr.gqm3.dto.post.PostAssignUserToGroup;
 import it.uniroma2.isssr.gqm3.dto.post.PostWorkflowToBeSaved;
 import it.uniroma2.isssr.gqm3.dto.response.ResponseGetIssueMessages;
 import it.uniroma2.isssr.gqm3.model.*;
-import it.uniroma2.isssr.gqm3.repository.MetricRepository;
-import it.uniroma2.isssr.gqm3.repository.SystemStateRepository;
-import it.uniroma2.isssr.gqm3.repository.WorkflowDataRepository;
+import it.uniroma2.isssr.gqm3.service.implementation.BusService2Phase4Implementation;
 import it.uniroma2.isssr.gqm3.tools.BusObjectTypes;
 import it.uniroma2.isssr.gqm3.tools.Costants;
 import it.uniroma2.isssr.gqm3.tools.JsonRequestActiviti;
@@ -86,6 +84,10 @@ public class BusInterfaceControllerImplementation implements
     private FeedbackControllerImplementation feedbackControllerImplementation;
     @Autowired
     private OntologyRepository ontologyRepository;
+    @Autowired
+    private StrategicPlanRepository strategicPlanRepository;
+    @Autowired
+    private BusService2Phase4Implementation busService2Phase4Implementation;
 
 
     @RequestMapping(value = "/bus/notifications", method = RequestMethod.POST)
@@ -137,7 +139,7 @@ public class BusInterfaceControllerImplementation implements
                     ObjectMapper mapper = new ObjectMapper();
                     System.out.println(readResponseString);
                     List<BusReadResponse> readResponses = mapper.readValue(readResponseString, mapper.getTypeFactory().constructCollectionType(
-                                    List.class, BusReadResponse.class));
+                            List.class, BusReadResponse.class));
                     BusReadResponse readResponse = readResponses.get(0);
                     if (readResponse == null) {
                         throw new BusException("Response is null!");
@@ -306,7 +308,7 @@ public class BusInterfaceControllerImplementation implements
         BusReadResponse busResponseParsed;
 
         busResponseParsed = mapper.readValue(busResponse,
-                    BusReadResponse.class);
+                BusReadResponse.class);
         if (!busResponseParsed.getErr().equals("0")) {
             busMessage = new BusMessage(BusMessage.OPERATION_CREATE, hostSettings.getPhaseName(), jo.toString());
             busResponse = busMessage.send(hostSettings.getBusUri());
@@ -410,7 +412,8 @@ public class BusInterfaceControllerImplementation implements
     }
 
     /**
-     *  Save on bus the Workflow Xml
+     * Save on bus the Workflow Xml
+     *
      * @param workflowToBeSaved Contains the parameters of the workflow wanted to be saved to
      *                          the bus (modelId and name)
      * @param response          The HttpServletResponse
@@ -489,8 +492,15 @@ public class BusInterfaceControllerImplementation implements
                                 busResponseParsed.getErr());
                     }
                 }
-                if (saveWorkflowData(workflowDataRepository.findByBusinessWorkflowModelId(
-                                workflowToBeSaved.getModelId()).get(0)))
+
+                WorkflowData workflowData = workflowDataRepository.findByBusinessWorkflowModelId(
+                        workflowToBeSaved.getModelId()).get(0);
+
+                Boolean savedWData = saveWorkflowData(workflowData);
+
+                Boolean savedStrategicPlan = updateStrategicPlan(workflowData.get_id());
+
+                if (savedWData && savedStrategicPlan)
                     return new ResponseEntity<String>(busResponse, HttpStatus.OK);
             } else
                 System.out.println(xml);
@@ -510,8 +520,6 @@ public class BusInterfaceControllerImplementation implements
                     e.getMessage());
         }
     }
-
-
 
 
     @RequestMapping(value = "/bus/workflows", method = RequestMethod.GET)
@@ -576,7 +584,33 @@ public class BusInterfaceControllerImplementation implements
 
     }
 
-    public Boolean deleteAllAndUpdateLocalOntologies(){
+    private Boolean updateStrategicPlan(String id) {
+
+        List<StrategicPlan> strategicPlans = strategicPlanRepository.findAll();
+        StrategicPlan tobeSaved = null;
+
+        for (StrategicPlan strategicPlan : strategicPlans) {
+            for (StrategyWorkflowRelation strategyWorkflowRelation : strategicPlan.getStrategyWorkflowIds()) {
+                if (strategyWorkflowRelation.getWorkflow().get_id().equals(id)) {
+                    tobeSaved = strategicPlan;
+                    break;
+                }
+            }
+            if (tobeSaved != null)
+                break;
+        }
+
+        if (tobeSaved == null)
+            return false;
+
+        ResponseEntity entity = busService2Phase4Implementation.saveStrategicPlan(tobeSaved);
+        if (entity.getStatusCode() != HttpStatus.BAD_REQUEST)
+            return true;
+
+        return false;
+    }
+
+    public Boolean deleteAllAndUpdateLocalOntologies() {
 
         JSONObject jo = new JSONObject();
         jo.put("objIdLocalToPhase", "");
@@ -588,7 +622,7 @@ public class BusInterfaceControllerImplementation implements
         BusMessage message = null;
         Ontology ontology = null;
         try {
-            message = new BusMessage(BusMessage.OPERATION_READ,"phase2", jo.toString());
+            message = new BusMessage(BusMessage.OPERATION_READ, "phase2", jo.toString());
             String busResponse = message.send(hostSettings.getBusUri());
             System.out.println(busResponse);
 
@@ -602,7 +636,7 @@ public class BusInterfaceControllerImplementation implements
             ontologyRepository.deleteAll();
 
             List<Ontology> ontologyList = new ArrayList<>();
-            for(BusReadResponse e: readResponseList) {
+            for (BusReadResponse e : readResponseList) {
                 try {
                     ontology = mapper.readValue(e.getPayload().toString(), Ontology.class);
                     System.out.println(ontology.toString());
@@ -614,7 +648,6 @@ public class BusInterfaceControllerImplementation implements
                     return false;
                 }
             }
-
 
 
         } catch (BusException | IOException e) {

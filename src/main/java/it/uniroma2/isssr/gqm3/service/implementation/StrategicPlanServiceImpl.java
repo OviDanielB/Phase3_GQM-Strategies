@@ -2,7 +2,6 @@ package it.uniroma2.isssr.gqm3.service.implementation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +10,6 @@ import it.uniroma2.isssr.gqm3.Exception.*;
 import it.uniroma2.isssr.gqm3.service.StrategicPlanService;
 import it.uniroma2.isssr.gqm3.service.StrategyService;
 import it.uniroma2.isssr.integrazione.BusException;
-import it.uniroma2.isssr.integrazione.BusMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +155,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             strategicPlanRepository.save(strategicP);
 
             /* save on bus */
-            busService2Phase4Implementation.StrategicPlanOperation(strategicP, BusMessage.OPERATION_CREATE);
+//            busService2Phase4Implementation.StrategicPlanOperation(strategicP, BusMessage.OPERATION_CREATE);
 
             DTOResponseStrategicPlan dtoResponse = new DTOResponseStrategicPlan();
             dtoResponse.setId(strategicP.getId());
@@ -189,7 +187,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
             strategicPlanRepository.delete(strategicP);
 
             /* delete from bus */
-            busService2Phase4Implementation.StrategicPlanOperation(strategicP, BusMessage.OPERATION_DELETE);
+            busService2Phase4Implementation.saveStrategicPlan(strategicP);
 
             DTOResponseStrategicPlan dtoResponse = new DTOResponseStrategicPlan();
             dtoResponse.setId(strategicP.getId());
@@ -280,7 +278,7 @@ public class StrategicPlanServiceImpl implements StrategicPlanService {
 
         strategicPlanRepository.save(p);
 
-        busService2Phase4Implementation.StrategicPlanOperation(p, BusMessage.OPERATION_UPDATE);
+        busService2Phase4Implementation.saveStrategicPlan(p);
 
         DTOResponseStrategicPlan dtoResponse = new DTOResponseStrategicPlan();
         dtoResponse.setId(p.getId());

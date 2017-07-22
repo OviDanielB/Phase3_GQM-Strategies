@@ -1,22 +1,14 @@
 package it.uniroma2.isssr.gqm3.service.implementation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.BooleanSerializer;
-import com.fasterxml.jackson.databind.ser.std.NonTypedScalarSerializerBase;
-import com.google.gson.Gson;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.BusRequestException;
 import it.uniroma2.isssr.gqm3.dto.bus.BusReadResponse;
 import it.uniroma2.isssr.gqm3.model.*;
-import it.uniroma2.isssr.gqm3.model.validation.ValidationOp;
 import it.uniroma2.isssr.gqm3.tools.BusObjectTypes;
 import it.uniroma2.isssr.integrazione.BusException;
 import it.uniroma2.isssr.integrazione.BusMessage;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.regex.Matcher;
+import java.util.Iterator;
 
 /**
  * @author emanuele
@@ -38,7 +30,7 @@ public class BusService2Phase4Implementation {
     @Autowired
     HostSettings hostSettings;
 
-    public ResponseEntity saveWorkflowData(WorkflowData workflowData) throws IOException, BusException {
+    public ResponseEntity saveWorkflowData(WorkflowData workflowData) throws IOException, BusException, BusRequestException {
 
         JSONObject payload = new JSONObject();
         payload.put("_id", workflowData.get_id());
@@ -99,13 +91,9 @@ public class BusService2Phase4Implementation {
             busResponse = busMessage.send(hostSettings.getBusUri());
             busResponseParsed = responseMapper.readValue(busResponse,
                     BusReadResponse.class);
-            if (!busResponseParsed.getErr().equals("0")) {
-                try {
-                    throw new BusRequestException(busResponseParsed.getErr());
-                } catch (BusRequestException e) {
-                    e.printStackTrace();
-                }
-            }
+            if (!busResponseParsed.getErr().equals("0"))
+                throw new BusRequestException(busResponseParsed.getErr());
+
         }
         return new ResponseEntity<String>(busResponse, HttpStatus.OK);
     }
@@ -160,25 +148,32 @@ public class BusService2Phase4Implementation {
 
     }
 
-    public ResponseEntity StrategicPlanOperation(StrategicPlan strategicPlan, String busMessageOperation) {
-        JSONObject payload = new JSONObject();
+    public ResponseEntity saveStrategicPlan(StrategicPlan strategicPlan) {
 
+        /* remove all strategy with no workflow associated */
+        Iterator<StrategyWorkflowRelation> swIterator = strategicPlan.getStrategyWorkflowIds().iterator();
+        while (swIterator.hasNext()) {
+            StrategyWorkflowRelation strategyWorkflowRelation = swIterator.next();
+            if (strategyWorkflowRelation.getWorkflow().getBusinessWorkflowProcessInstanceId() == null)
+                swIterator.remove();
+        }
+
+        JSONObject payload = new JSONObject();
         ObjectMapper mapper = new ObjectMapper();
         String jsonStrategicPlan = "";
         try {
             jsonStrategicPlan = mapper.writeValueAsString(strategicPlan);
+
+            String encoded = null;
+            encoded = java.util.Base64.getEncoder().encodeToString(
+                    jsonStrategicPlan.getBytes("utf-8"));
+            payload.put("object", encoded);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
-        String encoded = null;
-        try {
-            encoded = java.util.Base64.getEncoder().encodeToString(
-                    jsonStrategicPlan.getBytes("utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        payload.put("object", encoded);
 
         JSONObject jo = new JSONObject();
         jo.put("objIdLocalToPhase", strategicPlan.getId());
@@ -188,15 +183,25 @@ public class BusService2Phase4Implementation {
         jo.put("tags", "[]");
         jo.put("payload", payload.toString());
 
-        BusMessage busMessage = null;
         try {
-            busMessage = new BusMessage(BusMessage.OPERATION_CREATE, hostSettings.getPhaseName(), jo.toString());
-        } catch (BusException e) {
-            e.printStackTrace();
-        }
-        try {
+            BusMessage busMessage = new BusMessage(BusMessage.OPERATION_UPDATE, hostSettings.getPhaseName(), jo.toString());
             String busResponse = busMessage.send(hostSettings.getBusUri());
-        } catch (IOException e) {
+
+            ObjectMapper responseMapper = new ObjectMapper();
+            BusReadResponse busResponseParsed = responseMapper.readValue(busResponse, BusReadResponse.class);
+
+            /* bad update request so we create it */
+            if (!busResponseParsed.getErr().equals("0")) {
+                busMessage = new BusMessage(BusMessage.OPERATION_CREATE, hostSettings.getPhaseName(), jo.toString());
+                busResponse = busMessage.send(hostSettings.getBusUri());
+                busResponseParsed = responseMapper.readValue(busResponse, BusReadResponse.class);
+
+                if (!busResponseParsed.getErr().equals("0"))
+                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+            }
+
+        } catch (IOException | BusException e) {
             e.printStackTrace();
             return new ResponseEntity<>(strategicPlan, HttpStatus.BAD_REQUEST);
         }
