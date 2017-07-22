@@ -270,6 +270,11 @@ public class RestActivitiPresentation {
 
     }
 
+    @RequestMapping(value = "/cleanAll", method = RequestMethod.GET)
+    public ResponseEntity<?> cleanActiviti() throws ActivitiGetException, IOException, JsonRequestException {
+        return activitiInterationImplementation.cleanAll();
+    }
+
     /***********************************************************************************************/
 
 }

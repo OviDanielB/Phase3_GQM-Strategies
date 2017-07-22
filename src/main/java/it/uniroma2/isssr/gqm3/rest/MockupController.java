@@ -69,7 +69,7 @@ public class MockupController {
     }
 
     @RequestMapping(value = "/strategy/createStrategy", method = RequestMethod.POST)
-    public ResponseEntity<DTOResponseStrategy> createStrategy(@RequestBody DTOStrategyFrom2 dtoStrategy) {
+    public ResponseEntity<DTOResponseStrategy> createStrategy(@RequestBody DTOStrategyFrom2 dtoStrategy) throws BusException {
 
         Strategy strategy = new Strategy(dtoStrategy.getName(), dtoStrategy.getDescription(), dtoStrategy.getOrganizationalUnit(),
                 dtoStrategy.getVersion(), 0);
@@ -89,7 +89,7 @@ public class MockupController {
         payload.put("organizationalUnit", strategy.getOrganizationalunit());
         payload.put("version", strategy.getVersion());
         payload.put("status", strategy.getStatus());
-
+        String p = payload.toString();
 
         System.out.println(payload.toString());
         try {
@@ -98,21 +98,16 @@ public class MockupController {
             jsonObject.put("typeObj", "base64-TerminalStrategy");
             jsonObject.put("instance", strategy.getName());
             jsonObject.put("tags", "[]");
-            jsonObject.put("payload", payload.toString());
+            jsonObject.put("payload", p);
 
-            BusMessage busMessage = null;
-            try {
-                busMessage = new BusMessage(BusMessage.OPERATION_UPDATE, "phase2", jsonObject.toString());
-            } catch (BusException e) {
-                e.printStackTrace();
-            }
-
+            BusMessage busMessage = new BusMessage(
+                    BusMessage.OPERATION_UPDATE, "phase2", jsonObject.toString());
+            System.out.println(jsonObject.toString());
             String busResponse = busMessage.send(hostSettings.getBusUri());
             BusReadResponse busResponseParsed;
 
             ObjectMapper responseMapper = new ObjectMapper();
             busResponseParsed = responseMapper.readValue(busResponse, BusReadResponse.class);
-
             if (!busResponseParsed.getErr().equals("0")) {
                 try {
                     busMessage = new BusMessage(BusMessage.OPERATION_CREATE, "phase2", jsonObject.toString());
@@ -145,4 +140,5 @@ public class MockupController {
                 HttpStatus.OK);
 
     }
+
 }

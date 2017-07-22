@@ -59,7 +59,7 @@ public class BusinessWorkflow extends Workflow {
 	}
 
 	@Override
-	protected PostProcessInstance buildStartRequestBody() {
+	protected PostProcessInstance buildStartRequestBody(String isStrategyUpdated) {
 		PostProcessInstance processInstanceBody = new PostProcessInstance();
 		processInstanceBody.setProcessDefinitionId(super.getProcessDefinitionId());
 		processInstanceBody.setTenantId(getMetaWorkflowProcessInstanceId());

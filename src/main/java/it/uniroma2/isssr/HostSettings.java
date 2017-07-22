@@ -179,7 +179,7 @@ public class HostSettings {
     @Value("${host.bus.phase.typeObject.user.delete}")
     private String userDeleteTypeObject;
 
-    public  enum state {
+    public enum state {
         MODIFIED(0), NOT_MODIFIED(1), NEW(2);
 
         private int value;

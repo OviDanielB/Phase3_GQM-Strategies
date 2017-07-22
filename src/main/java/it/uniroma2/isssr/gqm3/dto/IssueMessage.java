@@ -14,51 +14,49 @@ import java.util.Map;
 @JsonPropertyOrder({ "businessWorkflowProcessInstanceId", "issueMessage", "issueMessageResources" })
 public class IssueMessage {
 
+	@JsonProperty("taskId")
+	private String taskId;
 	@JsonProperty("businessWorkflowProcessInstanceId")
 	private String businessWorkflowProcessInstanceId;
-	@JsonProperty("issueMessage")
-	private String issueMessage;
+	@JsonProperty("messageType")
+	private String messageType;
+	@JsonProperty("messageContent")
+	private String messageContent;
 	@JsonProperty("issueMessageResources")
 	private List<IssueMessageResource> issueMessageResources = new ArrayList<IssueMessageResource>();
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	/**
-	 * 
-	 * @return The businessWorkflowProcessInstanceId
-	 */
-	@JsonProperty("businessWorkflowProcessInstanceId")
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
 	public String getBusinessWorkflowProcessInstanceId() {
 		return businessWorkflowProcessInstanceId;
 	}
 
-	/**
-	 * 
-	 * @param businessWorkflowProcessInstanceId
-	 *            The businessWorkflowProcessInstanceId
-	 */
-	@JsonProperty("businessWorkflowProcessInstanceId")
 	public void setBusinessWorkflowProcessInstanceId(String businessWorkflowProcessInstanceId) {
 		this.businessWorkflowProcessInstanceId = businessWorkflowProcessInstanceId;
 	}
 
-	/**
-	 * 
-	 * @return The issueMessage
-	 */
-	@JsonProperty("issueMessage")
-	public String getIssueMessage() {
-		return issueMessage;
+	public String getMessageType() {
+		return messageType;
 	}
 
-	/**
-	 * 
-	 * @param issueMessage
-	 *            The issueMessage
-	 */
-	@JsonProperty("issueMessage")
-	public void setIssueMessage(String issueMessage) {
-		this.issueMessage = issueMessage;
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
+	}
+
+	public String getMessageContent() {
+		return messageContent;
+	}
+
+	public void setMessageContent(String messageContent) {
+		this.messageContent = messageContent;
 	}
 
 	/**

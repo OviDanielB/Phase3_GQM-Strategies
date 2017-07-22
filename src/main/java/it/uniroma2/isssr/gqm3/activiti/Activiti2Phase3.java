@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import it.uniroma2.isssr.gqm3.Exception.JsonRequestConflictException;
 import it.uniroma2.isssr.gqm3.Exception.JsonRequestException;
+import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessDefinition;
 import it.uniroma2.isssr.gqm3.dto.activiti.entity.ProcessInstance;
 import it.uniroma2.isssr.gqm3.model.FlowElement;
 import it.uniroma2.isssr.gqm3.Exception.ActivitiGetException;
 import it.uniroma2.isssr.gqm3.Exception.ActivitiPostException;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormProperty;
 import it.uniroma2.isssr.gqm3.model.activiti.form.ActivitiFormVariableProperty;
-import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcess;
 import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcessDef;
 import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcessDefinition;
 import it.uniroma2.isssr.gqm3.model.activiti.process.ActivitiProcessInvolvedPeople;
@@ -63,7 +63,7 @@ public interface Activiti2Phase3 {
 	 */
 	public List<ActivitiTask> getTasks() throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException;
 
-	List<ActivitiProcessDef> getProcessesDefinitions()
+	List<ProcessDefinition> getProcessesDefinitions()
             throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException;
 
 	ActivitiTask getTaskByExecutionId(String executionId)
@@ -102,7 +102,7 @@ public interface Activiti2Phase3 {
 	public ActivitiProcessInvolvedPeople getInvolvedPeople(String username, String password, String id)
 			throws JsonParseException, JsonMappingException, IOException;
 
-	ActivitiProcessDef getProcessByProcessDefinitionId(String username, String password, String processDefinitionId)
+	ProcessDefinition getProcessByProcessDefinitionId(String username, String password, String processDefinitionId)
 			throws JsonParseException, JsonMappingException, IOException, ActivitiGetException, JsonRequestException;
 
 	/**
@@ -143,7 +143,7 @@ public interface Activiti2Phase3 {
                                               List<ActivitiFormVariableProperty> activitiFormVariableProperties) throws ActivitiPostException, JsonRequestConflictException, JsonRequestException;
 
 
-	public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException;
+	public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId, String goToTask) throws ActivitiGetException, IOException, JsonRequestException, JsonRequestConflictException;
 
     public ProcessInstance getProcessInstanceFromKey(String processDefinitionKey) throws JsonRequestException, IOException;
 }

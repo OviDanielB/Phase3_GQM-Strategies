@@ -13,7 +13,9 @@ public class WorkflowMessage
 
 	public static final String MESSAGE_EVENT_SUBSCRIPTION_NAME_ENDING_MESSAGE = "workflowEndingMessage";
 
+	private String taskId;
 	private String businessWorkflowProcessInstanceId;
+	private String activitiMessageType;
 	private String messageType;
 	private String messageBody;
 	
@@ -21,15 +23,15 @@ public class WorkflowMessage
 	public WorkflowMessage(IssueMessage issueMessage) throws IllegalReceiveMessageRequestBodyException
 	{
 		
-		if (issueMessage.getBusinessWorkflowProcessInstanceId() == null
-				|| issueMessage.getBusinessWorkflowProcessInstanceId().isEmpty()
-				|| issueMessage.getIssueMessage() == null || issueMessage.getIssueMessage().isEmpty()) {
+		if (issueMessage.getTaskId() == null
+				|| issueMessage.getTaskId().isEmpty()
+				|| issueMessage.getMessageType() == null || issueMessage.getMessageType().isEmpty()) {
 			throw new IllegalReceiveMessageRequestBodyException();
 		}
-		
 		this.businessWorkflowProcessInstanceId = issueMessage.getBusinessWorkflowProcessInstanceId();
-		this.messageType = MESSAGE_EVENT_SUBSCRIPTION_NAME_ISSUE_MESSAGE;
-		this.messageBody = issueMessage.getIssueMessage();
+		this.taskId = issueMessage.getTaskId();
+		this.activitiMessageType = MESSAGE_EVENT_SUBSCRIPTION_NAME_ISSUE_MESSAGE;
+		this.messageType = issueMessage.getMessageType();
 		
 		List<IssueMessageResource> issueMessageResources = issueMessage.getIssueMessageResources();
 
@@ -51,19 +53,16 @@ public class WorkflowMessage
 			throw new IllegalReceiveMessageRequestBodyException();
 		}
 		
-		this.businessWorkflowProcessInstanceId = endingMessage.getBusinessWorkflowProcessInstanceId();		
-		this.messageType = MESSAGE_EVENT_SUBSCRIPTION_NAME_ENDING_MESSAGE;
+		this.taskId = endingMessage.getBusinessWorkflowProcessInstanceId();
+		this.activitiMessageType = MESSAGE_EVENT_SUBSCRIPTION_NAME_ENDING_MESSAGE;
 		this.messageBody = null;
 	}
-	
-	
-	
-	public String getBusinessWorkflowProcessInstanceId()
-	{
-		return businessWorkflowProcessInstanceId;
+
+
+	public String getTaskId() {
+		return taskId;
 	}
-	
-	
+
 	public String getMessageType()
 	{
 		return messageType;
@@ -74,19 +73,17 @@ public class WorkflowMessage
 	{
 		return messageBody;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+	public String getActivitiMessageType() {
+		return activitiMessageType;
+	}
+
+	public String getBusinessWorkflowProcessInstanceId() {
+		return businessWorkflowProcessInstanceId;
+	}
+
+	public void setBusinessWorkflowProcessInstanceId(String businessWorkflowProcessInstanceId) {
+		this.businessWorkflowProcessInstanceId = businessWorkflowProcessInstanceId;
+	}
 }

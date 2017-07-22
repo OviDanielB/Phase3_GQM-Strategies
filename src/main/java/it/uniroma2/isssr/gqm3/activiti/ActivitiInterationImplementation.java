@@ -143,8 +143,8 @@ public class ActivitiInterationImplementation implements ActivitiInteration {
     }
 
     @Override
-    public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId) throws ActivitiGetException, IOException, JsonRequestException {
-        return activiti2fase32Implementation.getTaskByProcessDefinitionId(processDefinitionId);
+    public ActivitiTask getTaskByProcessDefinitionId(String processDefinitionId, String taskToComplete) throws ActivitiGetException, IOException, JsonRequestException, JsonRequestConflictException {
+        return activiti2fase32Implementation.getTaskByProcessDefinitionId(processDefinitionId, taskToComplete);
     }
 
     @Override
@@ -153,4 +153,7 @@ public class ActivitiInterationImplementation implements ActivitiInteration {
     }
 
 
+    public ResponseEntity<?> cleanAll() throws ActivitiGetException, IOException, JsonRequestException {
+        return activiti2fase32Implementation.cleanAll();
+    }
 }

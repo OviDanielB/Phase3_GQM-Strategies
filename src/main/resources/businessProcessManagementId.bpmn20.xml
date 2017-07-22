@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <message id="workflowIssueMessageId" name="workflowIssueMessage"></message>
+  <message id="workflowEndingMessageId" name="workflowEndingMessage"></message>
+  <process id="businessProcessManagementId" name="Business Process Management" isExecutable="true">
+    <documentation>Workflow for management of a workflow for the realization of a business process.</documentation>
+    <startEvent id="start" name="start" activiti:initiator="issueMessage"></startEvent>
+    <userTask id="workflowCreationTaskId" name="Populate the model of the Business Workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>The Business Workflow "${workflowName}" needs to be populated or edited in order to reflect actual strategy defined in the Strategic Plan.
+
+                &gt;&gt; Click here: ${webappUrl}${activitiModelerUri}?modelId=${businessWorkflowModelId}
+                &gt;&gt; Populate the workflow
+                &gt;&gt; Exit saving changes
+
+                Or, alternatively:
+                &gt;&gt; Enter Activiti Explorer: ${activitiExplorerUri}
+                &gt;&gt; Go to "Process" upper tab.
+                &gt;&gt; Click on "Model Workspace" lower tab and select the model "${workflowName}".
+                &gt;&gt; Populate the workflow selected before.
+                &gt;&gt; Exit saving changes
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${strategicPlannerNote}
+                -
+
+
+                Issue Report (if any):
+
+                ${strategicPlannerReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="workflowDeveloperNote1" name="Optional Note for measurement planner" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="insertMeasuresTaskID" name="Plan measure tasks" activiti:candidateGroups="Measurement Planner">
+      <documentation>The Business Workflow "${workflowName}" model was deployed but it doesn't have any measurement task yet.
+                If there are measurements to be done, attach the appropriate Metric to the task that comes before the measurement process.
+
+                &gt;&gt; Click here: ${webappUrl}${measurePlanningEndpoint}?name=${workflowName}&amp;modelId=${businessWorkflowModelId} .
+                &gt;&gt; For each task, if it needs to be followed by a measurement, attach the appropriate Metric to the task that comes before the measurement process.
+                &gt;&gt; Click on Save button.
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${workflowDeveloperNote2}
+                -
+
+
+                Issue Report (if any):
+
+                ${workflowDeveloperReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="measurementPlannerNote" name="Optional Note for validation planner" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="insertValidationTaskId" name="Plan validation tasks" activiti:candidateGroups="Validator">
+      <documentation>The Business Workflow "${workflowName}" was deployed and one or more tasks were attached to a measurement. The measurement needs to be validated in order to obtain consistent data.
+
+                &gt;&gt; Click here: ${webappUrl}${validationPlanningEndpoint}?name=${workflowName}&amp;processDefinitionId=${businessWorkflowProcessDefinitionId} .
+                &gt;&gt; For each measurement task, select the appropriate validation task.
+                &gt;&gt; Click on "Save" button.
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${measurementPlannerNote}
+                -
+
+
+                Issue Report (if any):
+
+                ${measurementPlannerReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="gqmExpertNote" name="Optional note for gqm expert" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="startBusinessProcessId" name="Start Business Process" activiti:candidateGroups="GQM Expert">
+      <documentation>The Business Workflow "${workflowName}" has been deployed and one or more tasks were attached to measurement and validation tasks in order to make it runnable.
+
+                &gt;&gt; Click here: ${webappUrl}${startEndpoint}?name=${workflowName}&amp;processDefinitionId=${businessWorkflowProcessDefinitionId} .
+                &gt;&gt; Start the workflow ${workflowName} when ready.
+
+                Notes:
+
+                ${gqmExpertNote}
+                -
+
+
+                Issue Report:
+
+                ${gqmExpertReport}
+                -</documentation>
+    </userTask>
+    <eventBasedGateway id="messageEventGatewayId"></eventBasedGateway>
+    <intermediateCatchEvent id="waitingEndMessageId" name="Waiting End Message">
+      <messageEventDefinition messageRef="workflowEndingMessageId"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <intermediateCatchEvent id="waitingIssueMessageId" name="Waiting Issue Message">
+      <messageEventDefinition messageRef="workflowIssueMessageId"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <endEvent id="endId" name="End">
+      <terminateEventDefinition activiti:terminateAll="true"></terminateEventDefinition>
+    </endEvent>
+    <userTask id="issueValidationTaskId" name="Check and fix wrong validation tasks" activiti:candidateGroups="Validator">
+      <documentation>An Issue has been reported regarding workflow "${workflowName}":
+
+                ${issueMessage}
+
+                &gt;&gt; Click here: ${webappUrl}${validationPlanningEndpoint}?name=${workflowName}&amp;processDefinitionId=${businessWorkflowProcessDefinitionId} .
+                &gt;&gt; Check if there are wrong validation tasks.
+                &gt;&gt; For each measurement task, select the appropriate validation task.
+                &gt;&gt; Click on "Save" button.
+                &gt;&gt; If something was adjusted, mark the issue as fixed.
+                &gt;&gt; Write a report about issue.
+
+                Complete task and report back when done.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="validationPlannerReport" name="Issue Report" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="validationIssueFixed" name="Fixed" type="boolean" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="workflowDefineStrategicPlanId" name="Start the construction of the Business Workflow" activiti:candidateGroups="Strategic Planner">
+      <documentation>A new Business Workflow that implements the ${workflowName} strategy is going to be build.
+
+                Insert any specific direction for the Workflow Developer and complete the task to start the process.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="strategicPlannerNote" name="Optional Note for the workflow developer" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="exportWorkflowTask0Id" name="Export Workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>The Business Workflow must be made available to the other phases users.
+
+                &gt;&gt; Click here ${webappUrl}${exportEndpoint}?name=${workflowName}&amp;modelId=${businessWorkflowModelId} or go to phase 3 dashboard.
+                &gt;&gt; Export workflow "${workflowName}".
+
+                Complete task and report back when done.
+
+                Notes:
+                - ${workflowDeveloperNote2}</documentation>
+    </userTask>
+    <userTask id="issueMeasurementTaskId" name="Check and fix wrong measurement tasks" activiti:candidateGroups="Measurement Planner">
+      <documentation>An Issue has been reported regarding workflow "${workflowName}":
+
+                ${issueMessage}
+
+
+                Validation Planner Report:
+
+                ${validationPlannerReport}
+
+                &gt;&gt; Click here: ${webappUrl}${measurePlanningEndpoint}?name=${workflowName}&amp;modelId=${businessWorkflowModelId} .
+                &gt;&gt; Check if there are wrong measure tasks
+                &gt;&gt; For each task, if it needs to be followed by a measurement, attach the appropriate Metric to the task that comes before the measurement process.
+                &gt;&gt; Click on Save button.
+                &gt;&gt; If something was adjusted, mark the issue as fixed.
+                &gt;&gt; Write a report about issue.
+
+                Complete task and report back when done.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="measurementPlannerReport" name="Issue Report" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="measurementIssueFixed" name="Fixed" type="boolean" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="issueWorkflowTaskId" name="Check and fix errors in the workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>An Issue has been reported regarding workflow "${workflowName}":
+
+                ${issueMessage}
+
+
+                Validation Planner Report:
+
+                ${validationPlannerReport}
+
+
+                Measurement Planner Report:
+
+                ${measurementPlannerReport}
+
+                &gt;&gt; Click here: ${webappUrl}${activitiModelerUri}?modelId=${businessWorkflowModelId}
+                &gt;&gt; Check if there are errors in the workflow.
+                &gt;&gt; Fix the workflow.
+                &gt;&gt; Exit saving changes (if any).
+                &gt;&gt; If there was any change, mark the issue as fixed.
+                &gt;&gt; Write a report about issue.
+
+                Or, alternatively:
+                &gt;&gt; Enter Activiti Explorer: ${activitiExplorerUri}
+                &gt;&gt; Go to "Process" upper tab.
+                &gt;&gt; Click on "Model Workspace" lower tab and select the model "${workflowName}".
+                &gt;&gt; Fix the workflow selected before.
+                &gt;&gt; Exit saving changes (if any).
+                &gt;&gt; If there was any change, mark the issue as fixed.
+                &gt;&gt; Write a report about the issue.
+
+                Complete task and report back when done.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="workflowDeveloperReport" name="Issue Report" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="workflowIssueFixed" name="Fixed" type="boolean" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="issuesStrategicTaskId" name="Check and fix strategy errors" activiti:candidateGroups="Strategic Planner">
+      <documentation>An Issue has been reported regarding workflow "${workflowName}":
+
+                ${issueMessage}
+
+
+                Validation Planner Report:
+
+                ${validationPlannerReport}
+
+
+                Measurement Planner Report:
+
+                ${measurementPlannerReport}
+
+
+                Workflow Developer Report:
+
+                ${workflowDeveloperReport}
+
+                &gt;&gt; Click here: ${strategyPlansUri}?modelId=${businessWorkflowModelId}
+                &gt;&gt; Check if there are errors in the strategy or in the Strategic Plan.
+                &gt;&gt; If any, adjust them and mark the issue as fixed.
+                &gt;&gt; Write a report about issue.
+
+                Complete task and report back when done.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="strategicPlannerReport" name="Issue Report" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="strategicIssueFixed" name="Fixed" type="boolean" required="true"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7"></exclusiveGateway>
+    <exclusiveGateway id="sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E"></exclusiveGateway>
+    <exclusiveGateway id="sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1"></exclusiveGateway>
+    <endEvent id="sid-F00F2575-80F9-4576-8BA4-3F4F50FA3A2E">
+      <terminateEventDefinition></terminateEventDefinition>
+    </endEvent>
+    <exclusiveGateway id="sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F"></exclusiveGateway>
+    <sequenceFlow id="sid-B1C33C81-B0DC-470F-9B21-CE1D473F7E9E" sourceRef="waitingIssueMessageId" targetRef="issueValidationTaskId"></sequenceFlow>
+    <sequenceFlow id="sid-1F38F9A8-2B8C-4709-BAA4-80D1398526EA" sourceRef="issueWorkflowTaskId" targetRef="sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7"></sequenceFlow>
+    <sequenceFlow id="sid-431D9CF7-8D99-4608-80C6-9DA63BFE8373" sourceRef="issueMeasurementTaskId" targetRef="sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F"></sequenceFlow>
+    <sequenceFlow id="sid-43C4088F-7933-4B2D-B13F-F9E399551716" sourceRef="issueValidationTaskId" targetRef="sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E"></sequenceFlow>
+    <sequenceFlow id="sid-01D63B59-5D24-4300-A18F-131F128F40BB" sourceRef="insertValidationTaskId" targetRef="startBusinessProcessId"></sequenceFlow>
+    <userTask id="workflowDeployTaskId" name="Deploy the Business Workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>The Business Workflow "${workflowName}" has been populated and needs to be deployed.
+
+                &gt;&gt; Click here: ${webappUrl}${deployEndpoint}?name=${workflowName}&amp;modelId=${businessWorkflowModelId}
+                &gt;&gt; Deploy the workflow "${workflowName}".
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${workflowDeveloperNote1}
+                -
+
+
+                Issue Report (if any):
+
+                ${workflowDeveloperReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="workflowDeveloperNote2" name="Optional Note for measurement planner" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-7BFFBFF1-9089-46A9-9F5F-AA4CAFCF1CBB" sourceRef="sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F" targetRef="issueWorkflowTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${measurementIssueFixed == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-F7948A4F-17F0-4407-B51D-C868AB4380A1" sourceRef="sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E" targetRef="issueMeasurementTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${validationIssueFixed == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-0429F3A4-ED39-4DBD-B568-7E5096FF74B3" sourceRef="insertMeasuresTaskID" targetRef="insertValidationTaskId"></sequenceFlow>
+    <sequenceFlow id="sid-4CEDB882-EFC5-4EEF-88E7-53448FD581D7" sourceRef="workflowDeployTaskId" targetRef="insertMeasuresTaskID"></sequenceFlow>
+    <sequenceFlow id="sid-EC718768-1C51-4725-A7BB-76F02DF4FF59" sourceRef="exportWorkflowTask0Id" targetRef="messageEventGatewayId"></sequenceFlow>
+    <sequenceFlow id="sid-08C4B74D-0460-4A50-B5A8-124EDE7C8522" sourceRef="startBusinessProcessId" targetRef="exportWorkflowTask0Id"></sequenceFlow>
+    <userTask id="workflowModifyStrategicPlanId" name="Start the modification of the Business Workflow" activiti:candidateGroups="Strategic Planner">
+      <documentation>A previous Business Workflow that implements the updated ${workflowName} strategy is going to be modified.
+
+                Insert any specific direction for the Workflow Developer and complete the task to start the process.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="strategicPlannerNote" name="Optional note for the workflow developer" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="workflowModificationTaskId" name="Modify the model of the Business Workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>The Business Workflow "${workflowName}" needs to be edited in order to reflect actual strategy defined in the Strategic Plan.
+
+                &gt;&gt; Click here: ${webappUrl}${activitiModelerUri}?modelId=${businessWorkflowModelId}
+                &gt;&gt; Edit the workflow
+                &gt;&gt; Exit saving changes
+
+                Or, alternatively:
+                &gt;&gt; Enter Activiti Explorer: ${activitiExplorerUri}
+                &gt;&gt; Go to "Process" upper tab.
+                &gt;&gt; Click on "Model Workspace" lower tab and select the model "${workflowName}".
+                &gt;&gt; Edit the workflow selected before.
+                &gt;&gt; Exit saving changes
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${strategicPlannerNote}
+                -
+
+
+                Issue Report (if any):
+
+                ${strategicPlannerReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="workflowDeveloperNote1" name="Optional Note for measurement planner" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="modifyMeasuresTaskID" name="Modify measure tasks" activiti:candidateGroups="Measurement Planner">
+      <documentation>Workflow for management of a workflow for the realization of a business process.</documentation>
+      <extensionElements>
+        <activiti:formProperty id="measurementPlannerNote" name="Optional note for validation planner" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-01140BBA-DFCD-4D11-AF25-A9ED5EA7AB89" sourceRef="issuesStrategicTaskId" targetRef="sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1"></sequenceFlow>
+    <sequenceFlow id="sid-A7D08BF4-53D7-4677-B80C-79B734A2C4E1" sourceRef="workflowCreationTaskId" targetRef="workflowDeployTaskId"></sequenceFlow>
+    <userTask id="modifyValidationTaskId" name="Modify validation tasks" activiti:candidateGroups="Validator">
+      <documentation>The Business Workflow "${workflowName}" was deployed and one or more tasks were attached to a measurement. The measurement needs to be validated in order to obtain consistent data.
+
+                &gt;&gt; Click here: ${webappUrl}${validationPlanningEndpoint}?name=${workflowName}&amp;processDefinitionId=${businessWorkflowProcessDefinitionId} .
+                &gt;&gt; For each measurement task, select the appropriate validation task.
+                &gt;&gt; Click on "Save" button.
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${measurementPlannerNote}
+                -
+
+
+                Issue Report (if any):
+
+                ${measurementPlannerReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="gqmExpertNote" name="Optional note for gqm expert" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-516E8244-BA14-4441-98BA-AFC7B67D8811" sourceRef="waitingEndMessageId" targetRef="endId"></sequenceFlow>
+    <sequenceFlow id="sid-DA63FA99-9795-4835-981B-7C6CBB042215" name="Discarded
+" sourceRef="sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1" targetRef="sid-F00F2575-80F9-4576-8BA4-3F4F50FA3A2E">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${strategicIssueFixed == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-90F84709-782E-4145-9D04-632B28D80B9B" sourceRef="sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7" targetRef="issuesStrategicTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${workflowIssueFixed == false}]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway id="strategyGatewayId"></exclusiveGateway>
+    <userTask id="modifiedWorkflowDeployTaskId" name="Deploy the Business Workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>The Business Workflow "${workflowName}" has been retrieved and needs to be modified.
+
+                &gt;&gt; Click here: ${webappUrl}${deployEndpoint}?name=${workflowName}&amp;modelId=${businessWorkflowModelId}
+                &gt;&gt; Deploy the workflow "${workflowName}".
+
+                Complete task and report back when done.
+
+                Notes:
+
+                ${workflowDeveloperNote1}
+                -
+
+
+                Issue Report (if any):
+
+                ${workflowDeveloperReport}
+                -</documentation>
+      <extensionElements>
+        <activiti:formProperty id="workflowDeveloperNote2" name="Optional Note for measurement planner" type="string"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="sid-EDAE4424-5FA9-4215-AC0F-CF14352B660E" sourceRef="start" targetRef="strategyGatewayId"></sequenceFlow>
+    <sequenceFlow id="sid-FA53DB5A-7FC7-4839-AF46-4BA508C000FA" sourceRef="workflowDefineStrategicPlanId" targetRef="workflowCreationTaskId"></sequenceFlow>
+    <sequenceFlow id="sid-88E67C73-D78C-4278-9DBE-CFED5203E184" sourceRef="workflowModifyStrategicPlanId" targetRef="workflowModificationTaskId"></sequenceFlow>
+    <sequenceFlow id="sid-984AC300-AB8E-43CF-839F-A56DF4656AA1" sourceRef="workflowModificationTaskId" targetRef="modifiedWorkflowDeployTaskId"></sequenceFlow>
+    <userTask id="startModifiedBusinessProcessId" name="Start Business Process" activiti:candidateGroups="GQM Expert">
+      <documentation>The Business Workflow "${workflowName}" has been deployed and one or more tasks were attached to measurement and validation tasks in order to make it runnable.
+
+                &gt;&gt; Click here: ${webappUrl}${startEndpoint}?name=${workflowName}&amp;processDefinitionId=${businessWorkflowProcessDefinitionId} .
+                &gt;&gt; Start the workflow ${workflowName} when ready.
+
+                Notes:
+
+                ${gqmExpertNote}
+                -
+
+
+                Issue Report:
+
+                ${gqmExpertReport}
+                -</documentation>
+    </userTask>
+    <sequenceFlow id="sid-3820AFB8-428B-4D8A-A99B-7DDAB58A9A14" sourceRef="modifyMeasuresTaskID" targetRef="modifyValidationTaskId"></sequenceFlow>
+    <userTask id="exportModifiedWorkflowTask0Id" name="Export Workflow" activiti:candidateGroups="Workflow Developer">
+      <documentation>The Business Workflow must be made available to the other phases users.
+
+                &gt;&gt; Click here ${webappUrl}${exportEndpoint}?name=${workflowName}&amp;modelId=${businessWorkflowModelId} or go to phase 3 dashboard.
+                &gt;&gt; Export workflow "${workflowName}".
+
+                Complete task and report back when done.
+
+                Notes:
+                - ${workflowDeveloperNote2}</documentation>
+    </userTask>
+    <sequenceFlow id="sid-B99F733C-F624-4978-8707-85AC3F117381" sourceRef="modifyValidationTaskId" targetRef="startModifiedBusinessProcessId"></sequenceFlow>
+    <sequenceFlow id="sid-C30D24E2-AF1E-4546-9943-800D0CAEC048" sourceRef="startModifiedBusinessProcessId" targetRef="exportModifiedWorkflowTask0Id"></sequenceFlow>
+    <sequenceFlow id="sid-1CD5D79D-2E49-4BEB-B87E-147EC5FFF767" name="Fixed" sourceRef="sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1" targetRef="workflowDefineStrategicPlanId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${strategicIssueFixed == true && updatedStrategy == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-8484B234-F3E2-42AA-8F76-0538398360C4" name="Fixed" sourceRef="sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7" targetRef="workflowCreationTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${workflowIssueFixed == true && updatedStrategy == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-B91B3151-C020-46D3-80CB-6D26FFBE2C4A" name="Fixed" sourceRef="sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7" targetRef="workflowModificationTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${workflowIssueFixed == true && updatedStrategy == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-111739BF-6CC9-4237-A95F-78235FE475C7" name="Fixed" sourceRef="sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F" targetRef="insertMeasuresTaskID">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${measurementIssueFixed == true && updatedStrategy == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-63468B4D-054A-4349-9F47-53BE3C45AFB1" name="Fixed" sourceRef="sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E" targetRef="insertValidationTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${validationIssueFixed == true && updatedStrategy == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-37580882-8B7F-404B-A4BF-2897C7495F9C" name="Fixed" sourceRef="sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E" targetRef="modifyValidationTaskId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${validationIssueFixed == true && updatedStrategy == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-2FBB64A9-F724-4135-93AA-F853E122C6D7" sourceRef="modifiedWorkflowDeployTaskId" targetRef="modifyMeasuresTaskID"></sequenceFlow>
+    <sequenceFlow id="sid-182ACAAF-8099-418D-AECB-8CD7DBB3347D" name="Fixed" sourceRef="sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F" targetRef="modifyMeasuresTaskID">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${measurementIssueFixed == true && updatedStrategy == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-8AFF66C6-FBC3-4A31-85AC-A5B3814B7ADA" name="Fixed" sourceRef="sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1" targetRef="workflowModifyStrategicPlanId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${strategicIssueFixed == true && updatedStrategy == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-06FFA718-6AC7-4F80-95D6-A65295258F7B" name="Updated Strategy" sourceRef="strategyGatewayId" targetRef="workflowModifyStrategicPlanId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${updatedStrategy == true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-B447B68F-479E-4982-96AE-03551039D4C8" name="New Strategy" sourceRef="strategyGatewayId" targetRef="workflowDefineStrategicPlanId">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${updatedStrategy == false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-7DC26CF9-9FDC-42CA-985E-CAF9C5DC1307" sourceRef="messageEventGatewayId" targetRef="waitingIssueMessageId"></sequenceFlow>
+    <sequenceFlow id="sid-A13A6C28-EDB2-4A10-ABBD-BBC8FF8695D9" sourceRef="exportModifiedWorkflowTask0Id" targetRef="messageEventGatewayId"></sequenceFlow>
+    <sequenceFlow id="sid-2E46104D-238F-491C-A4FC-96DD5A27C7CC" sourceRef="messageEventGatewayId" targetRef="waitingEndMessageId"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_businessProcessManagementId">
+    <bpmndi:BPMNPlane bpmnElement="businessProcessManagementId" id="BPMNPlane_businessProcessManagementId">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="27.862367331750647" y="170.0513924380732"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workflowCreationTaskId" id="BPMNShape_workflowCreationTaskId">
+        <omgdc:Bounds height="79.99999999999989" width="105.97327324376164" x="371.7987433214901" y="493.08504848667906"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="insertMeasuresTaskID" id="BPMNShape_insertMeasuresTaskID">
+        <omgdc:Bounds height="80.00000000000011" width="105.9732732437617" x="667.6924263623126" y="493.0850484866787"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="insertValidationTaskId" id="BPMNShape_insertValidationTaskId">
+        <omgdc:Bounds height="80.0" width="105.97327324376192" x="921.7356305719611" y="493.08504848667894"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startBusinessProcessId" id="BPMNShape_startBusinessProcessId">
+        <omgdc:Bounds height="80.00000000000023" width="105.97327324376192" x="1054.2975609430425" y="493.0850190965207"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messageEventGatewayId" id="BPMNShape_messageEventGatewayId">
+        <omgdc:Bounds height="40.0" width="40.0" x="1284.9251906930867" y="326.9050299598516"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="waitingEndMessageId" id="BPMNShape_waitingEndMessageId">
+        <omgdc:Bounds height="30.0" width="30.0" x="1371.7420399050395" y="331.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="waitingIssueMessageId" id="BPMNShape_waitingIssueMessageId">
+        <omgdc:Bounds height="30.0" width="30.0" x="1202.5581912896837" y="331.90502981084"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endId" id="BPMNShape_endId">
+        <omgdc:Bounds height="28.0" width="28.0" x="1463.191509232042" y="332.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="issueValidationTaskId" id="BPMNShape_issueValidationTaskId">
+        <omgdc:Bounds height="80.0" width="105.97327324376192" x="1054.2975923635584" y="306.90503055589807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workflowDefineStrategicPlanId" id="BPMNShape_workflowDefineStrategicPlanId">
+        <omgdc:Bounds height="79.99999999999994" width="105.97327324376167" x="170.07977655261877" y="493.0850484866788"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exportWorkflowTask0Id" id="BPMNShape_exportWorkflowTask0Id">
+        <omgdc:Bounds height="79.99999999999989" width="105.9732732437617" x="1251.9385540712058" y="493.0850190965209"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="issueMeasurementTaskId" id="BPMNShape_issueMeasurementTaskId">
+        <omgdc:Bounds height="80.0" width="105.9732732437617" x="794.7753739553254" y="306.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="issueWorkflowTaskId" id="BPMNShape_issueWorkflowTaskId">
+        <omgdc:Bounds height="80.0" width="105.97327324376158" x="516.851472592744" y="306.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="issuesStrategicTaskId" id="BPMNShape_issuesStrategicTaskId">
+        <omgdc:Bounds height="77.0887753846365" width="105.97327324376158" x="270.3060687641234" y="308.36065201006244"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7" id="BPMNShape_sid-4BAD74D6-F7AD-40E9-BD17-E4B8590A08F7">
+        <omgdc:Bounds height="40.0" width="40.0" x="404.78537994337097" y="326.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E" id="BPMNShape_sid-FD4F3F3B-46DA-443C-9486-0893C6EA5E7E">
+        <omgdc:Bounds height="40.0" width="40.0" x="954.7222671938421" y="326.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1" id="BPMNShape_sid-4598BBE4-8131-44CB-BA0B-7C150D8163B1">
+        <omgdc:Bounds height="40.0" width="40.0" x="203.0664131744996" y="326.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-F00F2575-80F9-4576-8BA4-3F4F50FA3A2E" id="BPMNShape_sid-F00F2575-80F9-4576-8BA4-3F4F50FA3A2E">
+        <omgdc:Bounds height="28.0" width="28.0" x="91.44946932700263" y="332.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F" id="BPMNShape_sid-63D633A6-9B5C-4AF7-B8BC-BED6EB50E39F">
+        <omgdc:Bounds height="40.0" width="40.0" x="700.6790629841935" y="326.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workflowDeployTaskId" id="BPMNShape_workflowDeployTaskId">
+        <omgdc:Bounds height="80.00000000000006" width="105.97327324376158" x="516.851472592744" y="493.0850484866789"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workflowModifyStrategicPlanId" id="BPMNShape_workflowModifyStrategicPlanId">
+        <omgdc:Bounds height="80.00000000000003" width="100.0" x="173.0664131744996" y="136.94260526474295"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="workflowModificationTaskId" id="BPMNShape_workflowModificationTaskId">
+        <omgdc:Bounds height="79.99999999999997" width="100.0" x="374.78537994337097" y="136.94260526474295"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="modifyMeasuresTaskID" id="BPMNShape_modifyMeasuresTaskID">
+        <omgdc:Bounds height="79.99999999999997" width="100.0" x="670.6790429964004" y="136.94260118353543"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="modifyValidationTaskId" id="BPMNShape_modifyValidationTaskId">
+        <omgdc:Bounds height="80.0" width="100.0" x="924.7222671938421" y="136.94260526474295"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="strategyGatewayId" id="BPMNShape_strategyGatewayId">
+        <omgdc:Bounds height="40.0" width="40.0" x="22.862367331750647" y="326.9050397023807"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="modifiedWorkflowDeployTaskId" id="BPMNShape_modifiedWorkflowDeployTaskId">
+        <omgdc:Bounds height="80.0" width="105.97327324376158" x="516.8514571893704" y="136.94258485870648"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startModifiedBusinessProcessId" id="BPMNShape_startModifiedBusinessProcessId">
+        <omgdc:Bounds height="80.00000000000011" width="105.97327324376192" x="1054.2975609430425" y="136.94260118353534"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exportModifiedWorkflowTask0Id" id="BPMNShape_exportModifiedWorkflowTask0Id">
+        <omgdc:Bounds height="79.99999999999989" width="105.9732732437617" x="1251.9385540712058" y="136.942605264743"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-B1C33C81-B0DC-470F-9B21-CE1D473F7E9E" id="BPMNEdge_sid-B1C33C81-B0DC-470F-9B21-CE1D473F7E9E">
+        <omgdi:waypoint x="1202.5581912896837" y="346.9050299121864"></omgdi:waypoint>
+        <omgdi:waypoint x="1160.2708656073203" y="346.9050301978977"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-8AFF66C6-FBC3-4A31-85AC-A5B3814B7ADA" id="BPMNEdge_sid-8AFF66C6-FBC3-4A31-85AC-A5B3814B7ADA">
+        <omgdi:waypoint x="223.49005540028028" y="327.32868192816136"></omgdi:waypoint>
+        <omgdi:waypoint x="223.07021654237528" y="216.94260526474298"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C30D24E2-AF1E-4546-9943-800D0CAEC048" id="BPMNEdge_sid-C30D24E2-AF1E-4546-9943-800D0CAEC048">
+        <omgdi:waypoint x="1160.2708341868044" y="176.94260122710654"></omgdi:waypoint>
+        <omgdi:waypoint x="1251.9385540712058" y="176.94260522117185"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-43C4088F-7933-4B2D-B13F-F9E399551716" id="BPMNEdge_sid-43C4088F-7933-4B2D-B13F-F9E399551716">
+        <omgdi:waypoint x="1054.2975923635584" y="346.905034211859"></omgdi:waypoint>
+        <omgdi:waypoint x="994.7222658138863" y="346.90503832242496"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-A13A6C28-EDB2-4A10-ABBD-BBC8FF8695D9" id="BPMNEdge_sid-A13A6C28-EDB2-4A10-ABBD-BBC8FF8695D9">
+        <omgdi:waypoint x="1304.9289940612443" y="216.9426052647429"></omgdi:waypoint>
+        <omgdi:waypoint x="1305.348832913187" y="327.3286721799519"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-08C4B74D-0460-4A50-B5A8-124EDE7C8522" id="BPMNEdge_sid-08C4B74D-0460-4A50-B5A8-124EDE7C8522">
+        <omgdi:waypoint x="1160.2708341868044" y="533.0850190965208"></omgdi:waypoint>
+        <omgdi:waypoint x="1251.9385540712058" y="533.0850190965209"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-984AC300-AB8E-43CF-839F-A56DF4656AA1" id="BPMNEdge_sid-984AC300-AB8E-43CF-839F-A56DF4656AA1">
+        <omgdi:waypoint x="474.78537994337097" y="176.94260480166483"></omgdi:waypoint>
+        <omgdi:waypoint x="516.8514571893704" y="176.9425853217846"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-01D63B59-5D24-4300-A18F-131F128F40BB" id="BPMNEdge_sid-01D63B59-5D24-4300-A18F-131F128F40BB">
+        <omgdi:waypoint x="1027.708903815723" y="533.0850367390707"></omgdi:waypoint>
+        <omgdi:waypoint x="1054.2975609430425" y="533.085030844129"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7BFFBFF1-9089-46A9-9F5F-AA4CAFCF1CBB" id="BPMNEdge_sid-7BFFBFF1-9089-46A9-9F5F-AA4CAFCF1CBB">
+        <omgdi:waypoint x="700.6790629841935" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="622.8247458365056" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-F7948A4F-17F0-4407-B51D-C868AB4380A1" id="BPMNEdge_sid-F7948A4F-17F0-4407-B51D-C868AB4380A1">
+        <omgdi:waypoint x="954.7222671938421" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="900.7486471990871" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-EDAE4424-5FA9-4215-AC0F-CF14352B660E" id="BPMNEdge_sid-EDAE4424-5FA9-4215-AC0F-CF14352B660E">
+        <omgdi:waypoint x="42.86236733175065" y="200.0513924380732"></omgdi:waypoint>
+        <omgdi:waypoint x="42.86236733175065" y="326.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-111739BF-6CC9-4237-A95F-78235FE475C7" id="BPMNEdge_sid-111739BF-6CC9-4237-A95F-78235FE475C7">
+        <omgdi:waypoint x="720.6790629841935" y="366.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="720.6790629841935" y="493.0850484866787"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4CEDB882-EFC5-4EEF-88E7-53448FD581D7" id="BPMNEdge_sid-4CEDB882-EFC5-4EEF-88E7-53448FD581D7">
+        <omgdi:waypoint x="622.8247458365056" y="533.0850484866788"></omgdi:waypoint>
+        <omgdi:waypoint x="667.6924263623126" y="533.0850484866788"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-63468B4D-054A-4349-9F47-53BE3C45AFB1" id="BPMNEdge_sid-63468B4D-054A-4349-9F47-53BE3C45AFB1">
+        <omgdi:waypoint x="974.7222671938421" y="366.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="974.7222671938421" y="493.08504848667894"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1CD5D79D-2E49-4BEB-B87E-147EC5FFF767" id="BPMNEdge_sid-1CD5D79D-2E49-4BEB-B87E-147EC5FFF767">
+        <omgdi:waypoint x="223.0664131744996" y="366.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="223.06641317449962" y="493.0850484866788"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-431D9CF7-8D99-4608-80C6-9DA63BFE8373" id="BPMNEdge_sid-431D9CF7-8D99-4608-80C6-9DA63BFE8373">
+        <omgdi:waypoint x="794.7753739553254" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="740.6790629841935" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-A7D08BF4-53D7-4677-B80C-79B734A2C4E1" id="BPMNEdge_sid-A7D08BF4-53D7-4677-B80C-79B734A2C4E1">
+        <omgdi:waypoint x="477.77201656525176" y="533.0850484866789"></omgdi:waypoint>
+        <omgdi:waypoint x="516.851472592744" y="533.0850484866789"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2FBB64A9-F724-4135-93AA-F853E122C6D7" id="BPMNEdge_sid-2FBB64A9-F724-4135-93AA-F853E122C6D7">
+        <omgdi:waypoint x="622.824730433132" y="176.94258518615717"></omgdi:waypoint>
+        <omgdi:waypoint x="670.6790429964004" y="176.9426008560847"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-37580882-8B7F-404B-A4BF-2897C7495F9C" id="BPMNEdge_sid-37580882-8B7F-404B-A4BF-2897C7495F9C">
+        <omgdi:waypoint x="974.7222671938421" y="326.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="974.7222671938421" y="216.94260526474295"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-516E8244-BA14-4441-98BA-AFC7B67D8811" id="BPMNEdge_sid-516E8244-BA14-4441-98BA-AFC7B67D8811">
+        <omgdi:waypoint x="1401.7420399050395" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="1463.191509232042" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-06FFA718-6AC7-4F80-95D6-A65295258F7B" id="BPMNEdge_sid-06FFA718-6AC7-4F80-95D6-A65295258F7B">
+        <omgdi:waypoint x="55.52044947512083" y="339.56312184575086"></omgdi:waypoint>
+        <omgdi:waypoint x="173.0664131744996" y="198.14568727724134"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-0429F3A4-ED39-4DBD-B568-7E5096FF74B3" id="BPMNEdge_sid-0429F3A4-ED39-4DBD-B568-7E5096FF74B3">
+        <omgdi:waypoint x="773.6656996060743" y="533.0850484866787"></omgdi:waypoint>
+        <omgdi:waypoint x="921.7356305719611" y="533.0850484866789"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-182ACAAF-8099-418D-AECB-8CD7DBB3347D" id="BPMNEdge_sid-182ACAAF-8099-418D-AECB-8CD7DBB3347D">
+        <omgdi:waypoint x="720.6790613493274" y="326.90504133724676"></omgdi:waypoint>
+        <omgdi:waypoint x="720.6790431617981" y="216.9426011835354"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-1F38F9A8-2B8C-4709-BAA4-80D1398526EA" id="BPMNEdge_sid-1F38F9A8-2B8C-4709-BAA4-80D1398526EA">
+        <omgdi:waypoint x="516.851472592744" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="444.78537994337097" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-FA53DB5A-7FC7-4839-AF46-4BA508C000FA" id="BPMNEdge_sid-FA53DB5A-7FC7-4839-AF46-4BA508C000FA">
+        <omgdi:waypoint x="276.05304979638044" y="533.0850484866788"></omgdi:waypoint>
+        <omgdi:waypoint x="371.7987433214901" y="533.0850484866789"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7DC26CF9-9FDC-42CA-985E-CAF9C5DC1307" id="BPMNEdge_sid-7DC26CF9-9FDC-42CA-985E-CAF9C5DC1307">
+        <omgdi:waypoint x="1284.9251907271985" y="346.90502992574"></omgdi:waypoint>
+        <omgdi:waypoint x="1232.5581912896837" y="346.90502983642375"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-88E67C73-D78C-4278-9DBE-CFED5203E184" id="BPMNEdge_sid-88E67C73-D78C-4278-9DBE-CFED5203E184">
+        <omgdi:waypoint x="273.0664131744996" y="176.94260514472427"></omgdi:waypoint>
+        <omgdi:waypoint x="374.78537994337097" y="176.942592936547"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-DA63FA99-9795-4835-981B-7C6CBB042215" id="BPMNEdge_sid-DA63FA99-9795-4835-981B-7C6CBB042215">
+        <omgdi:waypoint x="203.0664131744996" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="119.44946932700263" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B91B3151-C020-46D3-80CB-6D26FFBE2C4A" id="BPMNEdge_sid-B91B3151-C020-46D3-80CB-6D26FFBE2C4A">
+        <omgdi:waypoint x="424.78537994337097" y="326.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="424.78537994337097" y="216.94260526474292"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3820AFB8-428B-4D8A-A99B-7DDAB58A9A14" id="BPMNEdge_sid-3820AFB8-428B-4D8A-A99B-7DDAB58A9A14">
+        <omgdi:waypoint x="770.6790429964004" y="176.94260120968974"></omgdi:waypoint>
+        <omgdi:waypoint x="924.7222671938421" y="176.9426052385886"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-8484B234-F3E2-42AA-8F76-0538398360C4" id="BPMNEdge_sid-8484B234-F3E2-42AA-8F76-0538398360C4">
+        <omgdi:waypoint x="424.78537994337097" y="366.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="424.7853799433709" y="493.08504848667906"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B447B68F-479E-4982-96AE-03551039D4C8" id="BPMNEdge_sid-B447B68F-479E-4982-96AE-03551039D4C8">
+        <omgdi:waypoint x="50.97573344850263" y="358.7916735856287"></omgdi:waypoint>
+        <omgdi:waypoint x="172.6760823487362" y="493.0850484866788"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-EC718768-1C51-4725-A7BB-76F02DF4FF59" id="BPMNEdge_sid-EC718768-1C51-4725-A7BB-76F02DF4FF59">
+        <omgdi:waypoint x="1304.9251906930867" y="493.0850190965209"></omgdi:waypoint>
+        <omgdi:waypoint x="1304.9251906930867" y="366.9050299598516"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2E46104D-238F-491C-A4FC-96DD5A27C7CC" id="BPMNEdge_sid-2E46104D-238F-491C-A4FC-96DD5A27C7CC">
+        <omgdi:waypoint x="1324.9251883115412" y="346.9050323413972"></omgdi:waypoint>
+        <omgdi:waypoint x="1371.7420399050395" y="346.90503791622126"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B99F733C-F624-4978-8707-85AC3F117381" id="BPMNEdge_sid-B99F733C-F624-4978-8707-85AC3F117381">
+        <omgdi:waypoint x="1024.722267193842" y="176.94260513548977"></omgdi:waypoint>
+        <omgdi:waypoint x="1054.2975609430425" y="176.9426013127886"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-01140BBA-DFCD-4D11-AF25-A9ED5EA7AB89" id="BPMNEdge_sid-01140BBA-DFCD-4D11-AF25-A9ED5EA7AB89">
+        <omgdi:waypoint x="270.3060687641234" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="243.0664131744996" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-90F84709-782E-4145-9D04-632B28D80B9B" id="BPMNEdge_sid-90F84709-782E-4145-9D04-632B28D80B9B">
+        <omgdi:waypoint x="404.78537994337097" y="346.9050397023807"></omgdi:waypoint>
+        <omgdi:waypoint x="376.27934200788496" y="346.9050397023807"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

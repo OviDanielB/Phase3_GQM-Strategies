@@ -55,16 +55,16 @@ public abstract class Workflow {
         this.jsonRequestActiviti = new JsonRequestActiviti(hostSettings);
     }
 
-    public void start() throws MetaWorkflowNotStartedException, JsonRequestException, JsonRequestConflictException {
+    public void start(String isStrategyUpdated) throws MetaWorkflowNotStartedException, JsonRequestException, JsonRequestConflictException {
 
-        PostProcessInstance processInstanceBody = buildStartRequestBody();
+        PostProcessInstance processInstanceBody = buildStartRequestBody(isStrategyUpdated);
 
-        ResponseEntity<ResponseProcessInstance> postProcessinstanceResponse = this.jsonRequestActiviti.post(
+        ResponseEntity<ResponseProcessInstance> postProcessInstanceResponse = this.jsonRequestActiviti.post(
                 hostSettings.getActivitiRestEndpointProcessInstances(), processInstanceBody,
                 ResponseProcessInstance.class);
 
-        if (postProcessinstanceResponse.getBody() != null) {
-            setProcessInstanceId(postProcessinstanceResponse.getBody().getId());
+        if (postProcessInstanceResponse.getBody() != null) {
+            setProcessInstanceId(postProcessInstanceResponse.getBody().getId());
         }
         if (getProcessInstanceId() == null || getProcessInstanceId().isEmpty()) {
             throw new MetaWorkflowNotStartedException(getProcessDefinitionId());
@@ -74,7 +74,7 @@ public abstract class Workflow {
     }
 
 
-    abstract protected PostProcessInstance buildStartRequestBody();
+    abstract protected PostProcessInstance buildStartRequestBody(String isStrategyUpdated);
 
 
     public void deploy() throws JsonRequestException, MetaWorkflowNotDeployedException, ModelXmlNotFoundException,
@@ -205,7 +205,7 @@ public abstract class Workflow {
     public <T extends ActivitiEntityList> void checkAlreadyExists(String name, String restAddress, Class<T> T)
             throws ActivitiEntityAlreadyExistsException, JsonRequestException {
 
-        System.out.print(restAddress);
+        System.out.println(restAddress);
         Map<String, String> queryParams = new LinkedHashMap<String, String>();
         queryParams.put("name", name);
         List<? extends ActivitiEntity> entityList = jsonRequestActiviti

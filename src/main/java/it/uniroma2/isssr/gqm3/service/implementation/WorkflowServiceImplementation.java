@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author emanuele
@@ -37,7 +38,7 @@ public class WorkflowServiceImplementation {
     private BusInterfaceControllerImplementation busInterfaceControllerImplementation;
 
 
-    public ResponseEntity<String> createWorkflow(String workflowName) throws IllegalCharacterRequestException, JsonRequestException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, ProcessDefinitionNotFoundException, MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, JsonRequestConflictException, BusinessWorkflowNotCreatedException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
+    public ResponseEntity<String> createWorkflow(String workflowName, String isStrategyUpdated) throws IllegalCharacterRequestException, JsonRequestException, ActivitiEntityAlreadyExistsException, ModelXmlNotFoundException, ProcessDefinitionNotFoundException, MetaWorkflowNotDeployedException, MetaWorkflowNotStartedException, JsonRequestConflictException, BusinessWorkflowNotCreatedException, BusRequestException, BusException, IllegalSaveWorkflowRequestBodyException, IOException {
 
         for (char character : ILLEGAL_CHARACTERS) {
             if (workflowName.indexOf(character) >= 0) {
@@ -51,17 +52,22 @@ public class WorkflowServiceImplementation {
         String metaWorkflowName = hostSettings.getMetaworkflowPrefix() + workflowName
                 + hostSettings.getMetaworkflowSuffix();
 
+        /* create meta and business workflow */
         MetaWorkflow metaWorkflow = new MetaWorkflow(hostSettings, metaWorkflowName, workflowName);
         metaWorkflow.checkAlreadyExist(metaWorkflowName);
         BusinessWorkflow businessWorkflow = new BusinessWorkflow(hostSettings, workflowName);
         businessWorkflow.checkAlreadyExist(workflowName);
-
-        metaWorkflow.deploy();
-
-        metaWorkflow.start();
-
         businessWorkflow.setMetaWorkflowProcessInstanceId(metaWorkflow.getProcessInstanceId());
-        businessWorkflow.createModel();
+
+
+        /* deploy and start metaworkflow */
+        metaWorkflow.deploy();
+        metaWorkflow.start(isStrategyUpdated);
+
+        if (businessWorkflow.getModelId() == null)
+            businessWorkflow.createModel();
+
+
         metaWorkflow.updateVariable("businessWorkflowModelId", businessWorkflow.getModelId());
 
         WorkflowData workflowData = new WorkflowData();

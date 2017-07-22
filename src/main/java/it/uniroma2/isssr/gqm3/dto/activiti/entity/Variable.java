@@ -14,7 +14,7 @@ public class Variable implements ActivitiEntity {
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("value")
-	private String value;
+	private Object value;
 	@JsonProperty("valueUrl")
 	private String valueUrl;
 	@JsonProperty("scope")
@@ -34,11 +34,11 @@ public class Variable implements ActivitiEntity {
 	}
 	
 	@JsonProperty("value")
-	public String getValue() {
+	public Object getValue() {
 		return value;
 	}
 	@JsonProperty("value")
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 	
