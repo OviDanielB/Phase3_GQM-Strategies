@@ -1,11 +1,15 @@
 package it.uniroma2.isssr.gqm3.model;
 
+import it.uniroma2.isssr.gqm3.model.ontologyPhase2.Ontology;
+
 public class MetricTask {
 	
 	String nameMetric;
 	String idTask;
 	String nameTask;
 	String descriptionMetric;
+	Boolean newVersion = false;
+	Ontology ontology;
 	
 	
 	public MetricTask(String nameMetric, String nameTask, String descriptionMetric,String idTask) {
@@ -15,8 +19,30 @@ public class MetricTask {
 		this.nameTask = nameTask;
 		this.descriptionMetric = descriptionMetric;
 	}
-	
-	
+
+	public MetricTask(String idTask,Ontology ontology) {
+		super();
+		this.idTask = idTask;
+		this.ontology = ontology;
+		this.newVersion = true;
+	}
+
+	public Ontology getOntology() {
+		return ontology;
+	}
+
+	public void setOntology(Ontology ontology) {
+		this.ontology = ontology;
+	}
+
+	public Boolean getNewVersion() {
+		return newVersion;
+	}
+
+	public void setNewVersion(Boolean newVersion) {
+		this.newVersion = newVersion;
+	}
+
 	public String getIdTask() {
 		return idTask;
 	}

@@ -45,6 +45,16 @@ public class MeasureTask {
     private String scope;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String time;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean newVersion;
+
+    public Boolean getNewVersion() {
+        return newVersion;
+    }
+
+    public void setNewVersion(Boolean newVersion) {
+        this.newVersion = newVersion;
+    }
 
     public Ontology getOntology() {
         return ontology;
