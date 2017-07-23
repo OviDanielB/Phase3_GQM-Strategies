@@ -130,14 +130,7 @@ public class StrategyServiceImpl implements StrategyService {
             query.addCriteria(Criteria.where("idF2").is(dtoSF2.getId()));
             List<Strategy> mongoStrategy = mongoTemplate.find(query, Strategy.class);
 
-            Boolean alreadyPresent = false;
-            for (Strategy strategy : actualStrategies)
-                if (Objects.equals(strategy.getIdF2(), dtoSF2.getId()) && strategy.getVersion() == dtoSF2.getVersion()) {
-                    alreadyPresent = true;
-                    break;
-                }
-
-            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && !alreadyPresent) {
+            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && !alreadyExist(actualStrategies, dtoSF2)) {
 
                 Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
                         dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
@@ -145,15 +138,13 @@ public class StrategyServiceImpl implements StrategyService {
                 newStrategy.setIdF2(dtoSF2.getId());
                 strategyRepository.save(newStrategy);
 
-            } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()) {
+            } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()
+                    && !alreadyExist(actualStrategies, dtoSF2)) {
 
                 Strategy toUpdate = mongoStrategy.get(0);
 
-                if (mongoStrategy.size() > 1) {
-                    System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
-                }
-
                 if (toUpdate.getVersion() < dtoSF2.getVersion()) {
+
                     toUpdate.setId(null);
                     toUpdate.setIdF2(dtoSF2.getId());
                     toUpdate.setName(dtoSF2.getName());
@@ -170,6 +161,18 @@ public class StrategyServiceImpl implements StrategyService {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private Boolean alreadyExist(List<Strategy> actualStrategies, DTOStrategyFrom2 dtoSF2) {
+
+        Boolean alreadyPresent = false;
+        for (Strategy strategy : actualStrategies)
+            if (Objects.equals(strategy.getIdF2(), dtoSF2.getId()) && strategy.getVersion() == dtoSF2.getVersion()) {
+                alreadyPresent = true;
+                break;
+            }
+
+        return alreadyPresent;
     }
 
 //    private void updateWorkflowData(Strategy strategy) throws Exception {
