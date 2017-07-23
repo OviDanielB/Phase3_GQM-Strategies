@@ -123,23 +123,6 @@ public class StrategyServiceImpl implements StrategyService {
         // strategie presenti sul bus
         List<DTOStrategyFrom2> upToDateStr = bus2Fase3.getStrategiesF2();
 
-        // elimino le strategy presenti su mongodb ma che non sono più presenti sul bus
-//        if (upToDateStr == null) {
-//            strategyRepository.deleteAll();
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        }
-//
-//        for (Strategy strategy : actualStrategies) {
-//            Boolean notFound = true;
-//            for (DTOStrategyFrom2 dtoStrategyFrom2 : upToDateStr)
-//                if (dtoStrategyFrom2.getId().equals(strategy.getIdF2()) &&
-//                        dtoStrategyFrom2.getVersion()== strategy.getVersion()) {
-//                    notFound = false;
-//                }
-//            if (notFound)
-//                strategyRepository.delete(strategy);
-//        }
-
         // aggiorno i valori nuovi
         for (DTOStrategyFrom2 dtoSF2 : upToDateStr) {
 
@@ -148,40 +131,41 @@ public class StrategyServiceImpl implements StrategyService {
             List<Strategy> mongoStrategy = mongoTemplate.find(query, Strategy.class);
 
             Boolean alreadyPresent = false;
-            for (Strategy strategy : mongoStrategy)
+            for (Strategy strategy : actualStrategies)
                 if (Objects.equals(strategy.getIdF2(), dtoSF2.getId()) && strategy.getVersion() == dtoSF2.getVersion()) {
                     alreadyPresent = true;
                     break;
                 }
-                    if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && !alreadyPresent) {
 
-                        Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
-                                dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
-                                dtoSF2.getVersion(), 0);
-                        newStrategy.setIdF2(dtoSF2.getId());
-                        strategyRepository.save(newStrategy);
+            if (dtoSF2.getRevisited() == HostSettings.state.NEW.getValue() && !alreadyPresent) {
 
-                    } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()) {
+                Strategy newStrategy = new Strategy(dtoSF2.getName(), dtoSF2.getDescription(),
+                        dtoSF2.getOrganizationalUnit(), dtoSF2.getOrganizationalUnitId(), dtoSF2.getRevisited(),
+                        dtoSF2.getVersion(), 0);
+                newStrategy.setIdF2(dtoSF2.getId());
+                strategyRepository.save(newStrategy);
 
-                        Strategy toUpdate = mongoStrategy.get(0);
+            } else if (dtoSF2.getRevisited() == HostSettings.state.MODIFIED.getValue() && !mongoStrategy.isEmpty()) {
 
-                        if (mongoStrategy.size() > 1) {
-                            System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
-                        }
+                Strategy toUpdate = mongoStrategy.get(0);
 
-                        if (toUpdate.getVersion() < dtoSF2.getVersion()) {
-                            toUpdate.setId(null);
-                            toUpdate.setIdF2(dtoSF2.getId());
-                            toUpdate.setName(dtoSF2.getName());
-                            toUpdate.setDescription(dtoSF2.getDescription());
-                            toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
-                            toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
-                            toUpdate.setStatus(dtoSF2.getRevisited());
-                            toUpdate.setVersion(dtoSF2.getVersion());
+                if (mongoStrategy.size() > 1) {
+                    System.out.println("On the bus there are more than one strategy with the same idF2: " + toUpdate.getIdF2());
+                }
 
-                            strategyRepository.save(toUpdate);
-                        }
-                    }
+                if (toUpdate.getVersion() < dtoSF2.getVersion()) {
+                    toUpdate.setId(null);
+                    toUpdate.setIdF2(dtoSF2.getId());
+                    toUpdate.setName(dtoSF2.getName());
+                    toUpdate.setDescription(dtoSF2.getDescription());
+                    toUpdate.setOrganizationalunit(dtoSF2.getOrganizationalUnit());
+                    toUpdate.setOrganizationalunitId(dtoSF2.getOrganizationalUnitId());
+                    toUpdate.setStatus(dtoSF2.getRevisited());
+                    toUpdate.setVersion(dtoSF2.getVersion());
+
+                    strategyRepository.save(toUpdate);
+                }
+            }
 
         }
 
