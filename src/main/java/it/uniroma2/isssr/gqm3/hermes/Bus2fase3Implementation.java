@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -116,16 +117,20 @@ public class Bus2fase3Implementation implements Bus2fase3 {
                 jsonobj = jsonResponse.getJSONObject(i);
 
                 String payloads = jsonobj.getString("payload");
-                DTOStrategyFrom2 ob = new DTOStrategyFrom2();
+                System.out.println(payloads);
 
-                jsonobj = new JSONObject(payloads);
-                ob.setId(jsonobj.getString("id"));
-                ob.setName(jsonobj.getString("name"));
-                ob.setDescription(jsonobj.getString("description"));
-                ob.setOrganizationalUnit(jsonobj.getString("organizationalUnit"));
-                ob.setOrganizationalUnitId(jsonobj.getString("organizationalUnitId"));
-                ob.setRevisited(jsonobj.getInt("status"));
-                ob.setVersion(jsonobj.getInt("version"));
+                DTOStrategyFrom2 ob = new DTOStrategyFrom2();
+                JSONObject jsonPayload = new JSONObject(payloads);
+                ob.setId(Long.toString(jsonPayload.getLong("id")));
+                ob.setName(jsonPayload.getString("title"));
+                ob.setDescription(jsonPayload.getString("description"));
+                JSONObject scope = jsonPayload.getJSONObject("scope");
+                ob.setOrganizationalUnit(scope.getString("name"));
+                ob.setOrganizationalUnitId(Long.toString(scope.getLong("id")));
+                JSONObject state = jsonPayload.getJSONObject("state");
+                ob.setRevisited(state.getInt("value"));
+
+                ob.setVersion(jsonobj.getInt("busVersion"));
 
                 ls.add(ob);
 

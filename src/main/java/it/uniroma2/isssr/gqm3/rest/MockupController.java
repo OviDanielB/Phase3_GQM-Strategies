@@ -1,5 +1,6 @@
 package it.uniroma2.isssr.gqm3.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.uniroma2.isssr.HostSettings;
 import it.uniroma2.isssr.gqm3.Exception.BusRequestException;
@@ -7,6 +8,7 @@ import it.uniroma2.isssr.gqm3.dto.bus.BusReadResponse;
 import it.uniroma2.isssr.gqm3.model.Metric;
 import it.uniroma2.isssr.gqm3.model.Strategy;
 import it.uniroma2.isssr.gqm3.model.rest.DTOMetric;
+import it.uniroma2.isssr.gqm3.model.rest.DTOStrategy;
 import it.uniroma2.isssr.gqm3.model.rest.DTOStrategyFrom2;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseMetric;
 import it.uniroma2.isssr.gqm3.model.rest.response.DTOResponseStrategy;
@@ -22,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -140,5 +143,75 @@ public class MockupController {
                 HttpStatus.OK);
 
     }
+
+    @RequestMapping(value = "/strategy/createStrategy2", method = RequestMethod.POST)
+    public ResponseEntity<DTOResponseStrategy> createStrategy2(@RequestBody DTOStrategy dtoStrategy) throws BusException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonStrategy = "";
+        try {
+            jsonStrategy = mapper.writeValueAsString(dtoStrategy);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(jsonStrategy);
+//        String encoded = null;
+//        try {
+//            encoded = java.util.Base64.getEncoder().encodeToString(
+//                    jsonStrategy.getBytes("utf-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("objIdLocalToPhase", dtoStrategy.getId().toString());
+            jsonObject.put("typeObj", "base64-TerminalStrategy");
+            jsonObject.put("instance", dtoStrategy.getTitle());
+            jsonObject.put("tags", "[]");
+            jsonObject.put("payload", jsonStrategy);
+
+            BusMessage busMessage = new BusMessage(
+                    BusMessage.OPERATION_UPDATE, "phase2", jsonObject.toString());
+            System.out.println(jsonObject.toString());
+            String busResponse = busMessage.send(hostSettings.getBusUri());
+            BusReadResponse busResponseParsed;
+
+            ObjectMapper responseMapper = new ObjectMapper();
+            busResponseParsed = responseMapper.readValue(busResponse, BusReadResponse.class);
+            if (!busResponseParsed.getErr().equals("0")) {
+                try {
+                    busMessage = new BusMessage(BusMessage.OPERATION_CREATE, "phase2", jsonObject.toString());
+                } catch (BusException e) {
+                    e.printStackTrace();
+                }
+                busResponse = busMessage.send(hostSettings.getBusUri());
+                busResponseParsed = responseMapper.readValue(busResponse,
+                        BusReadResponse.class);
+                if (!busResponseParsed.getErr().equals("0")) {
+                    try {
+                        throw new BusRequestException(busResponseParsed.getErr());
+                    } catch (BusRequestException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        DTOResponseStrategy dtoResponse = new DTOResponseStrategy();
+        dtoResponse.setStrategyid(String.valueOf(dtoStrategy.getId()));
+        dtoResponse.setStrategyName(dtoStrategy.getTitle());
+        dtoResponse.setStrategyDescription(dtoStrategy.getDescription());
+
+        return new ResponseEntity<DTOResponseStrategy>(dtoResponse,
+                HttpStatus.OK);
+
+    }
+
 
 }
