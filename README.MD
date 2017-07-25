@@ -69,6 +69,9 @@ The project contains 3 *BPMN20.xml* files containing the metaworkflow definition
  in the original projects those functionalities were need while in the merged phases, it was no longer needed since
  the other phase used it. You can ignore those parts.
  
+  
+ Look at our exam presentation to see changes and improvements of old projects.
+ 
  Good Luck,
  
  GQM+S Phase 3 and 4 Team
